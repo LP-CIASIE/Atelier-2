@@ -3,15 +3,26 @@
 declare(strict_types=1);
 
 use Slim\Factory\AppFactory;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+/** ========================
+ * Création de Eloquent
+ * ====================== */
+$conf = parse_ini_file(__DIR__ . '/../conf/api.db.ini.env');
+
+$capsule = new Capsule;
+$capsule->addConnection($conf);
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
 
 /** ========================
  * Création du container
  * ====================== */
 $builder = new DI\ContainerBuilder();
-$builder->addDefinitions(dirname(__DIR__, 1) . '/conf/settings.php');
-$builder->addDefinitions(dirname(__DIR__, 1) . '/conf/logger.php');
+$builder->addDefinitions(dirname(__DIR__, 1) . '/containers/settings.php');
+$builder->addDefinitions(dirname(__DIR__, 1) . '/containers/logger.php');
 $container = $builder->build();
 
 /** ========================
