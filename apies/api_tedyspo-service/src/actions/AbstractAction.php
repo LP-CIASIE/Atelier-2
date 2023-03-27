@@ -1,6 +1,6 @@
 <?php
 
-namespace atelier\actions;
+namespace atelier\tedyspo\actions;
 
 use Psr\Container\ContainerInterface;
 
