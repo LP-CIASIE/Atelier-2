@@ -20,7 +20,7 @@ services:
 # ===============================
   reunionou.api:
     image: 'canals/php:latest'
-    command: "composer install"
+    command: "sh -c 'composer install && tail -f /dev/null'"
     environment:
       - VHOST_HOSTNAME=reunionou.atelier.local
       - VHOST_DOCROOT=/var/www/public
@@ -56,7 +56,7 @@ services:
 # ===============================
   auth.api:
     image: 'canals/php:latest'
-    command: "composer install"
+    command: "sh -c 'composer install && tail -f /dev/null'"
     environment:
       - VHOST_HOSTNAME=auth.atelier.local
       - VHOST_DOCROOT=/var/www/public
@@ -85,14 +85,14 @@ services:
     networks:
       - atelier.net
     volumes:
-      - './api/sql:/var/sql'
+      - './apies/api_auth-service/sql:/var/sql'
 
 # ===============================
 #     Docker for Gateway API
 # ===============================
   gateway.api:
     image: 'canals/php:latest'
-    command: "composer install"
+    command: "sh -c 'composer install && tail -f /dev/null'"
     environment:
       - VHOST_HOSTNAME=gateway.atelier.local
       - VHOST_DOCROOT=/var/www/public
