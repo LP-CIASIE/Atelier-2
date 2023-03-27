@@ -1,0 +1,49 @@
+*{box-sizing: border-box;}
+
+html {
+    height: 100%;
+}
+
+body{
+    font-family: $font-family;
+    font-size: 16px;
+    line-height: 1.1;
+    color: $color-font;
+    background-color: $color-background;
+    overflow-x: hidden;
+
+    min-height: 100%;
+}
+
+#app{
+    width: 100%;
+    position: relative;
+
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    color: $color-link;
+    text-decoration: none;
+
+    &:hover {
+        color: $color-link-hover;
+    }
+}
+
+article {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+section {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 100px 50px;
+}
