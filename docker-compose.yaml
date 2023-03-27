@@ -3,33 +3,47 @@ networks:
   atelier.net:
     driver: bridge
 
-# ===============================
-#     Docker for API Slim
-# ===============================
 services:
-  api:
+
+# ===============================
+#     Docker for API Public
+# ===============================
+  adminer:
+    image: adminer
+    ports:
+      - '8080:8080'
+    networks:
+      - atelier.net
+
+# ===============================
+#    Docker for Reunionou API
+# ===============================
+  reunionou.api:
     image: 'canals/php:latest'
+    command: "composer install"
     environment:
-      - VHOST_HOSTNAME=api.atelier.local
+      - VHOST_HOSTNAME=reunionou.atelier.local
       - VHOST_DOCROOT=/var/www/public
     ports:
-      - '8000:80'
-      - '8043:443'
+      - '8010:80'
     volumes:
-      - './api:/var/www/'
+      - './apies/api_reunionou-service:/var/www/'
     working_dir: /var/www/
     networks:
       atelier.net:
         aliases:
-          - api.atelier.local
-  api.db:
+          - reunionou.atelier.local
+    depends_on:
+      - reunionou.db
+  
+  reunionou.db:
     image: 'mariadb:latest'
     command: '--default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci'
     environment:
       - MYSQL_ROOT_PASSWORD=atelier
       - MYSQL_USER=atelier
       - MYSQL_PASSWORD=atelier
-      - MYSQL_DATABASE=atelier
+      - MYSQL_DATABASE=reunionou
     ports:
       - '3307:3306'
     networks:
@@ -37,9 +51,60 @@ services:
     volumes:
       - './api/sql:/var/sql'
 
-  adminer:
-    image: adminer
+# ===============================
+#     Docker for Auth API
+# ===============================
+  auth.api:
+    image: 'canals/php:latest'
+    command: "composer install"
+    environment:
+      - VHOST_HOSTNAME=auth.atelier.local
+      - VHOST_DOCROOT=/var/www/public
     ports:
-      - '8080:8080'
+      - '8020:80'
+    volumes:
+      - './apies/api_auth-service:/var/www/'
+    working_dir: /var/www/
+    networks:
+      atelier.net:
+        aliases:
+          - auth.atelier.local
+    depends_on:
+      - auth.db
+  
+  auth.db:
+    image: 'mariadb:latest'
+    command: '--default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci'
+    environment:
+      - MYSQL_ROOT_PASSWORD=atelier
+      - MYSQL_USER=atelier
+      - MYSQL_PASSWORD=atelier
+      - MYSQL_DATABASE=auth
+    ports:
+      - '3308:3306'
     networks:
       - atelier.net
+    volumes:
+      - './api/sql:/var/sql'
+
+# ===============================
+#     Docker for Gateway API
+# ===============================
+  gateway.api:
+    image: 'canals/php:latest'
+    command: "composer install"
+    environment:
+      - VHOST_HOSTNAME=gateway.atelier.local
+      - VHOST_DOCROOT=/var/www/public
+    ports:
+      - '8000:80'
+    volumes:
+      - './apies/api_gateway-service:/var/www/'
+    working_dir: /var/www/
+    networks:
+      atelier.net:
+        aliases:
+          - gateway.atelier.local
+    depends_on:
+      - auth.api
+      - reunionou.api

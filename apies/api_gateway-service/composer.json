@@ -1,0 +1,19 @@
+{
+	"require": {
+		"php": ">=8.1",
+		"slim/slim": "^4.0",
+		"ramsey/uuid": "^4.0",
+		"guzzlehttp/guzzle": "^7.5.0",
+		"firebase/php-jwt": "^6.3",
+		"monolog/monolog": "^3.3",
+		"slim/psr7": "^1.6",
+		"php-di/php-di": "^7.0",
+		"php-di/slim-bridge": "^3.3",
+		"respect/validation": "^2.2"
+	},
+	"autoload": {
+		"psr-4": {
+			"atelier\\gateway\\": "./src/"
+		}
+	}
+}
