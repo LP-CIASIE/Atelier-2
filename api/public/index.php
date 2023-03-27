@@ -11,7 +11,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * ====================== */
 $builder = new DI\ContainerBuilder();
 $builder->addDefinitions(dirname(__DIR__, 1) . '/conf/settings.php');
-// $builder->addDefinitions(dirname(__DIR__, 1) . '/conf/logger.php');
+$builder->addDefinitions(dirname(__DIR__, 1) . '/conf/logger.php');
 $container = $builder->build();
 
 /** ========================
