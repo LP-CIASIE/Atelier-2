@@ -16,7 +16,7 @@ services:
       - atelier.net
 
 # ===============================
-#    Docker for Reunionou API
+#    Docker for tedyspo API
 # ===============================
   tedyspo.api:
     image: 'canals/php:latest'
@@ -27,7 +27,7 @@ services:
     ports:
       - '8010:80'
     volumes:
-      - './apies/api_reunionou-service:/var/www/'
+      - './apies/api_tedyspo-service:/var/www/'
     working_dir: /var/www/
     networks:
       atelier.net:
@@ -49,7 +49,7 @@ services:
     networks:
       - atelier.net
     volumes:
-      - './api/sql:/var/sql'
+      - './apies/api_tedyspo-service/sql:/var/sql'
 
 # ===============================
 #     Docker for Auth API
@@ -107,4 +107,4 @@ services:
           - gateway.atelier.local
     depends_on:
       - auth.api
-      - reunionou.api
+      - tedyspo.api
