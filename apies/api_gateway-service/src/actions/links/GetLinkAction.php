@@ -1,14 +1,14 @@
 <?php
 
-namespace atelier\tedyspo\actions\users;
+namespace atelier\tedyspo\actions\links;
 
 use atelier\tedyspo\actions\AbstractAction;
 
-class GetUsersAction extends AbstractAction
+class GetLinkAction extends AbstractAction
 {
   public function __invoke($request, $response, $args)
   {
-    $userService = $this->container->get('service.user');
+    $linkService = $this->container->get('service.link');
 
     return $response;
   }
