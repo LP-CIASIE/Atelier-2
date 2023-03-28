@@ -41,76 +41,169 @@ $errorMiddleware->getDefaultErrorHandler()->forceContentType('application/json')
 $app->get('/', atelier\gateway\actions\HomeAction::class);
 
 
-/**
- * API Reunionou Service
- */
-
+/** ======================
+ *    Collection Users
+ * ===================== */
 $app->group('/users', function () use ($app) {
-  $app()->get('[/]', atelier\gateway\actions\users\GetUsersAction::class);
-  $app()->post('[/]', atelier\gateway\actions\users\CreateUserAction::class);
-  $app()->get('/{id_user}[/]', atelier\gateway\actions\users\GetUserAction::class);
-  $app()->put('/{id_user}[/]', atelier\gateway\actions\users\UpdateUserAction::class);
-  $app()->delete('/{id_user}[/]', atelier\gateway\actions\users\DeleteUserAction::class);
-  $app->group('/{id_user}/events', function () use ($app) {
-    $app()->post('/{id_event}[/]', atelier\gateway\actions\users\AddUserEventAction::class);
-    $app()->get('/{id_event}[/]', atelier\gateway\actions\users\GetUsersEventAction::class);
-    $app()->put('/{id_event}[/]', atelier\gateway\actions\users\UpdateUserEventAction::class);
-    $app()->delete('/{id_event}[/]', atelier\gateway\actions\users\DeleteUserEventAction::class);
+  // GET
+  $app->get('[/]', atelier\tedyspo\actions\users\GetUsersAction::class);
+  $app->get('/{id_user}[/]', atelier\tedyspo\actions\users\GetUserAction::class);
+
+  // POST
+  $app->post('[/]', atelier\tedyspo\actions\users\CreateUserAction::class);
+
+  // PUT
+  $app->put('/{id_user}[/]', atelier\tedyspo\actions\users\UpdateUserAction::class);
+
+  // DELETE
+  $app->delete('/{id_user}[/]', atelier\tedyspo\actions\users\DeleteUserAction::class);
+
+  $app->group('/{id_user}', function () use ($app) {
+    /** ===============================
+     *   Collection Share Evenements
+     * ============================= */
+    $app->group('/events', function () use ($app) {
+      // GET
+      $app->get('/{id_event}[/]', atelier\tedyspo\actions\events\GetEventUserAction::class);
+
+      // POST
+      $app->post('/{id_event}[/]', atelier\tedyspo\actions\events\CreateUserEventAction::class);
+
+      // PUT
+      $app->put('/{id_event}[/]', atelier\tedyspo\actions\events\UpdateUserEventAction::class);
+
+      // DELETE
+      $app->delete('/{id_event}[/]', atelier\tedyspo\actions\events\DeleteUserEventAction::class);
+    });
   });
 });
 
+
+/** =========================
+ *    Collection Evenements
+ * ======================= */
 $app->group('/events', function () use ($app) {
-  $app()->get('[/]', atelier\gateway\actions\events\GetEventsAction::class);
-  $app()->post('[/]', atelier\gateway\actions\events\CreateEventAction::class);
-  $app()->get('/{id_event}[/]', atelier\gateway\actions\events\GetEventAction::class);
-  $app()->put('/{id_event}[/]', atelier\gateway\actions\events\UpdateEventAction::class);
-  $app()->delete('/{id_event}[/]', atelier\gateway\actions\events\DeleteEventAction::class);
+  // GET
+  $app->get('[/]', atelier\tedyspo\actions\events\GetEventsAction::class);
+  $app->get('/{id_event}[/]', atelier\tedyspo\actions\events\GetEventAction::class);
 
-  $app->group('/{id_event}/users', function () use ($app) {
-    $app()->post('.{id_user}[/]', atelier\gateway\actions\events\AddEventUserAction::class);
-    $app()->get('/{id_user}[/]', atelier\gateway\actions\events\GetEventUsersAction::class);
-    $app()->put('/{id_user}[/]', atelier\gateway\actions\events\UpdateEventUserAction::class);
-    $app()->delete('/{id_user}[/]', atelier\gateway\actions\events\DeleteEventUserAction::class);
-  });
+  // POST
+  $app->post('[/]', atelier\tedyspo\actions\events\CreateEventAction::class);
 
-  $app->group('/{id_event}/comment', function () use ($app) {
-    $app->get('[/]', atelier\gateway\actions\events\GetEventCommentsAction::class);
-    $app->post('[/]', atelier\gateway\actions\events\CreateEventCommentAction::class);
-    $app->get('/{id_comment}[/]', atelier\gateway\actions\events\GetEventCommentAction::class);
-    $app->put('/{id_comment}[/]', atelier\gateway\actions\events\UpdateEventCommentAction::class);
-    $app->delete('/{id_comment}[/]', atelier\gateway\actions\events\DeleteEventCommentAction::class);
-  });
+  // PUT
+  $app->put('/{id_event}[/]', atelier\tedyspo\actions\events\UpdateEventAction::class);
 
-  $app->group('/{id_event}/links', function () use ($app) {
-    $app->get('[/]', atelier\gateway\actions\events\GetEventLinkAction::class);
-    $app->post('[/]', atelier\gateway\actions\events\CreateEventLinkAction::class);
-    $app->get('/{id_link}[/]', atelier\gateway\actions\events\GetEventLinkAction::class);
-    $app->put('/{id_link}[/]', atelier\gateway\actions\events\UpdateEventLinkAction::class);
-    $app->delete('/{id_link}[/]', atelier\gateway\actions\events\DeleteEventLinkAction::class);
-  });
-
-  $app->group('/{id_event}/locations', function () use ($app) {
-    $app->get('[/]', atelier\gateway\actions\events\GetEventlocationsAction::class);
-    $app->post('[/]', atelier\gateway\actions\events\CreateEventlocationAction::class);
-    $app->get('/{id_location}[/]', atelier\gateway\actions\events\GetEventlocationAction::class);
-    $app->put('/{id_location}[/]', atelier\gateway\actions\events\UpdateEventlocationAction::class);
-    $app->delete('/{id_location}[/]', atelier\gateway\actions\events\DeleteEventlocationAction::class);
-  });
+  // DELETE
+  $app->delete('/{id_event}[/]', atelier\tedyspo\actions\events\DeleteEventAction::class);
 
   $app->group('/{id_event}', function () use ($app) {
-    $app->get('/events[/]', atelier\gateway\actions\events\GetAdditionalsEventsAction::class);
-    $app->post('/events[/]', atelier\gateway\actions\events\CreateAdditionalEventAction::class);
-    $app->put('/events/{id_additional_event}[/]', atelier\gateway\actions\events\UpdateAdditionalEventAction::class);
+    /** ===============================
+     *   Collection Share Evenements
+     * ============================= */
+    $app->group('/users', function () use ($app) {
+      // GET
+      $app->get('[/]', atelier\tedyspo\actions\events\GetEventUsersAction::class);
+      $app->get('/{id_user}[/]', atelier\tedyspo\actions\events\GetEventUserAction::class);
+
+      // POST
+      $app->post('/{id_user}[/]', atelier\tedyspo\actions\events\CreateUserEventAction::class);
+
+      // PUT
+      $app->put('/{id_user}[/]', atelier\tedyspo\actions\events\UpdateUserEventAction::class);
+
+      // DELETE
+      $app->delete('/{id_user}[/]', atelier\tedyspo\actions\events\DeleteUserEventAction::class);
+    });
+
+    /** ============================
+     *    Collection Commentaires
+     * ========================== */
+    $app->group('/comments', function () use ($app) {
+      // GET
+      $app->get('[/]', atelier\tedyspo\actions\comments\GetCommentsAction::class);
+      $app->get('/{id_comment}[/]', atelier\tedyspo\actions\comments\GetCommentAction::class);
+
+      // POST
+      $app->post('[/]', atelier\tedyspo\actions\comments\CreateCommentAction::class);
+
+      // PUT
+      $app->put('/{id_comment}[/]', atelier\tedyspo\actions\comments\UpdateCommentAction::class);
+
+      // DELETE
+      $app->delete('/{id_comment}[/]', atelier\tedyspo\actions\comments\DeleteCommentAction::class);
+    });
+
+    /** ============================
+     *    Collection Links
+     * ========================== */
+    $app->group('/links', function () use ($app) {
+      // GET
+      $app->get('[/]', atelier\tedyspo\actions\links\GetLinksAction::class);
+      $app->get('/{id_link}[/]', atelier\tedyspo\actions\links\GetLinkAction::class);
+
+      // POST
+      $app->post('[/]', atelier\tedyspo\actions\links\CreateLinkAction::class);
+
+      // PUT
+      $app->put('/{id_link}[/]', atelier\tedyspo\actions\links\UpdateLinkAction::class);
+
+      // DELETE
+      $app->delete('/{id_link}[/]', atelier\tedyspo\actions\links\DeleteLinkAction::class);
+    });
+
+    /** ============================
+     *    Collection locations
+     * ========================== */
+    $app->group('/locations', function () use ($app) {
+      // GET
+      $app->get('[/]', atelier\tedyspo\actions\locations\GetLocationsAction::class);
+      $app->get('/{id_location}[/]', atelier\tedyspo\actions\locations\GetLocationAction::class);
+
+      // POST
+      $app->post('[/]', atelier\tedyspo\actions\locations\CreateLocationAction::class);
+
+      // PUT
+      $app->put('/{id_location}[/]', atelier\tedyspo\actions\locations\UpdateLocationAction::class);
+
+      // DELETE
+      $app->delete('/{id_location}[/]', atelier\tedyspo\actions\locations\DeleteLocationAction::class);
+    });
+
+    /** ============================
+     *    Collection Additional Events
+     * ========================== */
+    $app->group('/events', function () use ($app) {
+      // GET
+      $app->get('[/]', atelier\tedyspo\actions\events\GetAdditionalsEventsAction::class);
+
+      // POST
+      $app->post('[/]', atelier\tedyspo\actions\events\CreateAdditionalEventAction::class);
+
+      // PUT
+      $app->put('/{id_additional_event}[/]', atelier\tedyspo\actions\events\UpdateAdditionalEventAction::class);
+    });
   });
 });
 
-$app->group('/comments', function () use ($app) {
-  $app->get('/{id_comment}/medias[/]', atelier\gateway\actions\media\GetCommentsAction::class);
-  $app->post('/{id_comment}/medias[/]', atelier\gateway\actions\media\CreateCommentAction::class);
-  $app->get('/{id_comment}/medias/{id_media}[/]', atelier\gateway\actions\media\GetCommentAction::class);
-  $app->put('/{id_comment}/medias/{id_media}[/]', atelier\gateway\actions\media\UpdateCommentAction::class);
-  $app->delete('/{id_comment}/medias/{id_media}[/]', atelier\gateway\actions\media\DeleteCommentAction::class);
+/** ============================
+ *    Collection Medias
+ * ========================== */
+$app->group('/comments/{id_comment}/medias', function () use ($app) {
+  // GET
+  $app->get('[/]', atelier\tedyspo\actions\comments\GetCommentMediasAction::class);
+  $app->get('/{id_media}[/]', atelier\tedyspo\actions\comments\GetCommentMediaAction::class);
+
+  // POST
+  $app->post('[/]', atelier\tedyspo\actions\comments\CreateCommentMediaAction::class);
+
+  // PUT
+  $app->put('/{id_media}[/]', atelier\tedyspo\actions\comments\UpdateCommentMediaAction::class);
+
+  // DELETE
+  $app->delete('/{id_media}[/]', atelier\tedyspo\actions\comments\DeleteCommentMediaAction::class);
 });
+
+
 
 /**
  * API Auth Service
