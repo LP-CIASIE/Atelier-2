@@ -1,8 +1,8 @@
 <?php
 
-namespace atelier\tedyspo\actions\links;
+namespace atelier\gateway\actions\links;
 
-use atelier\tedyspo\actions\AbstractAction;
+use atelier\gateway\actions\AbstractAction;
 
 class UpdateLinkAction extends AbstractAction
 {

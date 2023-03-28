@@ -8,5 +8,5 @@ return [
   'content.type' => 'application/json',
 
   'auth.service.uri' => 'http://api.auth.local',
-  'reunionou.service.uri' => 'http://api.reunionou.local',
+  'tedyspo.service.uri' => 'http://api.tedyspo.local',
 ];

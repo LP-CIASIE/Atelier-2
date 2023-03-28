@@ -1,8 +1,8 @@
 <?php
 
-namespace atelier\tedyspo\actions\events;
+namespace atelier\gateway\actions\events;
 
-use atelier\tedyspo\actions\AbstractAction;
+use atelier\gateway\actions\AbstractAction;
 
 class GetEventsAction extends AbstractAction
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace atelier\tedyspo\actions\comments;
+namespace atelier\gateway\actions\comments;
 
-use atelier\tedyspo\actions\AbstractAction;
+use atelier\gateway\actions\AbstractAction;
 
 class GetCommentsAction extends AbstractAction
 {

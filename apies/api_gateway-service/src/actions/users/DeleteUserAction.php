@@ -9,14 +9,14 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 final class DeleteUserAction extends AbstractAction
 {
   public function __invoke(
-    Request $rq,
+    Request $request,
     Response $rs
   ): Response {
     $client = $this->container->get('client.auth.service');
     try {
       $responseHTTP = $client->get('/users', [
         'headers' => [
-          'Authorization' => $rq->getHeader('Authorization')[0],
+          'Authorization' => $request->getHeader('Authorization')[0],
         ],
       ]);
     } catch (\Exception $e) {

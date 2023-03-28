@@ -1,15 +1,13 @@
 <?php
 
-namespace atelier\tedyspo\actions\users;
+namespace atelier\gateway\actions\users;
 
-use atelier\tedyspo\actions\AbstractAction;
+use atelier\gateway\actions\AbstractAction;
 
 class GetUserAction extends AbstractAction
 {
   public function __invoke($request, $response, $args)
   {
-    $userService = $this->container->get('service.user');
-
-    return $response;
+    $this->sendRequest($request, $response, '/users/' . $args['id_user'], 'get');
   }
 }

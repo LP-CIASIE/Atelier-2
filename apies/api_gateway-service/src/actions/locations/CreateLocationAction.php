@@ -1,8 +1,8 @@
 <?php
 
-namespace atelier\tedyspo\actions\locations;
+namespace atelier\gateway\actions\locations;
 
-use atelier\tedyspo\actions\AbstractAction;
+use atelier\gateway\actions\AbstractAction;
 
 class CreateLocationAction extends AbstractAction
 {

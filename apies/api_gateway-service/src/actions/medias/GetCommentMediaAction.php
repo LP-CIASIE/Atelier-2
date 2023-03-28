@@ -1,8 +1,8 @@
 <?php
 
-namespace atelier\tedyspo\actions\medias;
+namespace atelier\gateway\actions\medias;
 
-use atelier\tedyspo\actions\AbstractAction;
+use atelier\gateway\actions\AbstractAction;
 
 class GetCommentMediaAction extends AbstractAction
 {

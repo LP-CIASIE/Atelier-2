@@ -46,17 +46,17 @@ $app->get('/', atelier\gateway\actions\HomeAction::class);
  * ===================== */
 $app->group('/users', function () use ($app) {
   // GET
-  $app->get('[/]', atelier\tedyspo\actions\users\GetUsersAction::class);
-  $app->get('/{id_user}[/]', atelier\tedyspo\actions\users\GetUserAction::class);
+  $app->get('[/]', atelier\gateway\actions\users\GetUsersAction::class)->add(new TokenMiddleware($app->getContainer()));
+  $app->get('/{id_user}[/]', atelier\gateway\actions\users\GetUserAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // POST
-  $app->post('[/]', atelier\tedyspo\actions\users\CreateUserAction::class);
+  $app->post('[/]', atelier\gateway\actions\users\CreateUserAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // PUT
-  $app->put('/{id_user}[/]', atelier\tedyspo\actions\users\UpdateUserAction::class);
+  $app->put('/{id_user}[/]', atelier\gateway\actions\users\UpdateUserAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // DELETE
-  $app->delete('/{id_user}[/]', atelier\tedyspo\actions\users\DeleteUserAction::class);
+  $app->delete('/{id_user}[/]', atelier\gateway\actions\users\DeleteUserAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   $app->group('/{id_user}', function () use ($app) {
     /** ===============================
@@ -64,16 +64,16 @@ $app->group('/users', function () use ($app) {
      * ============================= */
     $app->group('/events', function () use ($app) {
       // GET
-      $app->get('/{id_event}[/]', atelier\tedyspo\actions\events\GetEventUserAction::class);
+      $app->get('/{id_event}[/]', atelier\gateway\actions\events\GetEventUserAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // POST
-      $app->post('/{id_event}[/]', atelier\tedyspo\actions\events\CreateUserEventAction::class);
+      $app->post('/{id_event}[/]', atelier\gateway\actions\events\CreateUserEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // PUT
-      $app->put('/{id_event}[/]', atelier\tedyspo\actions\events\UpdateUserEventAction::class);
+      $app->put('/{id_event}[/]', atelier\gateway\actions\events\UpdateUserEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // DELETE
-      $app->delete('/{id_event}[/]', atelier\tedyspo\actions\events\DeleteUserEventAction::class);
+      $app->delete('/{id_event}[/]', atelier\gateway\actions\events\DeleteUserEventAction::class)->add(new TokenMiddleware($app->getContainer()));
     });
   });
 });
@@ -84,17 +84,17 @@ $app->group('/users', function () use ($app) {
  * ======================= */
 $app->group('/events', function () use ($app) {
   // GET
-  $app->get('[/]', atelier\tedyspo\actions\events\GetEventsAction::class);
-  $app->get('/{id_event}[/]', atelier\tedyspo\actions\events\GetEventAction::class);
+  $app->get('[/]', atelier\gateway\actions\events\GetEventsAction::class)->add(new TokenMiddleware($app->getContainer()));
+  $app->get('/{id_event}[/]', atelier\gateway\actions\events\GetEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // POST
-  $app->post('[/]', atelier\tedyspo\actions\events\CreateEventAction::class);
+  $app->post('[/]', atelier\gateway\actions\events\CreateEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // PUT
-  $app->put('/{id_event}[/]', atelier\tedyspo\actions\events\UpdateEventAction::class);
+  $app->put('/{id_event}[/]', atelier\gateway\actions\events\UpdateEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // DELETE
-  $app->delete('/{id_event}[/]', atelier\tedyspo\actions\events\DeleteEventAction::class);
+  $app->delete('/{id_event}[/]', atelier\gateway\actions\events\DeleteEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   $app->group('/{id_event}', function () use ($app) {
     /** ===============================
@@ -102,17 +102,17 @@ $app->group('/events', function () use ($app) {
      * ============================= */
     $app->group('/users', function () use ($app) {
       // GET
-      $app->get('[/]', atelier\tedyspo\actions\events\GetEventUsersAction::class);
-      $app->get('/{id_user}[/]', atelier\tedyspo\actions\events\GetEventUserAction::class);
+      $app->get('[/]', atelier\gateway\actions\events\GetEventUsersAction::class)->add(new TokenMiddleware($app->getContainer()));
+      $app->get('/{id_user}[/]', atelier\gateway\actions\events\GetEventUserAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // POST
-      $app->post('/{id_user}[/]', atelier\tedyspo\actions\events\CreateUserEventAction::class);
+      $app->post('/{id_user}[/]', atelier\gateway\actions\events\CreateUserEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // PUT
-      $app->put('/{id_user}[/]', atelier\tedyspo\actions\events\UpdateUserEventAction::class);
+      $app->put('/{id_user}[/]', atelier\gateway\actions\events\UpdateUserEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // DELETE
-      $app->delete('/{id_user}[/]', atelier\tedyspo\actions\events\DeleteUserEventAction::class);
+      $app->delete('/{id_user}[/]', atelier\gateway\actions\events\DeleteUserEventAction::class)->add(new TokenMiddleware($app->getContainer()));
     });
 
     /** ============================
@@ -120,17 +120,17 @@ $app->group('/events', function () use ($app) {
      * ========================== */
     $app->group('/comments', function () use ($app) {
       // GET
-      $app->get('[/]', atelier\tedyspo\actions\comments\GetCommentsAction::class);
-      $app->get('/{id_comment}[/]', atelier\tedyspo\actions\comments\GetCommentAction::class);
+      $app->get('[/]', atelier\gateway\actions\comments\GetCommentsAction::class)->add(new TokenMiddleware($app->getContainer()));
+      $app->get('/{id_comment}[/]', atelier\gateway\actions\comments\GetCommentAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // POST
-      $app->post('[/]', atelier\tedyspo\actions\comments\CreateCommentAction::class);
+      $app->post('[/]', atelier\gateway\actions\comments\CreateCommentAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // PUT
-      $app->put('/{id_comment}[/]', atelier\tedyspo\actions\comments\UpdateCommentAction::class);
+      $app->put('/{id_comment}[/]', atelier\gateway\actions\comments\UpdateCommentAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // DELETE
-      $app->delete('/{id_comment}[/]', atelier\tedyspo\actions\comments\DeleteCommentAction::class);
+      $app->delete('/{id_comment}[/]', atelier\gateway\actions\comments\DeleteCommentAction::class)->add(new TokenMiddleware($app->getContainer()));
     });
 
     /** ============================
@@ -138,17 +138,17 @@ $app->group('/events', function () use ($app) {
      * ========================== */
     $app->group('/links', function () use ($app) {
       // GET
-      $app->get('[/]', atelier\tedyspo\actions\links\GetLinksAction::class);
-      $app->get('/{id_link}[/]', atelier\tedyspo\actions\links\GetLinkAction::class);
+      $app->get('[/]', atelier\gateway\actions\links\GetLinksAction::class)->add(new TokenMiddleware($app->getContainer()));
+      $app->get('/{id_link}[/]', atelier\gateway\actions\links\GetLinkAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // POST
-      $app->post('[/]', atelier\tedyspo\actions\links\CreateLinkAction::class);
+      $app->post('[/]', atelier\gateway\actions\links\CreateLinkAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // PUT
-      $app->put('/{id_link}[/]', atelier\tedyspo\actions\links\UpdateLinkAction::class);
+      $app->put('/{id_link}[/]', atelier\gateway\actions\links\UpdateLinkAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // DELETE
-      $app->delete('/{id_link}[/]', atelier\tedyspo\actions\links\DeleteLinkAction::class);
+      $app->delete('/{id_link}[/]', atelier\gateway\actions\links\DeleteLinkAction::class)->add(new TokenMiddleware($app->getContainer()));
     });
 
     /** ============================
@@ -156,17 +156,17 @@ $app->group('/events', function () use ($app) {
      * ========================== */
     $app->group('/locations', function () use ($app) {
       // GET
-      $app->get('[/]', atelier\tedyspo\actions\locations\GetLocationsAction::class);
-      $app->get('/{id_location}[/]', atelier\tedyspo\actions\locations\GetLocationAction::class);
+      $app->get('[/]', atelier\gateway\actions\locations\GetLocationsAction::class)->add(new TokenMiddleware($app->getContainer()));
+      $app->get('/{id_location}[/]', atelier\gateway\actions\locations\GetLocationAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // POST
-      $app->post('[/]', atelier\tedyspo\actions\locations\CreateLocationAction::class);
+      $app->post('[/]', atelier\gateway\actions\locations\CreateLocationAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // PUT
-      $app->put('/{id_location}[/]', atelier\tedyspo\actions\locations\UpdateLocationAction::class);
+      $app->put('/{id_location}[/]', atelier\gateway\actions\locations\UpdateLocationAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // DELETE
-      $app->delete('/{id_location}[/]', atelier\tedyspo\actions\locations\DeleteLocationAction::class);
+      $app->delete('/{id_location}[/]', atelier\gateway\actions\locations\DeleteLocationAction::class)->add(new TokenMiddleware($app->getContainer()));
     });
 
     /** ============================
@@ -174,13 +174,13 @@ $app->group('/events', function () use ($app) {
      * ========================== */
     $app->group('/events', function () use ($app) {
       // GET
-      $app->get('[/]', atelier\tedyspo\actions\events\GetAdditionalsEventsAction::class);
+      $app->get('[/]', atelier\gateway\actions\events\GetAdditionalsEventsAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // POST
-      $app->post('[/]', atelier\tedyspo\actions\events\CreateAdditionalEventAction::class);
+      $app->post('[/]', atelier\gateway\actions\events\CreateAdditionalEventAction::class)->add(new TokenMiddleware($app->getContainer()));
 
       // PUT
-      $app->put('/{id_additional_event}[/]', atelier\tedyspo\actions\events\UpdateAdditionalEventAction::class);
+      $app->put('/{id_additional_event}[/]', atelier\gateway\actions\events\UpdateAdditionalEventAction::class)->add(new TokenMiddleware($app->getContainer()));
     });
   });
 });
@@ -190,17 +190,17 @@ $app->group('/events', function () use ($app) {
  * ========================== */
 $app->group('/comments/{id_comment}/medias', function () use ($app) {
   // GET
-  $app->get('[/]', atelier\tedyspo\actions\comments\GetCommentMediasAction::class);
-  $app->get('/{id_media}[/]', atelier\tedyspo\actions\comments\GetCommentMediaAction::class);
+  $app->get('[/]', atelier\gateway\actions\comments\GetCommentMediasAction::class)->add(new TokenMiddleware($app->getContainer()));
+  $app->get('/{id_media}[/]', atelier\gateway\actions\comments\GetCommentMediaAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // POST
-  $app->post('[/]', atelier\tedyspo\actions\comments\CreateCommentMediaAction::class);
+  $app->post('[/]', atelier\gateway\actions\comments\CreateCommentMediaAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // PUT
-  $app->put('/{id_media}[/]', atelier\tedyspo\actions\comments\UpdateCommentMediaAction::class);
+  $app->put('/{id_media}[/]', atelier\gateway\actions\comments\UpdateCommentMediaAction::class)->add(new TokenMiddleware($app->getContainer()));
 
   // DELETE
-  $app->delete('/{id_media}[/]', atelier\tedyspo\actions\comments\DeleteCommentMediaAction::class);
+  $app->delete('/{id_media}[/]', atelier\gateway\actions\comments\DeleteCommentMediaAction::class)->add(new TokenMiddleware($app->getContainer()));
 });
 
 
@@ -208,7 +208,7 @@ $app->group('/comments/{id_comment}/medias', function () use ($app) {
 /**
  * API Auth Service
  */
-$app->post('/auth[/]', atelier\gateway\actions\auth\SignInAction::class);
-$app->delete('/auth[/]', atelier\gateway\actions\auth\SignOutAction::class);
+$app->post('/signin[/]', atelier\gateway\actions\auth\SignInAction::class);
+$app->post('/signup[/]', atelier\gateway\actions\auth\SignUpAction::class);
 
 $app->run();

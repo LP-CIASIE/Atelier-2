@@ -11,17 +11,17 @@ use atelier\auth\services\TokenService as TokenService;
 
 final class SignInAction
 {
-    public function __invoke(Request $rq, Response $rs, array $args): Response
+    public function __invoke(Request $request, Response $rs, array $args): Response
     {
-        if ($rq->hasHeader('Authorization') == false) {
+        if ($request->hasHeader('Authorization') == false) {
             $data = [
                 'type' => 'error',
                 'error' => 401,
                 'message' => 'No authorization header present',
             ];
-            return FormatterAPI::formatResponse($rq, $rs, $data, 401); // 401 = Bad Request
+            return FormatterAPI::formatResponse($request, $rs, $data, 401); // 401 = Bad Request
         }
-        $header = $rq->getHeader('Authorization')[0];
+        $header = $request->getHeader('Authorization')[0];
         $tokenstring = sscanf($header, "Basic %s");
         $usermail = base64_decode($tokenstring[0]);
         $user = list($usermail, $userpswd) = explode(':', $usermail);
@@ -33,6 +33,6 @@ final class SignInAction
             'refresh-token' => $tokenJWT['refresh'],
 
         ];
-        return FormatterAPI::formatResponse($rq, $rs, $data, 201); // 201 = Created
+        return FormatterAPI::formatResponse($request, $rs, $data, 201); // 201 = Created
     }
 }

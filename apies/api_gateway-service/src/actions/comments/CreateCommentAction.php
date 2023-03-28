@@ -1,15 +1,33 @@
 <?php
 
-namespace atelier\tedyspo\actions\comments;
+namespace atelier\gateway\actions\comments;
 
-use atelier\tedyspo\actions\AbstractAction;
+use atelier\gateway\actions\AbstractAction;
 
 class CreateCommentAction extends AbstractAction
 {
   public function __invoke($request, $response, $args)
   {
-    $commentService = $this->container->get('service.comment');
+    $client = $this->container->get('client.tedyspo.service');
+    try {
+      $responseHTTP = $client->post('/comments', [
+        'headers' => [
+          'Authorization' => $request->getHeader('Authorization')[0],
+        ],
+      ]);
+    } catch (\Exception $e) {
+      $responseHTTP = new \Slim\Psr7\Response();
+      $responseHTTP->getBody()->write(json_encode([
+        'type' => 'error',
+        'error' => 401,
+        'message' => 'Unauthorized'
+      ]));
+      return $responseHTTP->withStatus(401);
+    }
 
-    return $response;
+    $logger = $this->container->get('logger');
+    $logger->info("CreateCommentAction | POST | {$this->container->get('tedyspo.service.uri')}/comments | {$responseHTTP->getStatusCode()}");
+
+    return $responseHTTP;
   }
 }

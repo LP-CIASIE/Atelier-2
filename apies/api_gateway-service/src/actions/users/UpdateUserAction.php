@@ -1,8 +1,8 @@
 <?php
 
-namespace atelier\tedyspo\actions\users;
+namespace atelier\gateway\actions\users;
 
-use atelier\tedyspo\actions\AbstractAction;
+use atelier\gateway\actions\AbstractAction;
 
 class UpdateUserAction extends AbstractAction
 {
