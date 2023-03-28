@@ -20,12 +20,13 @@ services:
 # ===============================
   tedyspo.api:
     image: 'canals/php:latest'
-    command: "sh -c 'composer install && tail -f /dev/null'"
+    # command: 'composer install'
     environment:
       - VHOST_HOSTNAME=tedyspo.atelier.local
       - VHOST_DOCROOT=/var/www/public
     ports:
       - '8010:80'
+      - '8011:443'
     volumes:
       - './apies/api_tedyspo-service:/var/www/'
     working_dir: /var/www/
@@ -56,12 +57,13 @@ services:
 # ===============================
   auth.api:
     image: 'canals/php:latest'
-    command: "sh -c 'composer install && tail -f /dev/null'"
+    # command: 'composer install'
     environment:
       - VHOST_HOSTNAME=auth.atelier.local
       - VHOST_DOCROOT=/var/www/public
     ports:
       - '8020:80'
+      - '8021:443'
     volumes:
       - './apies/api_auth-service:/var/www/'
     working_dir: /var/www/
@@ -92,12 +94,13 @@ services:
 # ===============================
   gateway.api:
     image: 'canals/php:latest'
-    command: "sh -c 'composer install && tail -f /dev/null'"
+    # command: 'composer install'
     environment:
       - VHOST_HOSTNAME=gateway.atelier.local
       - VHOST_DOCROOT=/var/www/public
     ports:
       - '8000:80'
+      - '8001:443'
     volumes:
       - './apies/api_gateway-service:/var/www/'
     working_dir: /var/www/
