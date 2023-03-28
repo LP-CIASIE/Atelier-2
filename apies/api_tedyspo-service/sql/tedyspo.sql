@@ -34,7 +34,7 @@ ENGINE = InnoDB;
 -- Table `tedyspo`.`comment`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tedyspo`.`comment` (
-  `id_comment` INT NOT NULL AUTO_INCREMENT,
+  `id_comment` VARCHAR(36) NOT NULL,
   `comment` LONGTEXT NULL,
   `id_event` VARCHAR(36) NULL,
   PRIMARY KEY (`id_comment`),
@@ -51,12 +51,12 @@ ENGINE = InnoDB;
 -- Table `tedyspo`.`location`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tedyspo`.`location` (
-  `id_location` INT NOT NULL AUTO_INCREMENT,
+  `id_location` VARCHAR(36) NOT NULL,
   `name` VARCHAR(80) NULL,
   `lat` DECIMAL(65) NULL,
   `long` DECIMAL(65) NULL,
   `is_related` TINYINT NULL,
-  `id_event` VARCHAR(45) NULL,
+  `id_event` VARCHAR(36) NULL,
   PRIMARY KEY (`id_location`),
   INDEX `id_evenement_idx` (`id_event` ASC) VISIBLE,
   CONSTRAINT `location_event`
@@ -71,7 +71,7 @@ ENGINE = InnoDB;
 -- Table `tedyspo`.`link`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tedyspo`.`link` (
-  `id_link` INT NOT NULL AUTO_INCREMENT,
+  `id_link` VARCHAR(36) NOT NULL,
   `title` VARCHAR(80) NULL,
   `link` VARCHAR(750) NULL,
   `id_event` VARCHAR(36) NULL,
@@ -127,10 +127,10 @@ ENGINE = InnoDB;
 -- Table `tedyspo`.`media`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tedyspo`.`media` (
-  `id_media` INT NOT NULL AUTO_INCREMENT,
+  `id_media` VARCHAR(36) NOT NULL,
   `path` VARCHAR(500) NULL,
   `type` VARCHAR(10) NULL,
-  `id_comment` INT NULL,
+  `id_comment` VARCHAR(36) NOT NULL,
   PRIMARY KEY (`id_media`),
   INDEX `id_comment_idx` (`id_comment` ASC) VISIBLE,
   CONSTRAINT `event_comment`
