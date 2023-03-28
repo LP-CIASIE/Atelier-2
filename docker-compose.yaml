@@ -16,7 +16,7 @@ services:
       - atelier.net
 
 # ===============================
-#    Docker for Reunionou API
+#    Docker for tedyspo API
 # ===============================
   tedyspo.api:
     image: 'canals/php:latest'
@@ -49,7 +49,7 @@ services:
     networks:
       - atelier.net
     volumes:
-      - './apies/api_tedyspo-service/api/sql:/var/sql'
+      - './apies/api_tedyspo-service/sql:/var/sql'
 
 # ===============================
 #     Docker for Auth API
