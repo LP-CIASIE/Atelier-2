@@ -73,7 +73,6 @@ $app->group('/users', function () use ($app) {
      * ============================= */
     $app->group('/events', function () use ($app) {
       // GET
-      $app->get('[/]', atelier\tedyspo\actions\user\GetUserEventsAction::class);
       $app->get('/{id_event}[/]', atelier\tedyspo\actions\events\GetEventUserAction::class);
 
       // POST
