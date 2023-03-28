@@ -8,14 +8,7 @@ class GetUsersAction extends AbstractAction
 {
   public function __invoke($request, $response, $args)
   {
-    $userService = $this->container->get('service.users');
-    $users = $userService->getUsers();
-
-    $data = [
-      'users' => $users
-    ];
-
-    $response = $response->withJson($data, 200);
+    $userService = $this->container->get('service.user');
 
     return $response;
   }

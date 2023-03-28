@@ -8,6 +8,8 @@ class GetCommentsAction extends AbstractAction
 {
   public function __invoke($request, $response, $args)
   {
+    $commentService = $this->container->get('service.comment');
+
     return $response;
   }
 }
