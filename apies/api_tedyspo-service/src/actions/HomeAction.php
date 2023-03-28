@@ -1,6 +1,6 @@
 <?php
 
-namespace atelier\actions;
+namespace atelier\tedyspo\actions;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
