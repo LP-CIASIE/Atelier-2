@@ -19,7 +19,7 @@ final class ValidateAction
       $tokenService = new TokenService();
       $tokenService->verifyToken($token);
 
-      return FormatterAPI::formatResponse($request, $rs, [], 204); // 204 = No Content
+      return FormatterAPI::formatResponse($request, $response, [], 204); // 204 = No Content
     } catch (\Exception $e) {
       throw new Exception('Token invalide.', 401);
     }
