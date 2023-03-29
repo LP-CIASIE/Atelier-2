@@ -6,8 +6,8 @@ import Button from 'primevue/button';
 
 const Session = useSessionStore();
 var form = reactive({
-  email: '',
-  password: '',
+  email: 'tedy-spo@mail.com',
+  password: '123456789',
   errorMessage: '',
 });
 
