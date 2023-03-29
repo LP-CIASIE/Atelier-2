@@ -3,6 +3,8 @@
 namespace atelier\tedyspo\actions\locations;
 
 use atelier\tedyspo\actions\AbstractAction;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class GetLocationAction extends AbstractAction
 {
