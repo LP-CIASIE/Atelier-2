@@ -3,6 +3,7 @@
 namespace atelier\tedyspo\actions\users;
 
 use atelier\tedyspo\actions\AbstractAction;
+use atelier\tedyspo\services\utils\FormatterAPI;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -10,14 +11,16 @@ class UpdateUserAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    // Récupération de l'id utilisateur
-    $jwt = $request->getHeader('Authorization');
+    // Récupération de l'utilisateur
+    $user = $this->parseJWT($request);
 
-    $jwtService = $this->container->get('service.jwt');
-    $user = $jwtService->decodeDataOfJWT($jwt);
+    // Récupération des données du body
+    $data = $this->parseBody($request);
 
+    // Changement des données de utilisateurs
     $userService = $this->container->get('service.user');
+    $userService->updateUser($user['uid'], $data);
 
-    return $response;
+    return FormatterAPI::formatResponse($request, $response, [], 204);
   }
 }

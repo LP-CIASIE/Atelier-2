@@ -6,7 +6,7 @@ use Respect\Validation\Validator as v;
 
 class JWTService extends AbstractService
 {
-  public function decodeDataOfJWT($Authorization)
+  public function decodeDataOfJWT($Authorization): array
   {
     $jwt = $Authorization[0] ?? '';
 
