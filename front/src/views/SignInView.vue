@@ -1,9 +1,11 @@
 <script setup>
 import { useSessionStore } from '@/stores/session.js';
 import { reactive } from 'vue';
+import { useRouter } from "vue-router";
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 
+const router = useRouter();
 const Session = useSessionStore();
 var form = reactive({
   email: '',
@@ -13,7 +15,13 @@ var form = reactive({
 
 
 function sendForm() {
-  Session.signIn(form);
+  Session.signIn(form).then((connection) => {
+    if (connection.ok) {
+      console.log('oui');
+    } else {
+      console.log('non');
+    }
+  })
 }
 
 </script>
@@ -31,7 +39,7 @@ function sendForm() {
       <label for="password">Mot de passe</label>
     </span>
     <small class="p-error" id="text-error">{{ form.errorMessage || '&nbsp;' }}</small>
-    <Button type="submit" label="S'inscrire" />
+    <Button type="submit" label="Se connecter" />
   </form>
 </template>
 

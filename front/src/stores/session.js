@@ -1,12 +1,10 @@
 import { defineStore } from "pinia";
 import { inject, reactive } from "vue";
-import { useRouter } from "vue-router";
 
 export const useSessionStore = defineStore(
   "session",
   () => {
     const API = inject("api");
-    const router = useRouter();
     const user = reactive({
       id: "",
       email: "",
@@ -14,22 +12,25 @@ export const useSessionStore = defineStore(
       refresh_token: "",
     });
 
-    function signIn(form) {
-      API.post("/signin", {
+    async function signIn(form) {
+      return API.post("/signin", {
         email: form.email,
         password: form.password,
       })
         .then((response) => {
-          console.log(response);
+          user.access_token = response.data["access-token"];
+          user.refresh_token = response.data["refresh-token"];
+          return {
+            ok: true,
+          };
         })
         .catch((error) => {
           console.log(error);
+          return {
+            ok: false,
+            message: "",
+          };
         });
-    }
-
-    function emptySession() {
-      data.token = "";
-      router.push("/login");
     }
 
     return { user, signIn };
