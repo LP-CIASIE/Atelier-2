@@ -10,7 +10,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 /** ========================
  * Création de Eloquent
  * ====================== */
-$conf = parse_ini_file(__DIR__ . '/../conf/api.db.ini.env');
+$conf = parse_ini_file(__DIR__ . '/../conf/tedyspo.db.ini.env');
 
 $capsule = new Capsule;
 $capsule->addConnection($conf);
