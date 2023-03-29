@@ -5,22 +5,26 @@ namespace atelier\fakedata\models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class UserAuth extends Model
+class Link extends Model
 {
   use HasUuids;
 
-  protected $connection = 'auth_db';
+  protected $connection = 'tedyspo_db';
 
-  protected $table = 'user';
-  protected $primaryKey = 'id_user';
+  protected $table = 'link';
+  protected $primaryKey = 'id_link';
   protected $autoIncrement = false;
   protected $keyType = 'string';
   public $timestamps = false;
   protected $fillable = [
-    'id_user',
-    'email',
-    'password',
-    'role',
-    'refresh_token'
+    'id_link',
+    'title',
+    'link',
+    'id_event'
   ];
+
+  public function event()
+  {
+    return $this->belongsTo(Event::class, 'id_event');
+  }
 }

@@ -5,26 +5,29 @@ namespace atelier\fakedata\models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class UserTedyspo extends Model
+class Comment extends Model
 {
-  use HasUuids;
-
   protected $connection = 'tedyspo_db';
 
-  protected $table = 'user';
-  protected $primaryKey = 'id_user';
+  protected $table = 'comment';
+  protected $primaryKey = 'id_comment';
   protected $autoIncrement = false;
   protected $keyType = 'string';
   public $timestamps = false;
   protected $fillable = [
+    'id_comment',
+    'comment',
     'id_user',
-    'email',
-    'firstname',
-    'lastname',
+    'id_event'
   ];
 
-  public function events()
+  public function user()
   {
-    return $this->belongsToMany(Event::class, 'user_event', 'id_user', 'id_event');
+    return $this->belongsTo(UserTedyspo::class, 'id_user');
+  }
+
+  public function event()
+  {
+    return $this->belongsTo(Event::class, 'id_event');
   }
 }

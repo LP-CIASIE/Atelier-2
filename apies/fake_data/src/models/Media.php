@@ -5,22 +5,26 @@ namespace atelier\fakedata\models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class UserAuth extends Model
+class Media extends Model
 {
   use HasUuids;
 
-  protected $connection = 'auth_db';
+  protected $connection = 'tedyspo_db';
 
-  protected $table = 'user';
-  protected $primaryKey = 'id_user';
+  protected $table = 'media';
+  protected $primaryKey = 'id_media';
   protected $autoIncrement = false;
   protected $keyType = 'string';
   public $timestamps = false;
   protected $fillable = [
-    'id_user',
-    'email',
-    'password',
-    'role',
-    'refresh_token'
+    'id_media',
+    'path',
+    'type',
+    'id_comment'
   ];
+
+  public function comment()
+  {
+    return $this->belongsTo(Comment::class, 'id_comment');
+  }
 }
