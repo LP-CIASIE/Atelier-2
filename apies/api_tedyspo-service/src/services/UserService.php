@@ -9,9 +9,17 @@ use Respect\Validation\Validator as v;
 class UserService extends AbstractService
 {
 
-  public function getCount()
+  public function getCount($params = [])
   {
-    return User::count();
+    if (count($params) == 0) {
+      return User::count();
+    }
+
+    $counter = User::where($params[0][0], $params[0][1], $params[0][2]);
+    for ($i = 1; $i < count($params); $i++) {
+      $counter = $counter->where($params[$i][0], $params[$i][1], $params[$i][2]);
+    }
+    return $counter->count();
   }
 
   public function getUsers($parameters)
@@ -39,7 +47,7 @@ class UserService extends AbstractService
       throw new \InvalidArgumentException('Recherche par email trop petite, 3 lettres minimum.', 400);
     }
 
-    $users = User::where('email', 'like', '%@%')
+    $users = User::where('email', 'like', '%' . $email . '%')
       ->orderBy('email', 'desc')
       ->skip(($page - 1) * $size)
       ->take($size)

@@ -21,7 +21,7 @@ class GetUsersAction extends AbstractAction
     $userService = $this->container->get('service.user');
 
     $users = $userService->getUsers($parameters);
-    $count = $userService->getCount();
+    $count = $userService->getCount([['email', 'like', '%' . $parameters['email'] . '%']]);
 
 
     $data = FormatterAPI::formatPagination($request, 'get_users', $page, $parameters, $count, $size);
