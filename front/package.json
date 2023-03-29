@@ -11,6 +11,8 @@
 		"mitt": "^3.0.0",
 		"pinia": "^2.0.28",
 		"pinia-plugin-persistedstate": "^3.0.2",
+		"primeicons": "^6.0.1",
+		"primevue": "^3.26.1",
 		"sass": "^1.57.1",
 		"vue": "^3.2.45",
 		"vue-router": "^4.1.6"
