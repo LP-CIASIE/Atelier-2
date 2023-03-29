@@ -19,4 +19,7 @@ return [
   'service.media' => function (\Psr\Container\ContainerInterface  $c) {
     return new atelier\tedyspo\services\MediaService($c);
   },
+  'service.jwt' => function (\Psr\Container\ContainerInterface  $c) {
+    return new atelier\tedyspo\services\JWTService($c);
+  },
 ];
