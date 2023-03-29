@@ -73,7 +73,7 @@ abstract class AbstractAction
         ]);
       }
     } catch (Exception $e) {
-      throw new Exception('Erreur pendant l\'acheminant', $e->getCode());
+      throw new Exception($e->getMessage(), $e->getCode());
     }
 
     $logger = $this->container->get('logger');

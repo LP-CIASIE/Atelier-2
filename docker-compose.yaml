@@ -111,3 +111,23 @@ services:
     depends_on:
       - auth.api
       - tedyspo.api
+
+# ===============================
+#     Docker for FakeData
+# ===============================
+  fake_data.api:
+    image: 'canals/php:latest'
+    # command: 'composer install'
+    ports:
+      - '8030:80'
+      - '8031:443'
+    volumes:
+      - './apies/fake_data:/var/www/'
+    working_dir: /var/www/
+    networks:
+      atelier.net:
+        aliases:
+          - fake_data.atelier.local
+    depends_on:
+      - auth.api
+      - tedyspo.api
