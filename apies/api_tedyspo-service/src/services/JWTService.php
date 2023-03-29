@@ -8,7 +8,7 @@ class JWTService extends AbstractService
 {
   public function decodeDataOfJWT($Authorization)
   {
-    $jwt = $Authorization[0] ?? null;
+    $jwt = $Authorization[0] ?? '';
 
     try {
       v::stringType()->notEmpty()->validate($jwt);
