@@ -24,8 +24,6 @@ CREATE TABLE IF NOT EXISTS `auth`.`user` (
   `id_user` VARCHAR(36) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
-  `lastname` VARCHAR(30) NULL,
-  `firstname` VARCHAR(30) NOT NULL,
   `role` VARCHAR(20) NOT NULL,
   `refresh_token` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id_user`),

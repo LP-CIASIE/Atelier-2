@@ -12,9 +12,9 @@ use atelier\auth\services\UserService;
 
 final class SignInAction
 {
-    public function __invoke(Request $rq, Response $rs, array $args): Response
+    public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $body = $rq->getBody();
+        $body = $request->getBody();
         $body = json_decode($body, true);
 
         $userService = new UserService();
@@ -27,7 +27,6 @@ final class SignInAction
             'access-token' => $tokenJWT['access'],
             'refresh-token' => $tokenJWT['refresh_token'],
         ];
-
-        return FormatterAPI::formatResponse($rq, $rs, $data, 200); // 200 = Created
+        return FormatterAPI::formatResponse($request, $response, $data, 201); // 201 = Created
     }
 }
