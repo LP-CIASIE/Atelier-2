@@ -9,16 +9,16 @@ class FormatterObject
   public static function User(User $user)
   {
     return [
-      'id' => $user->id,
+      'id' => $user->id_user,
       'email' => $user->email,
       'firstname' => $user->firstname,
       'lastname' => $user->lastname,
       'links' => [
         'self' => [
-          'href' => '/users/' . $user->id
+          'href' => '/users/' . $user->id_user
         ],
         'events' => [
-          'href' => '/users/' . $user->id . '/events'
+          'href' => '/users/' . $user->id_user . '/events'
         ],
       ]
     ];
