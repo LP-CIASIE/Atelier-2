@@ -3,13 +3,13 @@
 namespace atelier\tedyspo\services;
 
 use atelier\tedyspo\models\User;
-
+use Illuminate\Database\Eloquent\Collection;
 use Respect\Validation\Validator as v;
 
 class UserService extends AbstractService
 {
 
-  public function getCount($params = [])
+  public function getCount($params = []): int
   {
     if (count($params) == 0) {
       return User::count();
@@ -22,7 +22,7 @@ class UserService extends AbstractService
     return $counter->count();
   }
 
-  public function getUsers($parameters)
+  public function getUsers($parameters): Collection
   {
     $page = $parameters['page'] ?? 1;
     $size = $parameters['size'] ?? 10;
@@ -54,5 +54,115 @@ class UserService extends AbstractService
       ->get();
 
     return $users;
+  }
+
+  public function getUserById($id): User
+  {
+    try {
+      v::uuid()->assert($id);
+    } catch (\Exception $e) {
+      throw new \InvalidArgumentException('Format de donnée pour l\'id est incorrect.', 400);
+    }
+
+    try {
+      $user = User::findOrFail($id);
+    } catch (\Exception $e) {
+      throw new \Exception('Utilisateur introuvable', 404);
+    }
+
+    return $user;
+  }
+
+  public function updateUserById($id, $data): void
+  {
+    $user = $this->getUserById($id);
+
+    if (isset($data['email'])) {
+      try {
+        v::email()->assert($data['email']);
+      } catch (\Exception $e) {
+        throw new \InvalidArgumentException('Format de donnée pour l\'email est incorrect.', 400);
+      }
+      $user->email = $data['email'];
+    }
+
+    if (isset($data['firstname'])) {
+      try {
+        v::length(1, 30)->assert($data['firstname']);
+      } catch (\Exception $e) {
+        throw new \InvalidArgumentException('Format de donnée pour le prénom est incorrect.', 400);
+      }
+      $user->firstname = $data['firstname'];
+    }
+
+    if (isset($data['lastname'])) {
+      try {
+        v::length(1, 30)->assert($data['lastname']);
+      } catch (\Exception $e) {
+        throw new \InvalidArgumentException('Format de donnée pour le nom est incorrect.', 400);
+      }
+      $user->lastname = $data['lastname'];
+    }
+
+    try {
+      $user->save();
+    } catch (\Exception $e) {
+      throw new \Exception('Erreur lors de la mise à jour de l\'utilisateur', 500);
+    }
+  }
+
+  public function deleteUserById($id): void
+  {
+    $user = $this->getUserById($id);
+
+    try {
+      $user->delete();
+    } catch (\Exception $e) {
+      throw new \Exception('Erreur lors de la suppression de l\'utilisateur', 500);
+    }
+  }
+
+  public function createUser($data): User
+  {
+    $user = new User();
+    $user->id_user = \Ramsey\Uuid\Uuid::uuid4();
+
+    try {
+      v::email()->assert($data['email']);
+    } catch (\Exception $e) {
+      throw new \InvalidArgumentException('Format de donnée pour l\'email est incorrect.', 400);
+    }
+
+    if (User::where('email', $data['email'])->count() > 0) {
+      throw new \Exception('Email déjà utilisé', 400);
+    }
+
+    $user->email = $data['email'];
+
+    try {
+      v::length(1, 30)->assert($data['firstname']);
+      $user->firstname = $data['firstname'];
+    } catch (\Exception $e) {
+      throw new \InvalidArgumentException('Format de donnée pour le prénom est incorrect.', 400);
+    }
+
+    if (isset($data['lastname'])) {
+      try {
+        v::length(1, 30)->assert($data['lastname']);
+        $user->lastname = $data['lastname'];
+      } catch (\Exception $e) {
+        throw new \InvalidArgumentException('Format de donnée pour le nom est incorrect.', 400);
+      }
+    }
+
+
+    try {
+      $user->save();
+    } catch (\Exception $e) {
+      echo ($e->getMessage());
+      throw new \Exception('Erreur lors de la création de l\'utilisateur', 500);
+    }
+
+    return $user;
   }
 }
