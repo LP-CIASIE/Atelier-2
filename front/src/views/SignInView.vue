@@ -4,22 +4,25 @@ import { reactive } from 'vue';
 import { useRouter } from "vue-router";
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
 
 const router = useRouter();
 const Session = useSessionStore();
 var form = reactive({
-  email: 'tedy-spo@mail.com',
-  password: '123456789',
+  email: '',
+  password: '',
   errorMessage: '',
+  pending: false
 });
 
 
 function sendForm() {
+  form.pending = true;
   Session.signIn(form).then((connection) => {
     if (connection.ok) {
-      console.log('oui');
+      router.push({ name: "home" })
     } else {
-      console.log('non');
+      // pending = false;
     }
   })
 }
@@ -28,6 +31,7 @@ function sendForm() {
 
 <template>
   <form @submit.prevent="sendForm">
+    <h1>Connexion</h1>
     <span class="p-float-label">
       <InputText id="mail" v-model="form.email" type="text" :class="{ 'p-invalid': form.errorMessage }"
         aria-describedby="text-error" />
@@ -38,9 +42,28 @@ function sendForm() {
         aria-describedby="text-error" />
       <label for="password">Mot de passe</label>
     </span>
-    <small class="p-error" id="text-error">{{ form.errorMessage || '&nbsp;' }}</small>
-    <Button type="submit" label="Se connecter" />
+    <p>
+      <small class="p-error" id="text-error">{{ form.errorMessage || '&nbsp;' }}</small>
+    </p>
+    <div class="button-on-right">
+      <Button v-if="form.pending" type="submit" label="Se connecter" disabled />
+      <Button v-else type="submit" label="Se connecter" />
+    </div>
   </form>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+form {
+  max-width: $max-width;
+  margin: auto;
+  margin-bottom: 150px;
+}
+
+input {
+  width: 100%;
+}
+
+.button-on-right {
+  text-align: right;
+}
+</style>
