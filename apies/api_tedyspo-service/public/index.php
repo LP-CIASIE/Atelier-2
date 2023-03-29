@@ -57,7 +57,7 @@ $app->get('/users[/]', atelier\tedyspo\actions\users\GetUsersAction::class)->set
 $app->get('/users/{id_user}[/]', atelier\tedyspo\actions\users\GetUserAction::class)->setName('get_user');
 
 // POST
-$app->post('/users[/]', atelier\tedyspo\actions\users\CreateUserAction::class)->setName('create_user');
+$app->post('/signup[/]', atelier\tedyspo\actions\users\CreateUserAction::class)->setName('create_user');
 
 // PUT
 $app->put('/users/{id_user}[/]', atelier\tedyspo\actions\users\UpdateUserAction::class)->setName('update_user');
