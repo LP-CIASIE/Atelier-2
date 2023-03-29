@@ -7,6 +7,7 @@ return [
   'timeout.request.HTTP' => 10.0,
   'content.type' => 'application/json',
 
-  'auth.service.uri' => 'http://api.auth.local',
-  'reunionou.service.uri' => 'http://api.reunionou.local',
+  'auth.atelier.local' => 'http://auth.atelier.local',
+  'tedyspo.atelier.local' => 'http://tedyspo.atelier.local',
+  'gateway.atelier.local' => 'http://gateway.atelier.local',
 ];
