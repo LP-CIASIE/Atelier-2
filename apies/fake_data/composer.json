@@ -1,0 +1,19 @@
+{
+	"name": "atelier/fake_data",
+	"autoload": {
+		"psr-4": {
+			"atelier\\fakedata\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Bradley BARBIER",
+			"email": "bradley.barbier@outlook.fr"
+		}
+	],
+	"require": {
+		"ramsey/uuid": "^4.7",
+		"fakerphp/faker": "^1.21",
+		"illuminate/database": "^10.5"
+	}
+}

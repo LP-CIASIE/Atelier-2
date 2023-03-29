@@ -4,10 +4,12 @@ namespace atelier\tedyspo\actions\users;
 
 use atelier\tedyspo\actions\AbstractAction;
 use atelier\tedyspo\services\utils\FormatterAPI;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class GetUsersAction extends AbstractAction
 {
-  public function __invoke($request, $response, $args)
+  public function __invoke(Request $request, Response $response, $args)
   {
     $params = $request->getQueryParams();
 

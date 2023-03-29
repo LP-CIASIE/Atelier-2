@@ -35,8 +35,6 @@ class UserService
       $user->id_user = \Ramsey\Uuid\Uuid::uuid4()->toString();
       $user->email = $body['email'];
       $user->password = password_hash($body['password'], PASSWORD_BCRYPT, ['cost' => 12]);
-      $user->lastname = $body['lastname'] ?? '';
-      $user->firstname = $body['firstname'];
       $user->refresh_token = base64_encode(random_bytes(150));
       $user->role = $body['role'];
 
