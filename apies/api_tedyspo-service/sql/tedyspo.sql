@@ -15,7 +15,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema tedyspo
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `tedyspo` DEFAULT CHARACTER SET utf8 ;
-USE `tedyspo` ;
+USE `tedyspo`;
 
 -- -----------------------------------------------------
 -- Table `tedyspo`.`event`
@@ -31,17 +31,37 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `auth`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tedyspo`.`user` (
+  `id_user` VARCHAR(36) NOT NULL,
+  `email` VARCHAR(50) NOT NULL,
+  `lastname` VARCHAR(30) NULL,
+  `firstname` VARCHAR(30) NOT NULL,
+  PRIMARY KEY (`id_user`),
+  UNIQUE INDEX `mail_UNIQUE` (`email` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `tedyspo`.`comment`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tedyspo`.`comment` (
   `id_comment` VARCHAR(36) NOT NULL,
   `comment` LONGTEXT NULL,
   `id_event` VARCHAR(36) NULL,
+  `id_user` VARCHAR(36) NULL,
   PRIMARY KEY (`id_comment`),
   INDEX `id_evenement_idx` (`id_event` ASC) VISIBLE,
+  INDEX `id_utilisateur_idx` (`id_user` ASC) VISIBLE,
   CONSTRAINT `comment_event`
     FOREIGN KEY (`id_event`)
     REFERENCES `tedyspo`.`event` (`id_event`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `comment_user`
+    FOREIGN KEY (`id_user`)
+    REFERENCES `tedyspo`.`user` (`id_user`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -92,10 +112,17 @@ CREATE TABLE IF NOT EXISTS `tedyspo`.`event_user` (
   `state` VARCHAR(16) NOT NULL,
   `comment` LONGTEXT NULL,
   `id_event` VARCHAR(36) NULL,
+  `id_user` VARCHAR(36) NULL,
   INDEX `id_event_idx` (`id_event` ASC) VISIBLE,
+  INDEX `id_user_idx` (`id_user` ASC) VISIBLE,
   CONSTRAINT `user_event`
     FOREIGN KEY (`id_event`)
     REFERENCES `tedyspo`.`event` (`id_event`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `event_user`
+    FOREIGN KEY (`id_user`)
+    REFERENCES `tedyspo`.`user` (`id_user`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
