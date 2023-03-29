@@ -6,7 +6,7 @@ use atelier\tedyspo\actions\AbstractAction;
 
 class GetCommentAction extends AbstractAction
 {
-  public function __invoke($request, $response, $args)
+  public function __invoke(Request $request, Response $response, $args)
   {
     $commentService = $this->container->get('service.comment');
 

@@ -10,9 +10,9 @@ use atelier\auth\services\TokenService as TokenService;
 
 final class ValidateAction
 {
-  public function __invoke(Request $request, Response $rs): Response
+  public function __invoke(Request $request, Response $response): Response
   {
-    $token = $request->getHeader('Authorization')[0];;
+    $token = $request->getHeader('Authorization')[0];
 
     $tokenService = new TokenService();
 
@@ -23,7 +23,7 @@ final class ValidateAction
         'type' => 'success',
         'message' => 'Token valide',
       ];
-      return FormatterAPI::formatResponse($request, $rs, $data, 200); // 200 = OK
+      return FormatterAPI::formatResponse($request, $response, $data, 200); // 200 = OK
 
     } catch (\Exception $e) {
       $data = [
@@ -31,7 +31,7 @@ final class ValidateAction
         'error' => 401,
         'message' => $e->getMessage(),
       ];
-      return FormatterAPI::formatResponse($request, $rs, $data, 401); // 401 = Unauthorized
+      return FormatterAPI::formatResponse($request, $response, $data, 401); // 401 = Unauthorized
     }
   }
 }

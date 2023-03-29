@@ -7,13 +7,13 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class FormatterAPI
 {
-  public static function formatResponse(Request $request, Response $rs, $data, $status = 200, $message = null): Response
+  public static function formatResponse(Request $request, Response $response, $data, $status = 200, $message = null): Response
   {
-    $rs = $rs->withStatus($status);
-    $rs = $rs->withHeader('Content-Type', 'application/json');
+    $response = $response->withStatus($status);
+    $response = $response->withHeader('Content-Type', 'application/json');
 
-    $rs->getBody()->write(json_encode($data));
+    $response->getBody()->write(json_encode($data));
 
-    return $rs;
+    return $response;
   }
 }

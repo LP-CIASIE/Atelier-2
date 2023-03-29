@@ -3,13 +3,13 @@
 namespace atelier\gateway\actions\comments;
 
 use atelier\gateway\actions\AbstractAction;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class GetCommentAction extends AbstractAction
 {
-  public function __invoke($request, $response, $args)
+  public function __invoke(Request $request, Response $response, $args)
   {
-    $commentService = $this->container->get('service.comment');
-
-    return $response;
+    return $this->sendRequest($request, $response, '/events/' . $args['id_event'] . '/comments/' . $args['id_comment'], 'get');
   }
 }

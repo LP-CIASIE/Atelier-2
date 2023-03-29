@@ -9,9 +9,9 @@ final class HomeAction
 {
   public function __invoke(
     Request $request,
-    Response $rs
+    Response $response
   ): Response {
-    $rs->getBody()->write('Hello, World!');
-    return $rs;
+    $response->getBody()->write('Hello, World!');
+    return $response;
   }
 }

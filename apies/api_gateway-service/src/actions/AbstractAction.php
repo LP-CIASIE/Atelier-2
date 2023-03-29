@@ -8,6 +8,7 @@ use atelier\gateway\errors\exceptions\GuzzleException;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Respect\Validation\Rules\Length;
 
 abstract class AbstractAction
 {
@@ -18,41 +19,63 @@ abstract class AbstractAction
     $this->container = $container;
   }
 
-  public function sendRequest(Request $request, Response $response, $route, $method = 'get',  $args = '')
+  public function sendRequest(Request $request, Response $response, $route, $method = 'get')
   {
-    $client = $this->container->get('client.tedyspo.service');
 
-    $authorization = $request->getHeader('Authorization');
+    //Pas toujours ce client, il faut utiliser client.auth.service si c'est pour l'authentification
+    // TODO : Faire une condition qui va chercher le bon client en fonction de la route // DONE : voir plus bas
 
-    if (empty($authorization)) {
-      throw new GuzzleException('Token manquant', 400);
+
+    if ($route === '/signup' || $route === '/signin') {
+      $client = $this->container->get('client.auth.service');
+    } else {
+      $client = $this->container->get('client.tedyspo.service');
     }
+
+    $token = $request->getHeader('Authorization')[0] ?? '';
+
+    $args = $request->getQueryParams() ?? [];
+
+
+    if (count($args) > 0) {
+      $getParams = '?';
+      $i = 0;
+      foreach ($request->getQueryParams() as $key => $value) {
+        $getParams .= $key . '=' . $value;
+        if ($i < count($args) - 1) {
+          $getParams .= '&';
+        }
+      }
+    } else {
+      $getParams = '';
+    }
+
 
     try {
       if ($method === "post") {
-        $responseHTTP = $client->post($route . $args, [
+        $responseHTTP = $client->post($route . $getParams, [
           'headers' => [
-            'Authorization' => $request->getHeader('Authorization')[0],
+            'Authorization' => $token,
           ],
           'body' => json_decode($request->getBody(), true),
         ]);
       } else if ($method === "get") {
-        $responseHTTP = $client->get($route . $args, [
+        $responseHTTP = $client->get($route . $getParams, [
           'headers' => [
-            'Authorization' => $request->getHeader('Authorization')[0],
+            'Authorization' => $token,
           ],
         ]);
       } else if ($method === "put") {
-        $responseHTTP = $client->put($route . $args, [
+        $responseHTTP = $client->put($route . $getParams, [
           'headers' => [
-            'Authorization' => $request->getHeader('Authorization')[0],
+            'Authorization' => $token,
           ],
           'body' => json_decode($request->getBody(), true),
         ]);
       } else if ($method === "delete") {
-        $responseHTTP = $client->delete($route . $args, [
+        $responseHTTP = $client->delete($route . $getParams, [
           'headers' => [
-            'Authorization' => $request->getHeader('Authorization')[0],
+            'Authorization' => $token,
           ],
           'body' => json_decode($request->getBody(), true),
         ]);

@@ -6,7 +6,7 @@ use atelier\tedyspo\actions\AbstractAction;
 
 class GetUsersAction extends AbstractAction
 {
-  public function __invoke($request, $response, $args)
+  public function __invoke(Request $request, Response $response, $args)
   {
     $userService = $this->container->get('service.user');
 

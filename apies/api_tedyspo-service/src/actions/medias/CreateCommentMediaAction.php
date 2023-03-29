@@ -4,9 +4,9 @@ namespace atelier\tedyspo\actions\medias;
 
 use atelier\tedyspo\actions\AbstractAction;
 
-class CreateComentMediaAction extends AbstractAction
+class CreateCommentMediaAction extends AbstractAction
 {
-  public function __invoke($request, $response, $args)
+  public function __invoke(Request $request, Response $response, $args)
   {
     $mediaService = $this->container->get('service.media');
 

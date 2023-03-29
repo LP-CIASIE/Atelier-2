@@ -208,7 +208,7 @@ $app->group('/comments/{id_comment}/medias', function () use ($app) {
 /**
  * API Auth Service
  */
-$app->post('/signin[/]', atelier\gateway\actions\auth\SignInAction::class);
-$app->post('/signup[/]', atelier\gateway\actions\auth\SignUpAction::class);
+$app->post('/signin', atelier\gateway\actions\auth\SignInAction::class);
+$app->post('/signup', atelier\gateway\actions\auth\SignUpAction::class);
 
 $app->run();

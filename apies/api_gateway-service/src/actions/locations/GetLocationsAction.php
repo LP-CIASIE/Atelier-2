@@ -6,10 +6,8 @@ use atelier\gateway\actions\AbstractAction;
 
 class GetLocationsAction extends AbstractAction
 {
-  public function __invoke($request, $response, $args)
+  public function __invoke(Request $request, Response $response, $args)
   {
     $locationService = $this->container->get('service.location');
-
-    return $response;
   }
 }
