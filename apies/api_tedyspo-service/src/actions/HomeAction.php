@@ -8,10 +8,10 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 final class HomeAction
 {
   public function __invoke(
-    Request $rq,
-    Response $rs
+    Request $request,
+    Response $response
   ): Response {
-    $rs->getBody()->write('Hello, World!');
-    return $rs;
+    $response->getBody()->write('Hello, World!');
+    return $response;
   }
 }
