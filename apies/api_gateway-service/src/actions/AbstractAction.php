@@ -4,11 +4,11 @@ namespace atelier\gateway\actions;
 
 use Psr\Container\ContainerInterface;
 
-use atelier\gateway\errors\exceptions\GuzzleException;
-use GuzzleHttp\Exception\ClientException as GuzzleClientException;
+use atelier\gateway\errors\exceptions\GuzzleException as GuzzleException;
+use Exception;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Respect\Validation\Rules\Length;
 
 abstract class AbstractAction
 {
@@ -34,59 +34,50 @@ abstract class AbstractAction
 
     $token = $request->getHeader('Authorization')[0] ?? '';
 
-    $args = $request->getQueryParams() ?? [];
-
-
-    if (count($args) > 0) {
-      $getParams = '?';
-      $i = 0;
-      foreach ($request->getQueryParams() as $key => $value) {
-        $getParams .= $key . '=' . $value;
-        if ($i < count($args) - 1) {
-          $getParams .= '&';
-        }
-      }
-    } else {
-      $getParams = '';
-    }
-
 
     try {
       if ($method === "post") {
-        $responseHTTP = $client->post($route . $getParams, [
+        $responseHTTP = $client->post($route, [
+          'query' => $request->getQueryParams(),
           'headers' => [
             'Authorization' => $token,
+            'Content-Type' => $this->container->get('content.type')
           ],
-          'body' => json_decode($request->getBody(), true),
+          'body' => json_encode($request->getParsedBody()),
         ]);
       } else if ($method === "get") {
-        $responseHTTP = $client->get($route . $getParams, [
+        $responseHTTP = $client->get($route, [
+          'query' => $request->getQueryParams(),
           'headers' => [
             'Authorization' => $token,
+            'Content-Type' => $this->container->get('content.type')
           ],
         ]);
       } else if ($method === "put") {
-        $responseHTTP = $client->put($route . $getParams, [
+        $responseHTTP = $client->put($route, [
+          'query' => $request->getQueryParams(),
           'headers' => [
             'Authorization' => $token,
+            'Content-Type' => $this->container->get('content.type')
           ],
-          'body' => json_decode($request->getBody(), true),
+          'body' => json_encode($request->getParsedBody()),
         ]);
       } else if ($method === "delete") {
-        $responseHTTP = $client->delete($route . $getParams, [
+        $responseHTTP = $client->delete($route, [
+          'query' => $request->getQueryParams(),
           'headers' => [
             'Authorization' => $token,
+            'Content-Type' => $this->container->get('content.type')
           ],
-          'body' => json_decode($request->getBody(), true),
+          'body' => json_encode($request->getParsedBody()),
         ]);
       }
-    } catch (GuzzleClientException $e) {
-      throw new GuzzleException('Erreur pendant l\'acheminant', $e->getCode());
+    } catch (Exception $e) {
+      throw new Exception('Erreur pendant l\'acheminant', $e->getCode());
     }
 
-
     $logger = $this->container->get('logger');
-    $logger->info("{$method} | {$this->container->get('tedyspo.service.uri')}{$route} | {$responseHTTP->getStatusCode()}");
+    $logger->info("{$method} | {$this->container->get('gateway.atelier.local')}{$route} | {$responseHTTP->getStatusCode()}");
 
     return $responseHTTP;
   }

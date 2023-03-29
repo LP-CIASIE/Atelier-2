@@ -6,7 +6,7 @@ use atelier\gateway\actions\AbstractAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-final class CreateUserAction extends AbstractAction
+final class SignUpAction extends AbstractAction
 {
   public function __invoke(
     Request $request,
