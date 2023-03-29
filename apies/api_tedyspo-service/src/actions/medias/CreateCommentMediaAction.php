@@ -4,7 +4,7 @@ namespace atelier\tedyspo\actions\medias;
 
 use atelier\tedyspo\actions\AbstractAction;
 
-class CreateComentMediaAction extends AbstractAction
+class CreateCommentMediaAction extends AbstractAction
 {
   public function __invoke($request, $response, $args)
   {
