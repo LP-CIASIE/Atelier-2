@@ -14,4 +14,16 @@ abstract class AbstractAction
   {
     $this->container = $container;
   }
+
+  public function parseBody(Request $request): array
+  {
+    try {
+      $body = $request->getBody();
+      $body = json_decode($body, true);
+    } catch (\Exception $e) {
+      throw new \Exception('Aucune donnée reçu', 400);
+    }
+
+    return $body;
+  }
 }
