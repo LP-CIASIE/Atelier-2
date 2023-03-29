@@ -48,6 +48,8 @@ $app->get('/', function (Request $request, Response $response, $args) {
   return $response;
 });
 
+$app->post('/events[/]', atelier\auth\actions\Event::class);
+
 
 
 $app->post('/signin[/]', atelier\auth\actions\SignInAction::class);
