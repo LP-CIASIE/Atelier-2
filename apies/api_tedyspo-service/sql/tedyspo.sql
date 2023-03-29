@@ -36,10 +36,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `tedyspo`.`user` (
   `id_user` VARCHAR(36) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
   `lastname` VARCHAR(30) NULL,
-  `firstname` VARCHAR(30) NULL,
-  `role` INT NOT NULL,
+  `firstname` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`id_user`),
   UNIQUE INDEX `mail_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB;
