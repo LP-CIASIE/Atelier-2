@@ -43,16 +43,20 @@ $errorMiddleware = $app->addErrorMiddleware(
   $container->get('logger')
 );
 
+
 $errorMiddleware->getDefaultErrorHandler()->forceContentType('application/json');
 
 /**
  * API Basic Route
  */
+ 
 $app->get('/', atelier\tedyspo\actions\HomeAction::class)->setName('home');
+
 /** ======================
  *    Collection Users
  * ===================== */
 // GET
+
 $app->get('/users[/]', atelier\tedyspo\actions\users\GetUsersAction::class)->setName('get_users');
 $app->get('/users/{id_user}[/]', atelier\tedyspo\actions\users\GetUserAction::class)->setName('get_user');
 
@@ -84,6 +88,7 @@ $app->delete('/users/{id_user}/events/{id_event}[/]', atelier\tedyspo\actions\ev
 
 // Collection Additional Events
 // GET
+
 $app->get('/events/additionals[/]', atelier\tedyspo\actions\events\GetAdditionalsEventsAction::class)->setName('get_additional_events');
 
 // POST
@@ -165,6 +170,7 @@ $app->delete('/events/{id_event}/locations/{id_location}[/]', atelier\tedyspo\ac
  *    Collection Medias
  * ========================== */
 // GET
+
 $app->get('/comments/{id_comment}/medias[/]', atelier\tedyspo\actions\medias\GetCommentMediasAction::class)->setName('get_comment_medias');
 $app->get('/comments/{id_comment}/medias/{id_media}[/]', atelier\tedyspo\actions\medias\GetCommentMediaAction::class)->setName('get_comment_media');
 
