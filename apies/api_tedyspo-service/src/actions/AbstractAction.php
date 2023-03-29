@@ -26,4 +26,14 @@ abstract class AbstractAction
 
     return $body;
   }
+
+  public function parseJWT(Request $request): array
+  {
+    $jwt = $request->getHeader('Authorization');
+
+    $jwtService = $this->container->get('service.jwt');
+    $user = $jwtService->decodeDataOfJWT($jwt);
+
+    return $user;
+  }
 }
