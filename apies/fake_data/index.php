@@ -37,10 +37,9 @@ $faker = Factory::create('fr_FR');
 $users = [];
 
 echo "Generating users...\n";
-for ($i = 0; $i < 1000; $i++) {
+for ($i = 0; $i < 200; $i++) {
   $id = $faker->uuid;
   $email = $faker->email;
-  $firstname = $faker->firstName;
 
   if (UserAuth::where('email', $email)->first()) {
     continue;
@@ -57,7 +56,7 @@ for ($i = 0; $i < 1000; $i++) {
   $userTedyspo = new UserTedyspo();
   $userTedyspo->id_user = $id;
   $userTedyspo->email = $email;
-  $userTedyspo->firstname = $firtname;
+  $userTedyspo->firstname = $faker->firstName;
   $userTedyspo->lastname = ($i % 2 == 0) ? $faker->lastName : "";
   $userTedyspo->save();
 

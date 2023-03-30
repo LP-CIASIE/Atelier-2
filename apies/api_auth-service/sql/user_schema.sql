@@ -1,4 +1,4 @@
--- Adminer 4.8.1 MySQL 5.5.5-10.11.2-MariaDB-1:10.11.2+maria~ubu2204 dump
+-- Adminer 4.8.1 MySQL 5.5.5-10.10.2-MariaDB-1:10.10.2+maria~ubu2204 dump
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
@@ -17,4 +17,4 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 
--- 2023-03-30 10:23:00
+-- 2023-03-30 12:42:21
