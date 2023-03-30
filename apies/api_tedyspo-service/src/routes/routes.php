@@ -8,3 +8,4 @@ require_once __DIR__ . '/links.php';
 require_once __DIR__ . '/locations.php';
 require_once __DIR__ . '/medias.php';
 require_once __DIR__ . '/users.php';
+require_once __DIR__ . '/share_events.php';
