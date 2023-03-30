@@ -14,7 +14,6 @@ class UserService
     try {
       v::key('email', v::email()->length(5, 50)->notEmpty())
         ->key('password', v::stringType()->length(8, 255)->notEmpty())
-        ->key('firstname', v::stringType()->length(1, 30)->notEmpty())
         ->key('role', v::stringType())
         ->assert($body);
     } catch (ValidatorException $e) {
