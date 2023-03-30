@@ -5,6 +5,7 @@ namespace atelier\auth\services;
 use atelier\auth\models\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Respect\Validation\Validator as v;
 
 final class TokenService
 {
@@ -49,5 +50,32 @@ final class TokenService
     } catch (\Exception $e) {
       throw new \Exception("Token invalide.", 401);
     }
+  }
+
+  public function decodeDataOfJWT($Authorization): array
+  {
+    $jwt = $Authorization[0] ?? '';
+
+    try {
+      v::stringType()->notEmpty()->validate($jwt);
+    } catch (\Exception $e) {
+      throw new \Exception('Token manquant', 400);
+    }
+
+    $jwt = explode('.', $jwt);
+
+    if (count($jwt) !== 3) {
+      throw new \Exception('Token invalide', 400);
+    }
+
+    $jwt = $jwt[1];
+    $jwt = base64_decode($jwt);
+
+    if ($jwt === false) {
+      throw new \Exception('Token invalide', 400);
+    }
+
+    $jwt = json_decode($jwt, true);
+    return $jwt;
   }
 }

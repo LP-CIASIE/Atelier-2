@@ -6,9 +6,9 @@ use Respect\Validation\Validator as v;
 
 class JWTService extends AbstractService
 {
-  public function decodeDataOfJWT($Authorization)
+  public function decodeDataOfJWT($Authorization): array
   {
-    $jwt = $Authorization[0] ?? null;
+    $jwt = $Authorization[0] ?? '';
 
     try {
       v::stringType()->notEmpty()->validate($jwt);

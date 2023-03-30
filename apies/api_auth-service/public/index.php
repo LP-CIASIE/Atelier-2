@@ -48,10 +48,13 @@ $app->get('/', function (Request $request, Response $response, $args) {
   return $response;
 });
 
+$app->post('/events[/]', atelier\auth\actions\Event::class);
+
 
 
 $app->post('/signin[/]', atelier\auth\actions\SignInAction::class);
 $app->post('/signup[/]', atelier\auth\actions\SignUpAction::class);
+$app->put('/users[/]', atelier\auth\actions\UpdateUserAction::class);
 $app->post('/validate[/]', atelier\auth\actions\ValidateAction::class);
 
 $app->run();

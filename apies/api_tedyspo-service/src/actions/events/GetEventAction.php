@@ -11,7 +11,11 @@ class GetEventAction extends AbstractAction
   public function __invoke(Request $request, Response $response, $args)
   {
     $eventService = $this->container->get('service.event');
-
-    return $response;
+    $events = $eventService->getEventById($args['id_event']);
+    $data = [
+      'status' => 'success',
+      'data' => $events
+    ];
+    return FormatterAPI::formatResponse($request, $response, $data);
   }
 }

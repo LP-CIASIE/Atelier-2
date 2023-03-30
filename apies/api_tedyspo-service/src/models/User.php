@@ -12,6 +12,6 @@ class User extends Model
   use HasUuids;
 
   protected $table = 'user';
-  protected $primaryKey = 'user_id';
+  protected $primaryKey = 'id_user';
   public $timestamps = false;
 }
