@@ -76,8 +76,11 @@ abstract class AbstractAction
       $jsonDecode = json_decode($e->getResponse()->getBody()->getContents(), true);
       // var_dump($jsonDecode);
       // die();
+      $code = $jsonDecode['exception'][0]['code'] ?? 500;
+      $code = $code === 0 ? 500 : $code;
+
       $exceptionData = [
-        'code' => $jsonDecode['exception'][0]['code'] ?? 500,
+        'code' => $code,
         'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
       ];
 
