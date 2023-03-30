@@ -142,7 +142,7 @@ class UserService extends AbstractService
     }
 
     if (User::where('email', $data['email'])->count() > 0) {
-      throw new \Exception('Email déjà utilisé', 400);
+      throw new \Exception('Email déjà utilisé', 409);
     }
 
     $user->email = $data['email'];
