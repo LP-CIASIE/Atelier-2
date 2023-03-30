@@ -14,8 +14,8 @@ export const useSessionStore = defineStore(
 
     async function signIn(form) {
       return API.post("/signin", {
-        email: form.email,
-        password: form.password,
+        email: form.email.content,
+        password: form.password.content,
       })
         .then((response) => {
           user.access_token = response.data["access-token"];
