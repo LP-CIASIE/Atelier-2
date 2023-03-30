@@ -2,8 +2,9 @@
 
 namespace atelier\tedyspo\actions\events;
 
-use atelier\auth\services\utils\FormatterAPI;
+use atelier\tedyspo\services\utils\FormatterAPI;
 use atelier\tedyspo\actions\AbstractAction;
+use atelier\tedyspo\services\utils\FormatterObject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -11,12 +12,20 @@ class GetEventsAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
+    $test = $this->parseJWT($request);
+    var_dump($test);
+    die();
+    $params = $request->getQueryParams();
+
+    $page = $params['page'] ?? 1;
+    $size = $params['size'] ?? 10;
+
     $eventService = $this->container->get('service.event');
-    $events = $eventService->getEvents($args);
-    $data = [
-      'status' => 'success',
-      'data' => $events
-    ];
+    $events = $eventService->getEvents($params);
+    $count = $eventService->getCount();
+
+    $data = FormatterAPI::formatPagination($request, 'get_users', $page, $params, $count, $size);
+    $data['events'] = FormatterObject::Users($events);   
     return FormatterAPI::formatResponse($request, $response, $data);
   }
 }

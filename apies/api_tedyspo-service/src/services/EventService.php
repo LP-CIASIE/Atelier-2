@@ -7,14 +7,14 @@ use Carbon\Carbon;
 use Illuminate\Database\DBAL\TimestampType;
 use Illuminate\Database\Eloquent\Collection;
 use Respect\Validation\Validator as v;
+use atelier\tedyspo\models\User;
 
 class EventService extends AbstractService
 {
-    final public function getEvents($params)
+    final public function getEvents($parameters)
     {
         $page = $parameters['page'] ?? 1;
         $size = $parameters['size'] ?? 10;
-        $email = $parameters['email'] ?? '';
         
         try{
             v::intVal()->min(1)->assert($size);}
@@ -30,8 +30,7 @@ class EventService extends AbstractService
         try {
 
 
-            $event = Event::all()
-            ->orderBy('email', 'desc')
+            $event = Event::orderBy('email', 'desc')
             ->skip(($page - 1) * $size)
             ->take($size);
         }catch (\Exception $e){
@@ -77,15 +76,16 @@ class EventService extends AbstractService
         }
         $event->description = $data['description'];
         
+
         try{
-        v::stringType()->length(3, 100)->assert($data['date']);
+            $event->date = Carbon::now()->tz('Europe/Amsterdam');
+
         }catch (\Exception $e){
             throw new \Exception("Erreur lors de la création de la date", 400);
         }
-        $event->date = Carbon::now()->tz('Europe/Amsterdam');
         
         try{
-        v::boolType()->assert($data['is_public']);
+            v::between(0, 1)->validate($data['is_public']);
         }
         catch (\Exception $e){
             throw new \Exception("Erreur lors de la création de la visibilité", 400);
@@ -150,5 +150,17 @@ class EventService extends AbstractService
         }
 
         return $event;
+    }
+
+    public function getCount($id_user): int
+    {
+      try {
+        $user = User::findOrFail($id_user);
+      } catch (\Exception $e)
+      {
+        throw new \Exception('Utilisateur introuvable', 404);
+      }
+    
+      return $user->events()->count(); 
     }
 }
