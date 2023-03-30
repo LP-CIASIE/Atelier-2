@@ -24,6 +24,7 @@ var form = reactive({
 
 function on_submit() {
   var inputOK = true;
+  form.error_message = '';
   form.email.error_message = '';
   form.password.error_message = '';
 
