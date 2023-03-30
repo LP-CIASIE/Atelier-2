@@ -10,6 +10,17 @@ use Respect\Validation\Validator as v;
 
 class CommentService extends AbstractService
 {
+  public function getCount($id_event)
+  {
+    try {
+      $event = Event::findOrFail($id_event);
+    } catch (\Exception $e) {
+      throw new \Exception('Cette événement n\'existe pas', 404);
+    }
+
+    return $event->comments()->count();
+  }
+
   public function createComment($data, $id_user, $id_event): Comment
   {
     try {
@@ -74,7 +85,7 @@ class CommentService extends AbstractService
     return $comment;
   }
 
-  public function updateCommentById($id_comment, $body): Comment
+  public function updateComment($id_comment, $body): Comment
   {
     try {
       $comment = Comment::findOrFail($id_comment);
