@@ -25,10 +25,9 @@ export const useSessionStore = defineStore(
           };
         })
         .catch((error) => {
-          console.log(error);
           return {
             ok: false,
-            message: "",
+            message: error.response.data.message,
           };
         });
     }

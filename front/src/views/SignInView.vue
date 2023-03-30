@@ -17,6 +17,7 @@ var form = reactive({
     content: '',
     error_message: '',
   },
+  error_message: '',
   pending: false
 });
 
@@ -43,7 +44,8 @@ function on_submit() {
       if (connection.ok) {
         router.push({ name: "home" })
       } else {
-        // pending = false;
+        form.pending = false;
+        form.error_message = connection.message;
       }
     })
   }
@@ -57,8 +59,8 @@ function on_submit() {
 
     <div>
       <span class="p-float-label">
-        <InputText id="mail" v-model="form.email.content" type="text" :class="{ 'p-invalid': form.email.error_message }"
-          aria-describedby="text-error" />
+        <InputText id="mail" v-model="form.email.content" type="text"
+          :class="{ 'p-invalid': form.email.error_message || form.error_message }" aria-describedby="text-error" />
         <label for="mail">Email</label>
       </span>
       <small v-if="form.email.error_message.length > 0" class="p-error"
@@ -68,12 +70,15 @@ function on_submit() {
     <div>
       <span class="p-float-label">
         <InputText id="password" v-model="form.password.content" type="password"
-          :class="{ 'p-invalid': form.password.error_message }" aria-describedby="text-error" />
+          :class="{ 'p-invalid': form.password.error_message || form.error_message }" aria-describedby="text-error" />
         <label for="password">Mot de passe</label>
       </span>
       <small v-if="form.password.error_message.length > 0" class="p-error"
         id="text-error">{{ form.password.error_message || '&nbsp;' }}</small>
     </div>
+
+    <small v-if="form.error_message.length > 0" class="p-error"
+      id="text-error">{{ form.error_message || '&nbsp;' }}</small>
 
     <div class="button-on-right">
       <Button v-if="form.pending" type="submit" label="Se connecter" disabled />
