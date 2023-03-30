@@ -26,12 +26,14 @@ var form = reactive({
     confirmation: '',
     error_message: '',
   },
+  error_message: '',
   pending: false
 });
 
 
 function on_submit() {
   var inputOK = true;
+  form.error_message = '';
   form.email.error_message = '';
   form.password.error_message = '';
   form.firstname.error_message = '';
@@ -91,7 +93,11 @@ function on_submit() {
         router.push({ name: "signIn" })
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response.data.code == 409) {
+          form.email.error_message = 'Un compte est déjà associé à cet email.'
+        } else {
+          form.error_message = error.response.data.message;
+        }
         form.pending = false;
       });
   }
@@ -144,6 +150,10 @@ function on_submit() {
       <small v-if="form.password.error_message.length > 0" class="p-error"
         id="text-error">{{ form.password.error_message || '&nbsp;' }}</small>
     </div>
+
+
+    <small v-if="form.error_message.length > 0" class="p-error"
+      id="text-error">{{ form.error_message || '&nbsp;' }}</small>
 
     <div class="button-on-right">
       <Button v-if="form.pending" type="submit" label="Se connecter" disabled />
