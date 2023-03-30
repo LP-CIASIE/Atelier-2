@@ -77,15 +77,13 @@ abstract class AbstractAction
       // var_dump($jsonDecode);
       // die();
       $exceptionData = [
-        'code' => $e->getCode(),
+        'code' => $jsonDecode['exception'][0]['code'] ?? 500,
         'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
       ];
 
-      // Encodez le tableau en JSON
       $jsonExceptionData = json_encode($exceptionData, JSON_UNESCAPED_UNICODE);
 
       $response->getBody()->write($jsonExceptionData);
-
       $response = $response->withHeader('Content-Type', 'application/json');
       return $response->withStatus($exceptionData['code']);
     }
