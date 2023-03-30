@@ -16,7 +16,7 @@ class CreateCommentAction extends AbstractAction
     $data = $this->parseBody($request);
 
     $commentService = $this->container->get('service.comment');
-    $comment = $commentService->create($data, $user['uid'], $args['id_event']);
+    $comment = $commentService->createComment($data, $user['uid'], $args['id_event']);
 
     $data = [
       'comment' => FormatterObject::Comment($comment)
