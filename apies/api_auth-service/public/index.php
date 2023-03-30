@@ -54,7 +54,7 @@ $app->post('/events[/]', atelier\auth\actions\Event::class);
 
 $app->post('/signin[/]', atelier\auth\actions\SignInAction::class);
 $app->post('/signup[/]', atelier\auth\actions\SignUpAction::class);
-$app->post('/update[/]', atelier\auth\actions\SignUpAction::class);
+$app->put('/update[/]', atelier\auth\actions\SignUpAction::class);
 $app->post('/validate[/]', atelier\auth\actions\ValidateAction::class);
 
 $app->run();
