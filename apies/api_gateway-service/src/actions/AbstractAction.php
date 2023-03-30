@@ -7,6 +7,7 @@ use Psr\Container\ContainerInterface;
 use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Psr7\Response as ResponseSlim;
 
 abstract class AbstractAction
 {
@@ -71,9 +72,22 @@ abstract class AbstractAction
         ]);
       }
     } catch (\GuzzleHttp\Exception\RequestException $e) {
-      $response = new Response();
-      $response->getBody()->write($e->getResponse()->getBody()->getContents());
-      return $response->withStatus($e->getResponse()->getStatusCode());
+      $response = new ResponseSlim();
+      $jsonDecode = json_decode($e->getResponse()->getBody()->getContents(), true);
+      // var_dump($jsonDecode);
+      // die();
+      $exceptionData = [
+        'code' => $e->getCode(),
+        'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
+      ];
+
+      // Encodez le tableau en JSON
+      $jsonExceptionData = json_encode($exceptionData, JSON_UNESCAPED_UNICODE);
+
+      $response->getBody()->write($jsonExceptionData);
+
+      $response = $response->withHeader('Content-Type', 'application/json');
+      return $response->withStatus($exceptionData['code']);
     }
 
     $logger = $this->container->get('logger');
