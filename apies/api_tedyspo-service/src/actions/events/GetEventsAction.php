@@ -12,7 +12,7 @@ class GetEventsAction extends AbstractAction
   public function __invoke(Request $request, Response $response, $args)
   {
     $eventService = $this->container->get('service.event');
-    $events = $eventService->getEvents();
+    $events = $eventService->getEvents($args);
     $data = [
       'status' => 'success',
       'data' => $events

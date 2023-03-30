@@ -2,10 +2,8 @@
 
 namespace atelier\tedyspo\models;
 
-// I use Eloquent with UUID of Ramsey/Uuid
-
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids as HasUuids;
 
 class Event extends Model
 {
