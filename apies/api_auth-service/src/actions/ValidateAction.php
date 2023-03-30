@@ -13,11 +13,11 @@ final class ValidateAction
 {
   public function __invoke(Request $request, Response $response): Response
   {
-    $token = $request->getHeader('Authorization');
+    $authorization = $request->getHeader('Authorization');
 
     try {
       $tokenService = new TokenService();
-      $tokenService->verifyToken($token);
+      $tokenService->verifyToken($authorization);
 
       return FormatterAPI::formatResponse($request, $response, [], 204); // 204 = No Content
     } catch (\Exception $e) {

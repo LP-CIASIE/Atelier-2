@@ -10,7 +10,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 /** ========================
  * Création de Eloquent
  * ====================== */
-$conf = parse_ini_file(__DIR__ . '/../conf/api.db.ini.env');
+$conf = parse_ini_file(__DIR__ . '/../conf/tedyspo.db.ini.env');
 
 $capsule = new Capsule;
 $capsule->addConnection($conf);
@@ -49,7 +49,7 @@ $errorMiddleware->getDefaultErrorHandler()->forceContentType('application/json')
 /**
  * API Basic Route
  */
- 
+
 $app->get('/', atelier\tedyspo\actions\HomeAction::class)->setName('home');
 
 /** ======================
@@ -61,10 +61,10 @@ $app->get('/users[/]', atelier\tedyspo\actions\users\GetUsersAction::class)->set
 $app->get('/users/{id_user}[/]', atelier\tedyspo\actions\users\GetUserAction::class)->setName('get_user');
 
 // POST
-$app->post('/users[/]', atelier\tedyspo\actions\users\CreateUserAction::class)->setName('create_user');
+$app->post('/signup[/]', atelier\tedyspo\actions\users\CreateUserAction::class)->setName('create_user');
 
 // PUT
-$app->put('/users/{id_user}[/]', atelier\tedyspo\actions\users\UpdateUserAction::class)->setName('update_user');
+$app->put('/users[/]', atelier\tedyspo\actions\users\UpdateUserAction::class)->setName('update_user');
 
 // DELETE
 $app->delete('/users/{id_user}[/]', atelier\tedyspo\actions\users\DeleteUserAction::class)->setName('delete_user');

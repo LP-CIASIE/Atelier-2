@@ -4,7 +4,7 @@ namespace atelier\auth\services;
 
 use atelier\auth\models\User;
 use Respect\Validation\Exceptions\ValidatorException;
-use Respect\Validation\Validator as Validator;
+use Respect\Validation\Validator as v;
 
 class UserService
 {
@@ -12,10 +12,9 @@ class UserService
   public function createUser($body): void
   {
     try {
-      Validator::key('email', Validator::email()->length(5, 50)->notEmpty())
-        ->key('password', Validator::stringType()->length(8, 255)->notEmpty())
-        ->key('firstname', Validator::stringType()->length(1, 30)->notEmpty())
-        ->key('role', Validator::stringType())
+      v::key('email', v::email()->length(5, 50)->notEmpty())
+        ->key('password', v::stringType()->length(8, 255)->notEmpty())
+        ->key('role', v::stringType())
         ->assert($body);
     } catch (ValidatorException $e) {
       throw new \Exception("Donnée du body invalides.", 400);
@@ -47,8 +46,8 @@ class UserService
   public function login($body): User
   {
     try {
-      Validator::key('email', Validator::email()->length(5, 50)->notEmpty())
-        ->key('password', Validator::stringType()->length(8, 255)->notEmpty())
+      v::key('email', v::email()->length(5, 50)->notEmpty())
+        ->key('password', v::stringType()->length(8, 255)->notEmpty())
         ->assert($body);
     } catch (ValidatorException $e) {
       throw new \Exception("Donnée du body invalides.", 400);
@@ -61,5 +60,58 @@ class UserService
     }
 
     return $user;
+  }
+
+  public function getUserById($id): User
+  {
+    try {
+      v::uuid()->assert($id);
+    } catch (\Exception $e) {
+      throw new \InvalidArgumentException('Format de donnée pour l\'id est incorrect.', 400);
+    }
+
+    try {
+      $user = User::findOrFail($id);
+    } catch (\Exception $e) {
+      throw new \Exception('Utilisateur introuvable', 404);
+    }
+
+    return $user;
+  }
+
+  public function updateUserById($id, $data): void
+  {
+    $user = $this->getUserById($id);
+    $changed = false;
+
+    if (isset($data['email'])) {
+      try {
+        v::email()->length(4, 50)->assert($data['email']);
+      } catch (\Exception $e) {
+        throw new \InvalidArgumentException('Format de donnée pour l\'email est incorrect.', 400);
+      }
+      $user->email = $data['email'];
+      $changed = true;
+    }
+
+    if (isset($data['password'])) {
+      try {
+        v::stringType()->length(8, 255)->assert($data['password']);
+      } catch (\Exception $e) {
+        throw new \InvalidArgumentException('Format de donnée pour le mot de passe est incorrect.', 400);
+      }
+      $user->password = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+      $changed = true;
+    }
+
+    try {
+      if ($changed) {
+        $user->save();
+      } else {
+        throw new \Exception('Aucune donnée à mettre à jour', 400);
+      }
+    } catch (\Exception $e) {
+      throw new \Exception('Erreur lors de la mise à jour de l\'utilisateur', 500);
+    }
   }
 }

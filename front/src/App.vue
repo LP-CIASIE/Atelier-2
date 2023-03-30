@@ -19,8 +19,8 @@ provide("api", API);
 
 <template>
 	<!-- <header>
-														<Navbar />
-													</header> -->
+															<Navbar />
+														</header> -->
 
 	<article>
 		<router-view v-slot="{ Component }">
