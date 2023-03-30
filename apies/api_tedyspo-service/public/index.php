@@ -47,6 +47,7 @@ $errorMiddleware = $app->addErrorMiddleware(
 
 $errorMiddleware->getDefaultErrorHandler()->forceContentType('application/json');
 
+
 /** ========================
  * Création des routes
  * ====================== */

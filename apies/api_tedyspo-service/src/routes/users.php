@@ -1,18 +1,22 @@
 <?php
 
+use atelier\tedyspo\actions\users;
+use atelier\tedyspo\middlewares\AccessEventMiddleware;
+use atelier\tedyspo\middlewares\OwnerEventMiddleware;
+
 /** ======================
  * Collection Users
  * ===================== */
 // GET
 
-$app->get('/users[/]', atelier\tedyspo\actions\users\GetUsersAction::class)->setName('get_users');
-$app->get('/users/{id_user}[/]', atelier\tedyspo\actions\users\GetUserAction::class)->setName('get_user');
+$app->get('/users[/]', users\GetUsersAction::class)->setName('get_users');
+$app->get('/users/{id_user}[/]', users\GetUserAction::class)->setName('get_user');
 
 // POST
-$app->post('/signup[/]', atelier\tedyspo\actions\users\CreateUserAction::class)->setName('create_user');
+$app->post('/signup[/]', users\CreateUserAction::class)->setName('create_user');
 
 // PUT
-$app->put('/users[/]', atelier\tedyspo\actions\users\UpdateUserAction::class)->setName('update_user');
+$app->put('/users[/]', users\UpdateUserAction::class)->setName('update_user');
 
 // DELETE
-$app->delete('/users/{id_user}[/]', atelier\tedyspo\actions\users\DeleteUserAction::class)->setName('delete_user');
+$app->delete('/users/{id_user}[/]', users\DeleteUserAction::class)->setName('delete_user');
