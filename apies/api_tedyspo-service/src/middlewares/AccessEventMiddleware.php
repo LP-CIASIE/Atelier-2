@@ -2,29 +2,67 @@
 
 namespace atelier\tedyspo\middlewares;
 
-use Psr\Http\Message\ResponseInterface as Response;
+use atelier\tedyspo\models\Event;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
-
-use Psr\Container\ContainerInterface as Container;
 
 class AccessEventMiddleware extends AbstractMiddleware
 {
-  public function __invoke(Request $request, RequestHandler $handler): Response
+  /**
+   * Récupère l'id de l'utilisateur dans le token JWT reçu par la requête
+   * Récupère l'événement par l'id de route
+   * 
+   * Vérifie si l'utilisateur est invité à l'événement
+   *
+   * @param Request $request
+   * @return boolean
+   */
+  public function validateMiddleware(Request $request): bool
   {
+    $JWTService = $this->container->get('service.jwt');
+    $user = $JWTService->decodeDataOfJWT($request->getHeader('Authorization'));
 
-    if ($request->hasHeader('Authorization') && $this->validateToken($request->getHeader('Authorization')[0])) {
+    $event = $this->getEvent($request);
 
-      $response = $handler->handle($request);
-      return $response;
+    $participant = $event->users()->where('id_user', $user['uid'])->withPivot('state')->first();
+
+    if ($participant) {
+      return $participant->pivot->state == "accepted";
     } else {
-      $response = new \Slim\Psr7\Response();
-      $response->getBody()->write(json_encode([
-        'type' => 'error',
-        'error' => 401,
-        'message' => 'Unauthorized'
-      ]));
-      return $response->withStatus(401);
+      return false;
     }
+  }
+
+
+  /**
+   * Message d'erreur en cas de refus du middleware
+   *
+   * @return array
+   */
+  public function ErrorMiddleware(): array
+  {
+    return [
+      'code' => 403,
+      'message' => 'Tu n\'es pas invité, ou tu n\'as pas encore accepté l\'invitation.'
+    ];
+  }
+
+
+  /**
+   * Récupère l'événement par l'id de route
+   *
+   * @param Request $request
+   * @return Event
+   */
+  public function getEvent(Request $request): Event
+  {
+    // Get id of the event
+    $route = $request->getAttribute('route');
+    $id_event = $route->getArgument('id_event');
+
+    // Get event
+    $eventService = $this->container->get('service.event');
+    $event = $eventService->getEventById($id_event);
+
+    return $event;
   }
 }

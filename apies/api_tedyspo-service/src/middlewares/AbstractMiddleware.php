@@ -26,14 +26,17 @@ abstract class AbstractMiddleware
       return $response;
     } else {
       $response = new \Slim\Psr7\Response();
-      $response->getBody()->write(json_encode([
-        'type' => 'error',
-        'error' => 401,
-        'message' => 'Unauthorized'
-      ]));
-      return $response->withStatus(401);
+      $response->getBody()->write(json_encode($this->ErrorMiddleware()));
+      return $response->withStatus($this->ErrorMiddleware()['code']);
     }
   }
 
   abstract public function validateMiddleware(Request $request): bool;
+
+  // Format : 
+  // [
+  //   'code' => 404,
+  //   'message' => 'Message de l\erreur'
+  // ]
+  abstract public function ErrorMiddleware(): array;
 }
