@@ -5,13 +5,13 @@ declare(strict_types=1);
 use Slim\Factory\AppFactory;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once dirname(__DIR__, 1) . '/vendor/autoload.php';
 
 /** ========================
  * Création de Eloquent
  * ====================== */
 
-$conf = parse_ini_file(__DIR__ . '/../conf/tedyspo.db.ini.dist');
+$conf = parse_ini_file(dirname(__DIR__, 1) . '/conf/tedyspo.db.ini.dist');
 
 $capsule = new Capsule;
 $capsule->addConnection($conf);
