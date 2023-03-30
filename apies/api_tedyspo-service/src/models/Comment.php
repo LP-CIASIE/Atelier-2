@@ -30,4 +30,9 @@ class Comment extends Model
   {
     return $this->belongsTo(Event::class, 'id_event');
   }
+
+  public function medias()
+  {
+    return $this->hasMany(Media::class, 'id_comment');
+  }
 }
