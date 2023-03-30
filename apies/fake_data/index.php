@@ -49,7 +49,7 @@ for ($i = 0; $i < 1000; $i++) {
   $userAuth = new UserAuth();
   $userAuth->id_user = $id;
   $userAuth->email = $email;
-  $userAuth->password = password_hash($firstname, PASSWORD_BCRYPT, ['cost' => 12]);
+  $userAuth->password = password_hash('Tedyspo!', PASSWORD_BCRYPT, ['cost' => 12]);
   $userAuth->refresh_token = base64_encode(random_bytes(150));
   $userAuth->role = 'user';
   $userAuth->save();
@@ -57,7 +57,7 @@ for ($i = 0; $i < 1000; $i++) {
   $userTedyspo = new UserTedyspo();
   $userTedyspo->id_user = $id;
   $userTedyspo->email = $email;
-  $userTedyspo->firstname = $faker->firstName;
+  $userTedyspo->firstname = $firtname;
   $userTedyspo->lastname = ($i % 2 == 0) ? $faker->lastName : "";
   $userTedyspo->save();
 
