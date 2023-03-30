@@ -10,6 +10,6 @@ class UpdateUserAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    return $this->sendRequest($request, $response, '/users/' . $args['id_user'], 'put');
+    return $this->sendRequest($request, $response, '/users', 'put');
   }
 }

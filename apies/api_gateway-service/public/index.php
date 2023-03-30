@@ -66,7 +66,7 @@ $app->get('/users/{id_user}[/]', atelier\gateway\actions\users\GetUserAction::cl
 $app->post('/users[/]', atelier\gateway\actions\users\CreateUserAction::class)->add(new TokenMiddleware($container));
 
 // PUT
-$app->put('/users/{id_user}[/]', atelier\gateway\actions\users\UpdateUserAction::class)->add(new TokenMiddleware($container));
+$app->put('/users[/]', atelier\gateway\actions\users\UpdateUserAction::class)->add(new TokenMiddleware($container));
 
 // DELETE
 $app->delete('/users/{id_user}[/]', atelier\gateway\actions\users\DeleteUserAction::class)->add(new TokenMiddleware($container));
