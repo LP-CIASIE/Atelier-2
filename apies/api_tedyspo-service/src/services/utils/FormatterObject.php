@@ -39,7 +39,7 @@ class FormatterObject
   {
     return [
       'id' => $comment->id_comment,
-      'comment' => $comment->content,
+      'comment' => $comment->comment,
       'links' => [
         'self' => [
           'href' => '/comments/' . $comment->id_comment
