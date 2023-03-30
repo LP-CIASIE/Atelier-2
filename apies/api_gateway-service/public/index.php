@@ -53,7 +53,7 @@ $app->add(function ($request, $handler) {
 /**
  * API Basic Route
  */
-$app->get('/', atelier\gateway\actions\HomeAction::class)->add(new TokenMiddleware($container));
+$app->get('/', atelier\gateway\actions\HomeAction::class);
 /** ======================
  *    Collection Users
  * ===================== */
