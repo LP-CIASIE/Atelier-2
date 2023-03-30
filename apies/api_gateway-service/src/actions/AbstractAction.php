@@ -70,8 +70,10 @@ abstract class AbstractAction
           'body' => json_encode($request->getParsedBody()),
         ]);
       }
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage(), $e->getCode());
+    } catch (\GuzzleHttp\Exception\RequestException $e) {
+      $response = new Response();
+      $response->getBody()->write($e->getResponse()->getBody()->getContents());
+      return $response->withStatus($e->getResponse()->getStatusCode());
     }
 
     $logger = $this->container->get('logger');
