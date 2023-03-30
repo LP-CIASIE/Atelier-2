@@ -4,11 +4,10 @@ namespace atelier\gateway\actions;
 
 use Psr\Container\ContainerInterface;
 
-use atelier\gateway\errors\exceptions\GuzzleException as GuzzleException;
 use Exception;
-use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Psr7\Response as ResponseSlim;
 
 abstract class AbstractAction
 {
@@ -72,8 +71,21 @@ abstract class AbstractAction
           'body' => json_encode($request->getParsedBody()),
         ]);
       }
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage(), $e->getCode());
+    } catch (\GuzzleHttp\Exception\RequestException $e) {
+      $response = new ResponseSlim();
+      $jsonDecode = json_decode($e->getResponse()->getBody()->getContents(), true);
+      // var_dump($jsonDecode);
+      // die();
+      $exceptionData = [
+        'code' => $jsonDecode['exception'][0]['code'] ?? 500,
+        'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
+      ];
+
+      $jsonExceptionData = json_encode($exceptionData, JSON_UNESCAPED_UNICODE);
+
+      $response->getBody()->write($jsonExceptionData);
+      $response = $response->withHeader('Content-Type', 'application/json');
+      return $response->withStatus($exceptionData['code']);
     }
 
     $logger = $this->container->get('logger');
