@@ -19,7 +19,7 @@ class UpdateUserAction extends AbstractAction
 
     // Changement des données de utilisateurs
     $userService = $this->container->get('service.user');
-    $userService->updateUser($user['uid'], $data);
+    $userService->updateUserById($user['uid'], $data);
 
     return FormatterAPI::formatResponse($request, $response, [], 204);
   }
