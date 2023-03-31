@@ -90,7 +90,14 @@ function on_submit() {
 
     API.post("/signup", body)
       .then((response) => {
-        router.push({ name: "signIn" })
+        Session.signIn(form).then((connection) => {
+          if (connection.ok) {
+            router.push({ name: "home" })
+          } else {
+            form.pending = false;
+            form.error_message = connection.message;
+          }
+        })
       })
       .catch((error) => {
         form.error_message = error.response.data.message;
