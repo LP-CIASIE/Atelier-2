@@ -10,7 +10,10 @@ class CreateLinkAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
+    $data = $this->parseBody($request);
+
     $linkService = $this->container->get('service.link');
+    $link = $linkService->createLinkByEventId($data, $args['id_event']);
 
     return $response;
   }
