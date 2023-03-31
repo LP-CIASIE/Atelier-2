@@ -28,6 +28,7 @@ final class SignInAction
         $tokenJWT = $tokenService->generateToken($user);
 
         $data = [
+            'id_user' => $user->id_user,
             'access-token' => $tokenJWT['access'],
             'refresh-token' => $tokenJWT['refresh_token'],
         ];

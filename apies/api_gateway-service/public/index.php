@@ -65,9 +65,6 @@ $app->get('/users/{id_user}[/]', atelier\gateway\actions\users\GetUserAction::cl
 
 $app->post('/users[/]', atelier\gateway\actions\users\CreateUserAction::class);
 
-// PUT
-$app->put('/users[/]', atelier\gateway\actions\users\UpdateUserAction::class)->add(new TokenMiddleware($container));
-
 // DELETE
 $app->delete('/users/{id_user}[/]', atelier\gateway\actions\users\DeleteUserAction::class)->add(new TokenMiddleware($container));
 
@@ -187,6 +184,11 @@ $app->delete('/comments/{id_comment}/medias/{id_media}[/]', atelier\gateway\acti
 /**
  * API Auth Service
  */
+
+// PUT
+$app->put('/users[/]', atelier\gateway\actions\auth\UpdateUserAction::class)->add(new TokenMiddleware($container));
+
+// POST
 $app->post('/signin[/]', atelier\gateway\actions\auth\SignInAction::class);
 $app->post('/signup[/]', atelier\gateway\actions\auth\SignUpAction::class);
 

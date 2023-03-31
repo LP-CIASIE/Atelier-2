@@ -90,7 +90,6 @@ class CommentService extends AbstractService
     try {
       $comments = $event->comments()->skip($data['size'] * ($data['page'] - 1))->take($data['size'])->get();
     } catch (\Exception $e) {
-      echo $e->getMessage();
       throw new \Exception('Erreur lors de la récupération des commentaires', 500);
     }
 

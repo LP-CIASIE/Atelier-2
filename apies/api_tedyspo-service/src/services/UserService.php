@@ -133,7 +133,7 @@ class UserService extends AbstractService
   public function createUser($data): User
   {
     $user = new User();
-    $user->id_user = \Ramsey\Uuid\Uuid::uuid4();
+    $user->id_user = $data['id_user'];
 
     try {
       v::email()->assert($data['email']);
@@ -167,7 +167,6 @@ class UserService extends AbstractService
     try {
       $user->save();
     } catch (\Exception $e) {
-      echo ($e->getMessage());
       throw new \Exception('Erreur lors de la création de l\'utilisateur', 500);
     }
 
