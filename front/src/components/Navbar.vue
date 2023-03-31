@@ -1,6 +1,11 @@
 <script setup>
 import Menubar from "primevue/menubar";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useSessionStore } from "@/stores/session.js";
+
+const router = useRouter();
+const Session = useSessionStore();
 
 const items = ref([
 	{
@@ -22,6 +27,10 @@ const items = ref([
 	{
 		label: "Disconnect",
 		icon: "pi pi-fw pi-power-off",
+		command: () => {
+			Session.signOut();
+			router.push({ name: "signIn" });
+		},
 	},
 ]);
 </script>
