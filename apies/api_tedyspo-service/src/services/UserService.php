@@ -76,6 +76,7 @@ class UserService extends AbstractService
   public function updateUserById($id, $data): void
   {
     $user = $this->getUserById($id);
+    $changed = false;
 
     if (isset($data['email'])) {
       try {
@@ -84,6 +85,7 @@ class UserService extends AbstractService
         throw new \InvalidArgumentException('Format de donnée pour l\'email est incorrect.', 400);
       }
       $user->email = $data['email'];
+      $changed = true;
     }
 
     if (isset($data['firstname'])) {
@@ -93,6 +95,7 @@ class UserService extends AbstractService
         throw new \InvalidArgumentException('Format de donnée pour le prénom est incorrect.', 400);
       }
       $user->firstname = $data['firstname'];
+      $changed = true;
     }
 
     if (isset($data['lastname'])) {
@@ -102,10 +105,15 @@ class UserService extends AbstractService
         throw new \InvalidArgumentException('Format de donnée pour le nom est incorrect.', 400);
       }
       $user->lastname = $data['lastname'];
+      $changed = true;
     }
 
     try {
-      $user->save();
+      if ($changed) {
+        $user->save();
+      } else {
+        throw new \Exception('Aucune donnée à mettre à jour', 400);
+      }
     } catch (\Exception $e) {
       throw new \Exception('Erreur lors de la mise à jour de l\'utilisateur', 500);
     }
@@ -134,7 +142,7 @@ class UserService extends AbstractService
     }
 
     if (User::where('email', $data['email'])->count() > 0) {
-      throw new \Exception('Email déjà utilisé', 400);
+      throw new \Exception('Email déjà utilisé', 409);
     }
 
     $user->email = $data['email'];

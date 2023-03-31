@@ -53,7 +53,7 @@ $app->add(function ($request, $handler) {
 /**
  * API Basic Route
  */
-$app->get('/', atelier\gateway\actions\HomeAction::class)->add(new TokenMiddleware($container));
+$app->get('/', atelier\gateway\actions\HomeAction::class);
 /** ======================
  *    Collection Users
  * ===================== */
@@ -63,10 +63,10 @@ $app->get('/users/{id_user}[/]', atelier\gateway\actions\users\GetUserAction::cl
 
 // POST
 
-$app->post('/users[/]', atelier\gateway\actions\users\CreateUserAction::class)->add(new TokenMiddleware($container));
+$app->post('/users[/]', atelier\gateway\actions\users\CreateUserAction::class);
 
 // PUT
-$app->put('/users/{id_user}[/]', atelier\gateway\actions\users\UpdateUserAction::class)->add(new TokenMiddleware($container));
+$app->put('/users[/]', atelier\gateway\actions\users\UpdateUserAction::class)->add(new TokenMiddleware($container));
 
 // DELETE
 $app->delete('/users/{id_user}[/]', atelier\gateway\actions\users\DeleteUserAction::class)->add(new TokenMiddleware($container));

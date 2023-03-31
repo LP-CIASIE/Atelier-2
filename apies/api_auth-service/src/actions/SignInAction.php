@@ -14,8 +14,12 @@ final class SignInAction
 {
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $body = $request->getBody();
-        $body = json_decode($body, true);
+        try {
+            $body = $request->getBody();
+            $body = json_decode($body, true);
+        } catch (\Exception $e) {
+            throw new \Exception('Aucune donnée reçu', 400);
+        }
 
         $userService = new UserService();
         $user = $userService->login($body);

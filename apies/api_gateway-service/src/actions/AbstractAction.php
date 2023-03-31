@@ -4,11 +4,10 @@ namespace atelier\gateway\actions;
 
 use Psr\Container\ContainerInterface;
 
-use atelier\gateway\errors\exceptions\GuzzleException as GuzzleException;
 use Exception;
-use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Psr7\Response as ResponseSlim;
 
 abstract class AbstractAction
 {
@@ -22,22 +21,17 @@ abstract class AbstractAction
   public function sendRequest(Request $request, Response $response, $route, $method = 'get')
   {
 
-    //Pas toujours ce client, il faut utiliser client.auth.service si c'est pour l'authentification
-    // TODO : Faire une condition qui va chercher le bon client en fonction de la route // DONE : voir plus bas
-
-
-    if ($route === '/signup' || $route === '/signin') {
-      $client = $this->container->get('client.auth.service');
-    } else {
-      $client = $this->container->get('client.tedyspo.service');
-    }
-
+    // Récupère le token
     $token = $request->getHeader('Authorization')[0] ?? '';
 
 
-    try {
-      if ($method === "post") {
-        $responseHTTP = $client->post($route, [
+    // récupère les clients Auth et Tedyspo
+    $clientAuth = $this->container->get('client.auth.service');
+    $clientTedyspo = $this->container->get('client.tedyspo.service');
+
+    if ($route === '/signup') {
+      try {
+        $responseHTTP = $clientAuth->post($route, [
           'query' => $request->getQueryParams(),
           'headers' => [
             'Authorization' => $token,
@@ -45,16 +39,7 @@ abstract class AbstractAction
           ],
           'body' => json_encode($request->getParsedBody()),
         ]);
-      } else if ($method === "get") {
-        $responseHTTP = $client->get($route, [
-          'query' => $request->getQueryParams(),
-          'headers' => [
-            'Authorization' => $token,
-            'Content-Type' => $this->container->get('content.type')
-          ],
-        ]);
-      } else if ($method === "put") {
-        $responseHTTP = $client->put($route, [
+        $responseHTTP = $clientTedyspo->post($route, [
           'query' => $request->getQueryParams(),
           'headers' => [
             'Authorization' => $token,
@@ -62,18 +47,136 @@ abstract class AbstractAction
           ],
           'body' => json_encode($request->getParsedBody()),
         ]);
-      } else if ($method === "delete") {
-        $responseHTTP = $client->delete($route, [
-          'query' => $request->getQueryParams(),
-          'headers' => [
-            'Authorization' => $token,
-            'Content-Type' => $this->container->get('content.type')
-          ],
-          'body' => json_encode($request->getParsedBody()),
-        ]);
+      } catch (\GuzzleHttp\Exception\RequestException $e) {
+        $response = new ResponseSlim();
+        $jsonDecode = json_decode($e->getResponse()->getBody()->getContents(), true);
+        // var_dump($jsonDecode);
+        // die();
+        $exceptionData = [
+          'code' => $jsonDecode['exception'][0]['code'] ?? 500,
+          'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
+        ];
+
+        $jsonExceptionData = json_encode($exceptionData, JSON_UNESCAPED_UNICODE);
+
+        $response->getBody()->write($jsonExceptionData);
+        $response = $response->withHeader('Content-Type', 'application/json');
+        return $response->withStatus($exceptionData['code']);
       }
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage(), $e->getCode());
+    } else if ($route === '/signin') {
+      try {
+        $responseHTTP = $clientAuth->post($route, [
+          'query' => $request->getQueryParams(),
+          'headers' => [
+            'Authorization' => $token,
+            'Content-Type' => $this->container->get('content.type')
+          ],
+          'body' => json_encode($request->getParsedBody()),
+        ]);
+      } catch (\GuzzleHttp\Exception\RequestException $e) {
+        $response = new ResponseSlim();
+        $jsonDecode = json_decode($e->getResponse()->getBody()->getContents(), true);
+        // var_dump($jsonDecode);
+        // die();
+        $exceptionData = [
+          'code' => $jsonDecode['exception'][0]['code'] ?? 500,
+          'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
+        ];
+
+        $jsonExceptionData = json_encode($exceptionData, JSON_UNESCAPED_UNICODE);
+
+        $response->getBody()->write($jsonExceptionData);
+        $response = $response->withHeader('Content-Type', 'application/json');
+        return $response->withStatus($exceptionData['code']);
+      }
+    } else if ($route === '/users' && $method === 'put') {
+      try {
+        $responseHTTP = $clientAuth->put($route, [
+          'query' => $request->getQueryParams(),
+          'headers' => [
+            'Authorization' => $token,
+            'Content-Type' => $this->container->get('content.type')
+          ],
+          'body' => json_encode($request->getParsedBody()),
+        ]);
+        $responseHTTP = $clientTedyspo->put($route, [
+          'query' => $request->getQueryParams(),
+          'headers' => [
+            'Authorization' => $token,
+            'Content-Type' => $this->container->get('content.type')
+          ],
+          'body' => json_encode($request->getParsedBody()),
+        ]);
+      } catch (\GuzzleHttp\Exception\RequestException $e) {
+        $response = new ResponseSlim();
+        $jsonDecode = json_decode($e->getResponse()->getBody()->getContents(), true);
+        // var_dump($jsonDecode);
+        // die();
+        $exceptionData = [
+          'code' => $jsonDecode['exception'][0]['code'] ?? 500,
+          'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
+        ];
+
+        $jsonExceptionData = json_encode($exceptionData, JSON_UNESCAPED_UNICODE);
+
+        $response->getBody()->write($jsonExceptionData);
+        $response = $response->withHeader('Content-Type', 'application/json');
+        return $response->withStatus($exceptionData['code']);
+      }
+    } else {
+      try {
+        if ($method === "post") {
+          $responseHTTP = $clientTedyspo->post($route, [
+            'query' => $request->getQueryParams(),
+            'headers' => [
+              'Authorization' => $token,
+              'Content-Type' => $this->container->get('content.type')
+            ],
+            'body' => json_encode($request->getParsedBody()),
+          ]);
+        } else if ($method === "get") {
+          $responseHTTP = $clientTedyspo->get($route, [
+            'query' => $request->getQueryParams(),
+            'headers' => [
+              'Authorization' => $token,
+              'Content-Type' => $this->container->get('content.type')
+            ],
+          ]);
+        } else if ($method === "put") {
+          $responseHTTP = $clientTedyspo->put($route, [
+            'query' => $request->getQueryParams(),
+            'headers' => [
+              'Authorization' => $token,
+              'Content-Type' => $this->container->get('content.type')
+            ],
+            'body' => json_encode($request->getParsedBody()),
+          ]);
+        } else if ($method === "delete") {
+          $responseHTTP = $clientTedyspo->delete($route, [
+            'query' => $request->getQueryParams(),
+            'headers' => [
+              'Authorization' => $token,
+              'Content-Type' => $this->container->get('content.type')
+            ],
+            'body' => json_encode($request->getParsedBody()),
+          ]);
+        }
+      } catch (\GuzzleHttp\Exception\RequestException $e) {
+        $response = new ResponseSlim();
+        $jsonDecode = json_decode($e->getResponse()->getBody()->getContents(), true);
+        // var_dump($jsonDecode);
+        // die();
+        $exceptionData = [
+          'code' => $jsonDecode['exception'][0]['code'] ?? 500,
+          'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
+        ];
+
+        $jsonExceptionData = json_encode($exceptionData, JSON_UNESCAPED_UNICODE);
+
+        $response->getBody()->write($jsonExceptionData);
+        $response = $response->withHeader('Content-Type', 'application/json');
+        return $response->withStatus($exceptionData['code']);
+      }
     }
 
     $logger = $this->container->get('logger');
