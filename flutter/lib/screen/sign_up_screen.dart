@@ -2,9 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
-import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
-import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -24,7 +21,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final _passwordConfirmController = TextEditingController();
 
   Future<void> _submitForm(context) async {
-    print('GO');
     setState(() {
       formPending = true;
       errorMessage = '';
@@ -51,7 +47,9 @@ class _SignUpPageState extends State<SignUpPage> {
 
         if (response.containsKey('code')) {
           setState(() {
-            errorMessage = response['message'];
+            print('u');
+            errorMessage = utf8.decode(response['message'].codeUnits);
+            print('v');
             formPending = true;
           });
         } else {
@@ -199,7 +197,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: Text(
                         errorMessage,
                         textAlign: TextAlign.start,
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   ),

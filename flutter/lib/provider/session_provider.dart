@@ -30,7 +30,7 @@ class SessionProvider extends ChangeNotifier {
       if (response.containsKey('code')) {
         return {
           "ok": false,
-          "message": response['message'],
+          "message": utf8.decode(response['message'].codeUnits),
         };
       } else {
         _user = User(
