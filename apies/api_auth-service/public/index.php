@@ -14,7 +14,7 @@ require_once "../vendor/autoload.php";
 /** ========================
  * Création de Eloquent
  * ====================== */
-$conf = parse_ini_file(__DIR__ . '/../conf/auth.db.ini.env');
+$conf = parse_ini_file(__DIR__ . '/../conf/auth.db.ini.dist');
 
 $capsule = new Capsule;
 $capsule->addConnection($conf);
@@ -47,10 +47,6 @@ $app->get('/', function (Request $request, Response $response, $args) {
 
   return $response;
 });
-
-$app->post('/events[/]', atelier\auth\actions\Event::class);
-
-
 
 $app->post('/signin[/]', atelier\auth\actions\SignInAction::class);
 $app->post('/signup[/]', atelier\auth\actions\SignUpAction::class);

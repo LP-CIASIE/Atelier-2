@@ -1,3 +1,5 @@
+
+
 <?php
 
 namespace atelier\gateway\actions;
@@ -18,21 +20,19 @@ abstract class AbstractAction
     $this->container = $container;
   }
 
-  public function sendRequest(Request $request, Response $response, $route, $method = 'get')
+  public function sendRequest(Request $request, Response $response, $route, $method = 'get', $serveur = 'tedyspo')
   {
 
-    //Pas toujours ce client, il faut utiliser client.auth.service si c'est pour l'authentification
-    // TODO : Faire une condition qui va chercher le bon client en fonction de la route // DONE : voir plus bas
-
-
-    if ($route === '/signup' || $route === '/signin') {
-      $client = $this->container->get('client.auth.service');
-    } else {
-      $client = $this->container->get('client.tedyspo.service');
-    }
-
+    // Récupère le token
     $token = $request->getHeader('Authorization')[0] ?? '';
 
+
+    // récupère le client nécessaire
+    if ($serveur === 'tedyspo') {
+      $client = $this->container->get('client.tedyspo.service');
+    } else if ($serveur === 'auth') {
+      $client = $this->container->get('client.auth.service');
+    }
 
     try {
       if ($method === "post") {

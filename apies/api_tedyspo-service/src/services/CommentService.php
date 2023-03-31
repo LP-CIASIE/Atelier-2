@@ -10,6 +10,17 @@ use Respect\Validation\Validator as v;
 
 class CommentService extends AbstractService
 {
+  public function getCount($id_event)
+  {
+    try {
+      $event = Event::findOrFail($id_event);
+    } catch (\Exception $e) {
+      throw new \Exception('Cette événement n\'existe pas', 404);
+    }
+
+    return $event->comments()->count();
+  }
+
   public function createComment($data, $id_user, $id_event): Comment
   {
     try {
@@ -46,7 +57,7 @@ class CommentService extends AbstractService
     return $comment;
   }
 
-  public function getComments($id_event): Collection
+  public function getComments($id_event, $data): Collection
   {
     try {
       $event = Event::findOrFail($id_event);
@@ -54,8 +65,30 @@ class CommentService extends AbstractService
       throw new \Exception('Cette événement n\'existe pas ou plus', 404);
     }
 
+    if (isset($data['page'])) {
+      try {
+        v::key('page', v::intVal()->positive())
+          ->assert($data);
+      } catch (\Exception $e) {
+        throw new \Exception('Données pour la pagination invalides', 400);
+      }
+    } else {
+      $data['page'] = 1;
+    }
+
+    if (isset($data['size'])) {
+      try {
+        v::key('size', v::intVal()->positive())
+          ->assert($data);
+      } catch (\Exception $e) {
+        throw new \Exception('Données pour la pagination invalides', 400);
+      }
+    } else {
+      $data['size'] = 10;
+    }
+
     try {
-      $comments = $event->comments()->get();
+      $comments = $event->comments()->skip($data['size'] * ($data['page'] - 1))->take($data['size'])->get();
     } catch (\Exception $e) {
       throw new \Exception('Erreur lors de la récupération des commentaires', 500);
     }
@@ -74,8 +107,10 @@ class CommentService extends AbstractService
     return $comment;
   }
 
-  public function updateCommentById($id_comment, $body): Comment
+  public function updateComment($id_comment, $id_user,  $body): Comment
   {
+    $this->isOwner($id_comment, $id_user);
+
     try {
       $comment = Comment::findOrFail($id_comment);
     } catch (\Exception $e) {
@@ -100,7 +135,18 @@ class CommentService extends AbstractService
     return $comment;
   }
 
-  public function deleteComment($id_comment): void
+  public function deleteComment($id_comment, $id_user): void
+  {
+    $comment = $this->isOwner($id_comment, $id_user);
+
+    try {
+      $comment->delete();
+    } catch (\Exception $e) {
+      throw new \Exception('Erreur lors de la suppression du commentaire', 500);
+    }
+  }
+
+  public function isOwner($id_comment, $id_user): Comment
   {
     try {
       $comment = Comment::findOrFail($id_comment);
@@ -108,10 +154,10 @@ class CommentService extends AbstractService
       throw new \Exception('Ce commentaire n\'existe pas ou plus', 404);
     }
 
-    try {
-      $comment->delete();
-    } catch (\Exception $e) {
-      throw new \Exception('Erreur lors de la suppression du commentaire', 500);
+    if ($comment->id_user != $id_user) {
+      throw new \Exception('Vous n\'êtes pas le propriétaire de ce commentaire', 403);
     }
+
+    return $comment;
   }
 }

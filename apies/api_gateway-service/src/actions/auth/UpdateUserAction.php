@@ -1,6 +1,6 @@
 <?php
 
-namespace atelier\gateway\actions\users;
+namespace atelier\gateway\actions\auth;
 
 use atelier\gateway\actions\AbstractAction;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -10,6 +10,7 @@ class UpdateUserAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    return $this->sendRequest($request, $response, '/users', 'put');
+    $this->sendRequest($request, $response, '/users', 'put', 'auth');
+    return $this->sendRequest($request, $response, '/users', 'put', 'tedyspo');
   }
 }
