@@ -86,6 +86,7 @@ class _SignInPageState extends State<SignInPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: TextFormField(
+                      obscureText: true,
                       controller: _passwordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -106,6 +107,7 @@ class _SignInPageState extends State<SignInPage> {
                       child: Text(
                         errorMessage,
                         textAlign: TextAlign.start,
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   ),
