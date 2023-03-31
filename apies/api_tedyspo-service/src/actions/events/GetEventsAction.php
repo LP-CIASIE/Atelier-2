@@ -12,9 +12,7 @@ class GetEventsAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    $test = $this->parseJWT($request);
-    var_dump($test);
-    die();
+    $user = $this->parseJWT($request);
     $params = $request->getQueryParams();
 
     $page = $params['page'] ?? 1;
@@ -22,7 +20,7 @@ class GetEventsAction extends AbstractAction
 
     $eventService = $this->container->get('service.event');
     $events = $eventService->getEvents($params);
-    $count = $eventService->getCount();
+    $count = $eventService->getCount($user['uid']);
 
     $data = FormatterAPI::formatPagination($request, 'get_users', $page, $params, $count, $size);
     $data['events'] = FormatterObject::Users($events);   
