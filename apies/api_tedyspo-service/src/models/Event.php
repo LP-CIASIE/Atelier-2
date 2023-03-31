@@ -36,4 +36,9 @@ class Event extends Model
   {
     return $this->belongsToMany(Event::class, 'event_event', 'id_additional_event', 'id_main_event');
   }
+
+  public function getOwner(): User
+  {
+    return $this->users()->wherePivot('is_organisator', 1)->first();
+  }
 }

@@ -2,8 +2,10 @@
 
 namespace atelier\tedyspo\services\utils;
 
+use atelier\tedyspo\models\Comment;
 use atelier\tedyspo\models\User;
-use atelier\tedyspo\models\Event;
+use Illuminate\Database\Eloquent\Collection;
+
 class FormatterObject
 {
   public static function User(User $user)
@@ -33,28 +35,31 @@ class FormatterObject
     return $usersArray;
   }
 
-  public static function Event(Event $event)
+  public static function Comment(Comment $comment)
   {
     return [
-      'id_event' => $event->id_event,
-      'title' => $event->title,
-      'description' => $event->description,
-      'date' => $event->date,
+      'id' => $comment->id_comment,
+      'comment' => $comment->comment,
       'links' => [
         'self' => [
-          'href' => '/events/' . $event->id_event
+          'href' => '/comments/' . $comment->id_comment
+        ],
+        'user' => [
+          'href' => '/users/' . $comment->id_user
+        ],
+        'event' => [
+          'href' => '/events/' . $comment->id_event
         ],
       ]
     ];
   }
 
-  public static function Events($events)
+  public static function Comments(Collection $comments)
   {
-    $eventsArray = [];
-    foreach ($events as $event) {
-      $eventsArray[] = self::Event($event);
+    $commentsArray = [];
+    foreach ($comments as $comment) {
+      $commentsArray[] = self::Comment($comment);
     }
-    return $eventsArray;
+    return $commentsArray;
   }
-
 }
