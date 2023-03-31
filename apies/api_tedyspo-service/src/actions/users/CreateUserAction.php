@@ -12,7 +12,9 @@ class CreateUserAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    $data = $this->parseBody($request);
+
+    $data = $request->getParsedBody();
+    $data['id_user'] = $args['id_user'];
 
     $userService = $this->container->get('service.user');
     $user = $userService->createUser($data);

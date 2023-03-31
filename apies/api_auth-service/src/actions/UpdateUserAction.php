@@ -1,6 +1,6 @@
 <?php
 
-namespace atelier\auth\actions\users;
+namespace atelier\auth\actions;
 
 use atelier\auth\services\TokenService;
 use atelier\auth\services\UserService;

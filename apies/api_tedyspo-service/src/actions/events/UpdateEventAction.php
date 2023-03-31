@@ -2,7 +2,6 @@
 
 namespace atelier\tedyspo\actions\events;
 
-use atelier\auth\services\utils\FormatterAPI;
 use atelier\tedyspo\actions\AbstractAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
