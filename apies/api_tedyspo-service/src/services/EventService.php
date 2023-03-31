@@ -165,21 +165,6 @@ class EventService extends AbstractService
         return $event;
     }
 
-    final public function createUserEvent($id_user, $id_event)
-    {
-        if ($id_user == null || $id_event == null) {
-            throw new \Exception("Erreur lors de la création de l'évènement", 400);
-        } else {
-            try {
-                $event = Event::find($id_event);
-                $user = User::find($id_user);
-                $event->users()->attach($id_user, ['id_user' => $id_user, 'id_event' => $id_event, 'is_organisator' => false, 'state' => 'pending', 'is_here' => false, 'comment' => 'En attente de validation par l\'utilisateur']);
-            } catch (\Exception $e) {
-                throw new \Exception("Erreur lors de la création de l'évènement", 400);
-            }
-        }
-        return $event;
-    }
     public function getCount($id_user): int
     {
         try {

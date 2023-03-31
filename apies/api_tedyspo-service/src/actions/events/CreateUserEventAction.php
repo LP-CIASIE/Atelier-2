@@ -11,13 +11,15 @@ class CreateUserEventAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    $eventService = $this->container->get('service.event');
+    $InvitationService = $this->container->get('service.invitation');
 
     $id_user = $args['id_user'];
     $id_event = $args['id_event'];
 
-    $response = $eventService->createUserEvent($id_user, $id_event);
+    $event = $InvitationService->createUserEvent($id_user, $id_event);
 
-    return FormatterAPI::formatResponse($request, $response, [], 204);
+    $data['events'] = $event;
+
+    return FormatterAPI::formatResponse($request, $response, $data, 204);
   }
 }
