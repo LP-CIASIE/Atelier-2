@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 import 'package:provider/provider.dart';
@@ -21,10 +24,49 @@ class _SignUpPageState extends State<SignUpPage> {
   final _passwordConfirmController = TextEditingController();
 
   Future<void> _submitForm(context) async {
+    print('GO');
     setState(() {
       formPending = true;
       errorMessage = '';
     });
+
+    Map bodyHttp = {
+      'email': _emailController.text,
+      'lastname': _lastnameController.text,
+      'firstname': _firstnameController.text,
+      'password': _passwordController.text,
+      'role': 'user'
+    };
+    try {
+      dynamic responseHttp = await http.post(
+        Uri.parse('http://gateway.atelier.local:8000/signup'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodyHttp),
+      );
+
+      if (!responseHttp.body.isEmpty) {
+        Map<String, dynamic> response = jsonDecode(responseHttp.body);
+
+        if (response.containsKey('code')) {
+          setState(() {
+            errorMessage = response['message'];
+            formPending = true;
+          });
+        } else {
+          print('OK');
+        }
+      } else {
+        print('OK');
+      }
+    } catch (error) {
+      setState(() {
+        errorMessage =
+            'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer';
+        formPending = true;
+      });
+    }
     // Map<String, dynamic> connection =
     //     await Provider.of<SessionProvider>(context, listen: false)
     //         .signUp(_emailController.text, _passwordController.text);

@@ -14,7 +14,7 @@ class SessionProvider extends ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> signIn(String email, String password) async {
-    Map user = {
+    Map bodyHttp = {
       'email': email,
       'password': password,
     };
@@ -24,7 +24,7 @@ class SessionProvider extends ChangeNotifier {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(user),
+        body: jsonEncode(bodyHttp),
       );
       Map<String, dynamic> response = jsonDecode(responseHttp.body);
       if (response.containsKey('code')) {
