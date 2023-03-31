@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 import 'package:provider/provider.dart';
@@ -47,93 +44,92 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Se connecter")),
-      body: Column(children: [
-        Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Text(errorMessage),
-                TextFormField(
-                  controller: _emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre adresse e-mail';
-                    }
-                    return null;
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Adresse e-mail',
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                      textAlign: TextAlign.start,
+                      'Connexion',
+                      style: TextStyle(fontSize: 19.6),
+                    ),
                   ),
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre mot de passe';
-                    }
-                    return null;
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Mot de passe',
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: TextFormField(
+                      controller: _emailController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email non renseignée';
+                        }
+                        final regex = RegExp(
+                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+                        if (!regex.hasMatch(value)) {
+                          return 'Email invalide';
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Email',
+                      ),
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      final BuildContext context = this.context;
-                      _submitForm(context);
-                    }
-                  },
-                  child: const Text("Se connecter"),
-                ),
-              ],
-            )),
-        // TextButton(
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => const SignUpScreen()),
-        //     );
-        //   },
-        //   child: const Text("S'inscrire"),
-        // ),
-        Consumer<SessionProvider>(builder: (context, model, child) {
-          return TextButton(
-            onPressed: () async {
-              setState(() {
-                errorMessage = "Opération en cours de traitement...";
-              });
-              final body = {
-                'refresh_token': model.user.refreshToken,
-              };
-              final response = await http.post(
-                Uri.parse('https://fruits.shrp.dev/auth/logout'),
-                headers: <String, String>{
-                  'Content-Type': 'application/json; charset=UTF-8',
-                },
-                body: jsonEncode(body),
-              );
-              if (response.statusCode == 204) {
-                setState(() {
-                  errorMessage = "Déconnexion réussie";
-                });
-              } else {
-                setState(() {
-                  errorMessage =
-                      "Un problème est survenu lors de la déconnexion";
-                });
-                // Erreur lors de l'envoi des données
-              }
-            },
-            child: const Text(
-              "Se déconnecter",
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: TextFormField(
+                      controller: _passwordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Mot de passe non renseigné';
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Mot de passe',
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: errorMessage != '',
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        errorMessage,
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            final BuildContext context = this.context;
+                            _submitForm(context);
+                          }
+                        },
+                        child: const Text("Se connecter"),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          );
-        }),
-      ]),
+          )
+        ],
+      ),
     );
   }
 }

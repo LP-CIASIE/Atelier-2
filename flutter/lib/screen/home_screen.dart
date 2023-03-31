@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
-import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/sign_in_screen.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
