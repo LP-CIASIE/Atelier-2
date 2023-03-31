@@ -12,6 +12,6 @@ final class SignInAction extends AbstractAction
     Request $request,
     Response $response
   ) {
-    return $this->sendRequest($request, $response, '/signin', 'post');
+    return $this->sendRequest($request, $response, '/signin', 'post', 'auth');
   }
 }

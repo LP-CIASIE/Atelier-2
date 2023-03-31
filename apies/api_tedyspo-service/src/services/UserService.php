@@ -133,7 +133,7 @@ class UserService extends AbstractService
   public function createUser($data): User
   {
     $user = new User();
-    $user->id_user = \Ramsey\Uuid\Uuid::uuid4();
+    $user->id_user = $data['id_user'];
 
     try {
       v::email()->assert($data['email']);
