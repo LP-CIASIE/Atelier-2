@@ -115,13 +115,13 @@ class EventService extends AbstractService
 
     final public function deleteEvent($id)
     {
+        $event = $this->getEventById($id);
+
         try {
-            $event = Event::find($id);
             $event->delete();
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la suppression d'un évènement", 400);
         }
-        return $event;
     }
 
     final public function updateEvent($id_event, $data)
