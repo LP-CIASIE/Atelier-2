@@ -23,7 +23,7 @@ class GetEventsAction extends AbstractAction
     $count = $eventService->getCount($user['uid']);
 
     $data = FormatterAPI::formatPagination($request, 'get_users', $page, $params, $count, $size);
-    $data['events'] = FormatterObject::Users($events);   
+    $data['events'] = FormatterObject::Users($events);
     return FormatterAPI::formatResponse($request, $response, $data);
   }
 }

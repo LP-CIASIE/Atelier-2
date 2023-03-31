@@ -147,13 +147,12 @@ class EventService extends AbstractService
 
     public function getCount($id_user): int
     {
-      try {
-        $user = User::findOrFail($id_user);
-      } catch (\Exception $e)
-      {
-        throw new \Exception('Utilisateur introuvable', 404);
-      }
-    
-      return $user->events()->count(); 
+        try {
+            $user = User::findOrFail($id_user);
+        } catch (\Exception $e) {
+            throw new \Exception('Utilisateur introuvable', 404);
+        }
+
+        return $user->events()->count();
     }
 }

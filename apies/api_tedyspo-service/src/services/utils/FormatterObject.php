@@ -42,9 +42,6 @@ class FormatterObject
       'id' => $comment->id_comment,
       'comment' => $comment->comment,
       'links' => [
-        'self' => [
-          'href' => '/comments/' . $comment->id_comment
-        ],
         'user' => [
           'href' => '/users/' . $comment->id_user
         ],

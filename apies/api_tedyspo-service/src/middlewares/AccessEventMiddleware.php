@@ -23,7 +23,7 @@ class AccessEventMiddleware extends AbstractMiddleware
 
     $event = $this->getEvent($request);
 
-    $participant = $event->users()->where('id_user', $user['uid'])->withPivot('state')->first();
+    $participant = $event->users()->where('event_user.id_user', $user['uid'])->withPivot('state')->first();
 
     if ($participant) {
       return $participant->pivot->state == "accepted";
@@ -56,8 +56,8 @@ class AccessEventMiddleware extends AbstractMiddleware
   public function getEvent(Request $request): Event
   {
     // Get id of the event
-    $route = $request->getAttribute('route');
-    $id_event = $route->getArgument('id_event');
+    $routeArguments = \Slim\Routing\RouteContext::fromRequest($request)->getRoute()->getArguments();
+    $id_event = $routeArguments['id_event'];
 
     // Get event
     $eventService = $this->container->get('service.event');

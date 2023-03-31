@@ -22,21 +22,25 @@ class FormatterAPI
   {
     $routeParser = RouteContext::fromRequest($rq)->getRouteParser();
 
+    $args = \Slim\Routing\RouteContext::fromRequest($rq)->getRoute()->getArguments();
+
+
     $data = [
       'count' => $count,
       'links' => [
-        'self' => $routeParser->urlFor($nameRoute, [], array_merge($parameters, ['page' => $actualPagination, 'size' => $size])),
-        'first' => $routeParser->urlFor($nameRoute, [], array_merge($parameters, ['page' => 1, 'size' => $size])),
-        'last' => $routeParser->urlFor($nameRoute, [], array_merge($parameters, ['page' => (ceil($count / $size) > 0 ? ceil($count / $size) : 1), 'size' => $size])),
+        'self' => $routeParser->urlFor($nameRoute, $args, array_merge($parameters, ['page' => $actualPagination, 'size' => $size])),
+        'first' => $routeParser->urlFor($nameRoute, $args, array_merge($parameters, ['page' => 1, 'size' => $size])),
+        'last' => $routeParser->urlFor($nameRoute, $args, array_merge($parameters, ['page' => (ceil($count / $size) > 0 ? ceil($count / $size) : 1), 'size' => $size])),
       ],
     ];
 
+
     if ($actualPagination > 1) {
-      $data['links']['prev'] = $routeParser->urlFor($nameRoute, [], array_merge($parameters, ['page' => $actualPagination - 1, 'size' => $size]));
+      $data['links']['prev'] = $routeParser->urlFor($nameRoute, $args, array_merge($parameters, ['page' => $actualPagination - 1, 'size' => $size]));
     }
 
     if ($actualPagination < ceil($count / $size)) {
-      $data['links']['next'] = $routeParser->urlFor($nameRoute, [], array_merge($parameters, ['page' => $actualPagination + 1, 'size' => $size]));
+      $data['links']['next'] = $routeParser->urlFor($nameRoute, $args, array_merge($parameters, ['page' => $actualPagination + 1, 'size' => $size]));
     }
 
 
