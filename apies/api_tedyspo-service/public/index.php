@@ -5,12 +5,13 @@ declare(strict_types=1);
 use Slim\Factory\AppFactory;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once dirname(__DIR__, 1) . '/vendor/autoload.php';
 
 /** ========================
  * Création de Eloquent
  * ====================== */
-$conf = parse_ini_file(__DIR__ . '/../conf/tedyspo.db.ini.env');
+
+$conf = parse_ini_file(dirname(__DIR__, 1) . '/conf/tedyspo.db.ini.dist');
 
 $capsule = new Capsule;
 $capsule->addConnection($conf);
@@ -61,7 +62,7 @@ $app->get('/users[/]', atelier\tedyspo\actions\users\GetUsersAction::class)->set
 $app->get('/users/{id_user}[/]', atelier\tedyspo\actions\users\GetUserAction::class)->setName('get_user');
 
 // POST
-$app->post('/signup/{id_user}[/]', atelier\tedyspo\actions\users\CreateUserAction::class)->setName('create_user');
+$app->post('/signup[/]', atelier\tedyspo\actions\users\CreateUserAction::class)->setName('create_user');
 
 // PUT
 $app->put('/users[/]', atelier\tedyspo\actions\users\UpdateUserAction::class)->setName('update_user');
@@ -118,69 +119,13 @@ $app->get('/events/{id_event}/users/{id_user}[/]', atelier\tedyspo\actions\event
 // POST
 $app->post('/events/{id_event}/users/{id_user}[/]', atelier\tedyspo\actions\events\CreateUserEventAction::class)->setName('create_event_user');
 
-// PUT
-$app->put('/events/{id_event}/users/{id_user}[/]', atelier\tedyspo\actions\events\UpdateUserEventAction::class)->setName('update_event_user');
+/** ========================
+ * Création des routes
+ * ====================== */
+require dirname(__DIR__, 1) . '/src/routes/routes.php';
 
-// DELETE
-$app->delete('/events/{id_event}/users/{id_user}[/]', atelier\tedyspo\actions\events\DeleteUserEventAction::class)->setName('delete_event_user');
 
-// Collection Commentaires
-// GET
-$app->get('/events/{id_event}/comments[/]', atelier\tedyspo\actions\comments\GetCommentsAction::class)->setName('get_comments');
-$app->get('/events/{id_event}/comments/{id_comment}[/]', atelier\tedyspo\actions\comments\GetCommentAction::class)->setName('get_comment');
-
-// POST
-$app->post('/events/{id_event}/comments[/]', atelier\tedyspo\actions\comments\CreateCommentAction::class)->setName('create_comment');
-
-// PUT
-$app->put('/events/{id_event}/comments/{id_comment}[/]', atelier\tedyspo\actions\comments\UpdateCommentAction::class)->setName('update_comment');
-
-// DELETE
-$app->delete('/events/{id_event}/comments/{id_comment}[/]', atelier\tedyspo\actions\comments\DeleteCommentAction::class)->setName('delete_comment');
-
-// Collection Links
-// GET
-$app->get('/events/{id_event}/links[/]', atelier\tedyspo\actions\links\GetLinksAction::class)->setName('get_links');
-$app->get('/events/{id_event}/links/{id_link}[/]', atelier\tedyspo\actions\links\GetLinkAction::class)->setName('get_link');
-
-// POST
-$app->post('/events/{id_event}/links[/]', atelier\tedyspo\actions\links\CreateLinkAction::class)->setName('create_link');
-
-// PUT
-$app->put('/events/{id_event}/links/{id_link}[/]', atelier\tedyspo\actions\links\UpdateLinkAction::class)->setName('update_link');
-
-// DELETE
-$app->delete('/events/{id_event}/links/{id_link}[/]', atelier\tedyspo\actions\links\DeleteLinkAction::class)->setName('delete_link');
-
-// Collection locations
-// GET
-$app->get('/events/{id_event}/locations[/]', atelier\tedyspo\actions\locations\GetLocationsAction::class)->setName('get_locations');
-$app->get('/events/{id_event}/locations/{id_location}[/]', atelier\tedyspo\actions\locations\GetLocationAction::class)->setName('get_location');
-
-// POST
-$app->post('/events/{id_event}/locations[/]', atelier\tedyspo\actions\locations\CreateLocationAction::class)->setName('create_location');
-
-// PUT
-$app->put('/events/{id_event}/locations/{id_location}[/]', atelier\tedyspo\actions\locations\UpdateLocationAction::class)->setName('update_location');
-
-// DELETE
-$app->delete('/events/{id_event}/locations/{id_location}[/]', atelier\tedyspo\actions\locations\DeleteLocationAction::class)->setName('delete_location');
-
-/** ============================
- *    Collection Medias
- * ========================== */
-// GET
-
-$app->get('/comments/{id_comment}/medias[/]', atelier\tedyspo\actions\medias\GetCommentMediasAction::class)->setName('get_comment_medias');
-$app->get('/comments/{id_comment}/medias/{id_media}[/]', atelier\tedyspo\actions\medias\GetCommentMediaAction::class)->setName('get_comment_media');
-
-// POST
-$app->post('/comments/{id_comment}/medias[/]', atelier\tedyspo\actions\medias\CreateCommentMediaAction::class)->setName('create_comment_media');
-
-// PUT
-$app->put('/comments/{id_comment}/medias/{id_media}[/]', atelier\tedyspo\actions\medias\UpdateCommentMediaAction::class)->setName('update_comment_media');
-
-// DELETE
-$app->delete('/comments/{id_comment}/medias/{id_media}[/]', atelier\tedyspo\actions\medias\DeleteCommentMediaAction::class)->setName('delete_comment_media');
-
+/** ========================
+ * Lancement de l'application
+ * ====================== */
 $app->run();

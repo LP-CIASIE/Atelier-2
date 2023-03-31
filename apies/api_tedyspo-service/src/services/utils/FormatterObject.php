@@ -2,7 +2,9 @@
 
 namespace atelier\tedyspo\services\utils;
 
+use atelier\tedyspo\models\Comment;
 use atelier\tedyspo\models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class FormatterObject
 {
@@ -31,5 +33,30 @@ class FormatterObject
       $usersArray[] = self::User($user);
     }
     return $usersArray;
+  }
+
+  public static function Comment(Comment $comment)
+  {
+    return [
+      'id' => $comment->id_comment,
+      'comment' => $comment->comment,
+      'links' => [
+        'user' => [
+          'href' => '/users/' . $comment->id_user
+        ],
+        'event' => [
+          'href' => '/events/' . $comment->id_event
+        ],
+      ]
+    ];
+  }
+
+  public static function Comments(Collection $comments)
+  {
+    $commentsArray = [];
+    foreach ($comments as $comment) {
+      $commentsArray[] = self::Comment($comment);
+    }
+    return $commentsArray;
   }
 }
