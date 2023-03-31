@@ -4,9 +4,8 @@ namespace atelier\tedyspo\services;
 
 use Ramsey\Uuid\Uuid;
 use atelier\tedyspo\models\Event;
+use atelier\tedyspo\models\User;
 use Carbon\Carbon;
-use Illuminate\Database\DBAL\TimestampType;
-use Illuminate\Database\Eloquent\Collection;
 use Respect\Validation\Validator as v;
 
 class EventService extends AbstractService
@@ -98,8 +97,6 @@ class EventService extends AbstractService
 
     final public function deleteEvent($id)
     {
-
-
         try {
             $event = Event::find($id);
             $event->delete();
@@ -141,6 +138,22 @@ class EventService extends AbstractService
             throw new \Exception("Erreur lors de la sauvegarde de l'évènement", 400);
         }
 
+        return $event;
+    }
+
+    final public function createUserEvent($id_user, $id_event)
+    {
+        if ($id_user == null || $id_event == null) {
+            throw new \Exception("Erreur lors de la création de l'évènement", 400);
+        } else {
+            try {
+                $event = Event::find($id_event);
+                $user = User::find($id_user);
+                $event->users()->attach($id_user, ['id_user' => $id_user, 'id_event' => $id_event, 'is_organisator' => false, 'state' => 'pending', 'is_here' => false, 'comment' => 'En attente de validation par l\'utilisateur']);
+            } catch (\Exception $e) {
+                throw new \Exception("Erreur lors de la création de l'évènement", 400);
+            }
+        }
         return $event;
     }
 }
