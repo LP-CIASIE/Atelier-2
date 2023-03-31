@@ -22,6 +22,6 @@ class User extends Model
 
   public function events()
   {
-    return $this->belongsToMany(UserTedyspo::class, 'event_user', 'id_user', 'id_event');
+    return $this->belongsToMany(Event::class, 'event_user', 'id_user', 'id_event');
   }
 }

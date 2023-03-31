@@ -63,7 +63,6 @@ class AccessEventMiddleware extends AbstractMiddleware
     $eventService = $this->container->get('service.event');
     $event = $eventService->getEventById($id_event);
 
-
     return $event;
   }
 }

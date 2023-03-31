@@ -5,38 +5,48 @@ namespace atelier\tedyspo\services;
 use Ramsey\Uuid\Uuid;
 use atelier\tedyspo\models\Event;
 use Carbon\Carbon;
-use Illuminate\Database\DBAL\TimestampType;
 use Illuminate\Database\Eloquent\Collection;
 use Respect\Validation\Validator as v;
+use atelier\tedyspo\models\User;
 
 class EventService extends AbstractService
 {
-    final public function getEvents($params)
+    final public function getEvents($id_user, $params)
     {
-        $page = $parameters['page'] ?? 1;
-        $size = $parameters['size'] ?? 10;
-        $email = $parameters['email'] ?? '';
 
-        try {
-            v::intVal()->min(1)->assert($size);
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException('Format de donnée pour la taille est incorrect.', 400);
-        }
-        try {
-            v::intVal()->min(1)->assert($page);
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException('Format de donnée pour la page est incorrect.', 400);
+        if (isset($params['size'])) {
+            try {
+                v::key('size', v::intVal()->positive())->assert($params);
+            } catch (\Exception $e) {
+                throw new \Exception('Données pour la pagination invalides', 400);
+            }
+        } else {
+            $params['size'] = 10;
         }
 
+        if (isset($params['page'])) {
+            try {
+                v::key('page', v::intVal()->positive())->assert($params);
+            } catch (\Exception $e) {
+                throw new \Exception('Données pour la pagination invalides', 400);
+            }
+        } else {
+            $params['page'] = 1;
+        }
+
+        $userService = $this->container->get('service.user');
+
+        $user = $userService->getUserById($id_user);
+
         try {
-
-
-            $event = Event::all()
-                ->orderBy('email', 'desc')
-                ->skip(($page - 1) * $size)
-                ->take($size);
+            $event = $user->events()
+                ->orderBy('event.date', 'desc')
+                ->skip(($params['page'] - 1) * $params['size'])
+                ->take($params['size'])
+                ->get();
         } catch (\Exception $e) {
-            throw new \Exception('Erreur lors de la récupérations de tout les évenements', 400);
+            echo ($e->getMessage());
+            throw new \Exception('Erreur lors de la récupérations de tout les évenements', 500);
         }
 
         return $event;
@@ -44,96 +54,108 @@ class EventService extends AbstractService
     final public function getEventById($id)
     {
         try {
+            v::uuid()->assert($id);
+        } catch (\Exception $e) {
+            throw new \Exception("Format de l'id de l'événement incorrect", 400);
+        }
+
+        try {
             $event = Event::findOrFail($id);
         } catch (\Exception $e) {
-            throw new \Exception("Erreur lors de la récupérations d'un évènement", 400);
+            throw new \Exception("L'événement n'éxiste pas ou plus.", 404);
         }
 
         return  $event;
     }
 
-    final public function createEvent($data)
+    final public function createEvent($id_user, $data)
     {
         $event = new Event();
         $event->id_event = Uuid::uuid4();
 
-
+        $userService = $this->container->get('service.user');
+        $user = $userService->getUserById($id_user);
 
         try {
-
-            v::stringType()->length(3, 100)->assert($data['title']);
+            v::stringType()->length(3, 80)->assert($data['title']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création du titre", 400);
         }
         $event->title = $data['title'];
 
         try {
-            v::stringType()->length(3, 100)->assert($data['description']);
+            v::stringType()->length(3, 1000)->assert($data['description']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la description", 400);
         }
         $event->description = $data['description'];
 
         try {
-            v::stringType()->length(3, 100)->assert($data['date']);
+            v::intVal()->assert($data['date']);
+            $event->date = Carbon::createFromTimestamp($data['date']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la date", 400);
         }
-        $event->date = Carbon::now()->tz('Europe/Amsterdam');
 
         try {
-            v::boolType()->assert($data['is_public']);
+            v::intVal()->length(1, 1)->assert($data['is_public']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la visibilité", 400);
         }
         $event->is_public = $data['is_public'];
 
         try {
-            $event->save();
+            $user->events()->save($event, ['is_organisator' => 1, 'state' => 'accepted', 'is_here' => 0, 'comment' => '']);
         } catch (\Exception $e) {
-            throw new \Exception("Erreur lors de la sauvegarde d'un évènement", 400);
+            throw new \Exception("Erreur lors de la sauvegarde d'un évènement", 500);
         }
+
         return $event;
     }
 
     final public function deleteEvent($id)
     {
-
+        $event = $this->getEventById($id);
 
         try {
-            $event = Event::find($id);
             $event->delete();
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la suppression d'un évènement", 400);
         }
-        return $event;
     }
 
-    final public function updateEvent($id, $data)
+    final public function updateEvent($id_event, $data)
     {
 
-        $event = Event::find($id);
+        $event = $this->getEventById($id_event);
 
         try {
-            v::stringType()->length(3, 100)->assert($data['title']);
+            v::stringType()->length(3, 80)->assert($data['title']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la modfication du titre", 400);
         }
         $event->title = $data['title'];
 
         try {
-            v::stringType()->length(3, 100)->assert($data['description']);
+            v::stringType()->length(3, 1000)->assert($data['description']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la modfication de la description", 400);
         }
         $event->description = $data['description'];
 
         try {
-            v::boolType()->assert($data['is_public']);
+            v::intVal()->length(1, 1)->assert($data['is_public']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la modfication de la visibilité", 400);
         }
         $event->is_public = $data['is_public'];
+
+        try {
+            v::intVal()->assert($data['date']);
+            $event->date = Carbon::createFromTimestamp($data['date']);
+        } catch (\Exception $e) {
+            throw new \Exception("Erreur lors de la création de la date", 400);
+        }
 
         try {
             $event->save();
@@ -142,5 +164,16 @@ class EventService extends AbstractService
         }
 
         return $event;
+    }
+
+    public function getCount($id_user): int
+    {
+        try {
+            $user = User::findOrFail($id_user);
+        } catch (\Exception $e) {
+            throw new \Exception('Utilisateur introuvable', 404);
+        }
+
+        return $user->events()->count();
     }
 }

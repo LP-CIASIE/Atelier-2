@@ -23,7 +23,6 @@ class OwnerEventMiddleware extends AbstractMiddleware
 
     $event = $this->getEvent($request);
 
-
     $owner = $event->getOwner();
 
     if ($owner->id_user == $user['uid']) {

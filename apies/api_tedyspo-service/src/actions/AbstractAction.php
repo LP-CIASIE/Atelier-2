@@ -20,6 +20,10 @@ abstract class AbstractAction
     try {
       $body = $request->getBody();
       $body = json_decode($body, true);
+
+      if ($body === null) {
+        throw new \Exception('Aucune donnée reçu', 400);
+      }
     } catch (\Exception $e) {
       throw new \Exception('Aucune donnée reçu', 400);
     }
