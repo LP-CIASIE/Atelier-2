@@ -84,6 +84,12 @@ class FormatterObject
         'participants' => [
           'href' => '/events/' . $event->id_event . '/users'
         ],
+        'locations' => [
+          'href' => '/events/' . $event->id_event . '/locations'
+        ],
+        'urls' => [
+          'href' => '/events/' . $event->id_event . '/links'
+        ],
       ]
     ];
   }

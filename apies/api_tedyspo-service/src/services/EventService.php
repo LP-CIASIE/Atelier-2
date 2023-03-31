@@ -5,7 +5,6 @@ namespace atelier\tedyspo\services;
 use Ramsey\Uuid\Uuid;
 use atelier\tedyspo\models\Event;
 use Carbon\Carbon;
-use Illuminate\Database\DBAL\TimestampType;
 use Illuminate\Database\Eloquent\Collection;
 use Respect\Validation\Validator as v;
 use atelier\tedyspo\models\User;
@@ -55,6 +54,12 @@ class EventService extends AbstractService
     final public function getEventById($id)
     {
         try {
+            v::uuid()->assert($id);
+        } catch (\Exception $e) {
+            throw new \Exception("Format de l'id de l'événement incorrect", 400);
+        }
+
+        try {
             $event = Event::findOrFail($id);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la récupérations d'un évènement", 400);
@@ -67,8 +72,6 @@ class EventService extends AbstractService
     {
         $event = new Event();
         $event->id_event = Uuid::uuid4();
-
-
 
         try {
 
@@ -109,8 +112,6 @@ class EventService extends AbstractService
 
     final public function deleteEvent($id)
     {
-
-
         try {
             $event = Event::find($id);
             $event->delete();
