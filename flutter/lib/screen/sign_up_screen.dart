@@ -2,6 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lp1_ciasie_atelier_2/class/user.dart';
+import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
+import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -47,22 +51,34 @@ class _SignUpPageState extends State<SignUpPage> {
 
         if (response.containsKey('code')) {
           setState(() {
-            print('u');
             errorMessage = utf8.decode(response['message'].codeUnits);
-            print('v');
-            formPending = true;
           });
-        } else {
-          print('OK');
         }
+        setState(() {
+          formPending = false;
+        });
       } else {
-        print('OK');
+        Map<String, dynamic> connection =
+            await Provider.of<SessionProvider>(context, listen: false)
+                .signIn(_emailController.text, _passwordController.text);
+
+        if (connection['ok']) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        } else {
+          setState(() {
+            formPending = false;
+            errorMessage = connection['message'];
+          });
+        }
       }
     } catch (error) {
       setState(() {
         errorMessage =
             'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer';
-        formPending = true;
+        formPending = false;
       });
     }
     // Map<String, dynamic> connection =
@@ -206,12 +222,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Container(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final BuildContext context = this.context;
-                            _submitForm(context);
-                          }
-                        },
+                        onPressed: formPending
+                            ? null
+                            : () async {
+                                if (_formKey.currentState!.validate()) {
+                                  final BuildContext context = this.context;
+                                  _submitForm(context);
+                                }
+                              },
                         child: const Text("S'inscrire"),
                       ),
                     ),

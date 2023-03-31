@@ -116,12 +116,14 @@ class _SignInPageState extends State<SignInPage> {
                     child: Container(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final BuildContext context = this.context;
-                            _submitForm(context);
-                          }
-                        },
+                        onPressed: formPending
+                            ? null
+                            : () async {
+                                if (_formKey.currentState!.validate()) {
+                                  final BuildContext context = this.context;
+                                  _submitForm(context);
+                                }
+                              },
                         child: const Text("Se connecter"),
                       ),
                     ),
