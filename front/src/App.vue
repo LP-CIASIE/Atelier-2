@@ -25,7 +25,7 @@ provide("api", API);
 		</header>
 	</template>
 
-	<article>
+	<article class="container">
 		<router-view v-slot="{ Component }">
 			<transition name="fade" mode="out-in">
 				<component :is="Component" />

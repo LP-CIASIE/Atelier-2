@@ -1,39 +1,47 @@
+<script setup>
+import Menubar from "primevue/menubar";
+import { ref } from "vue";
+
+const items = ref([
+	{
+		label: "Profile",
+		icon: "pi pi-fw pi-user",
+		items: [
+			{
+				label: "Account",
+				icon: "pi pi-fw pi-user",
+				to: "/profile",
+			},
+			{
+				label: "Settings",
+				icon: "pi pi-fw pi-cog",
+				to: "/settings",
+			},
+		],
+	},
+	{
+		label: "Disconnect",
+		icon: "pi pi-fw pi-power-off",
+	},
+]);
+</script>
+
 <template>
-	<nav class="navbar">
-		<router-link class="navbar__brand" to="/">Tedyspo</router-link>
-		<div class="navbar__links">
-			<router-link to="/profile">Profile</router-link>
-			<router-link to="/settings">Paramètres</router-link>
-			<router-link to="/sign-out">Déconnexion</router-link>
-		</div>
-	</nav>
+	<div class="card relative z-2">
+		<Menubar :model="items">
+			<template #start><router-link to="/" id="brand">Tedyspo</router-link></template>
+		</Menubar>
+	</div>
 </template>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/reset.scss";
-
-.navbar {
-	display: flex;
+.p-menubar {
 	justify-content: space-between;
-	align-items: center;
-	padding: 2rem 1.5rem;
-	height: 3rem;
-	background-color: $color-bg-navbar;
-	color: #fff;
-	a {
-		color: #fff;
-	}
 
-	&__brand {
+	#brand {
 		font-size: 1.5rem;
-		font-weight: 500;
-	}
-
-	&__links {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 1rem;
+		color: rgba(0, 0, 0, 0.9);
+		padding: 0.5rem 1rem;
 	}
 }
 </style>
