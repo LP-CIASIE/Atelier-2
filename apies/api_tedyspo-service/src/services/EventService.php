@@ -12,32 +12,42 @@ use atelier\tedyspo\models\User;
 
 class EventService extends AbstractService
 {
-    final public function getEvents($parameters)
+    final public function getEvents($id_user, $params)
     {
-        $page = $parameters['page'] ?? 1;
-        $size = $parameters['size'] ?? 10;
-        $email = $parameters['email'] ?? '';
 
-        try {
-            v::intVal()->min(1)->assert($size);
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException('Format de donnée pour la taille est incorrect.', 400);
-        }
-        try {
-            v::intVal()->min(1)->assert($page);
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException('Format de donnée pour la page est incorrect.', 400);
+        if (isset($params['size'])) {
+            try {
+                v::key('size', v::intVal()->positive())->assert($params);
+            } catch (\Exception $e) {
+                throw new \Exception('Données pour la pagination invalides', 400);
+            }
+        } else {
+            $params['size'] = 10;
         }
 
+        if (isset($params['page'])) {
+            try {
+                v::key('page', v::intVal()->positive())->assert($params);
+            } catch (\Exception $e) {
+                throw new \Exception('Données pour la pagination invalides', 400);
+            }
+        } else {
+            $params['page'] = 1;
+        }
+
+        $userService = $this->container->get('service.user');
+
+        $user = $userService->getUserById($id_user);
+
         try {
-
-
-            $event = Event::all()
-                ->orderBy('email', 'desc')
-                ->skip(($page - 1) * $size)
-                ->take($size);
+            $event = $user->events()
+                ->orderBy('event.date', 'desc')
+                ->skip(($params['page'] - 1) * $params['size'])
+                ->take($params['size'])
+                ->get();
         } catch (\Exception $e) {
-            throw new \Exception('Erreur lors de la récupérations de tout les évenements', 400);
+            echo ($e->getMessage());
+            throw new \Exception('Erreur lors de la récupérations de tout les évenements', 500);
         }
 
         return $event;
