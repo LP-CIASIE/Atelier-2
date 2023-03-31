@@ -62,7 +62,7 @@ class EventService extends AbstractService
         try {
             $event = Event::findOrFail($id);
         } catch (\Exception $e) {
-            throw new \Exception("Erreur lors de la récupérations d'un évènement", 500);
+            throw new \Exception("L'événement n'éxiste pas ou plus.", 404);
         }
 
         return  $event;
@@ -92,10 +92,10 @@ class EventService extends AbstractService
 
         try {
             v::intVal()->assert($data['date']);
+            $event->date = Carbon::createFromTimestamp($data['date']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la date", 400);
         }
-        $event->date = Carbon::createFromTimestamp($data['date']);
 
         try {
             v::intVal()->length(1, 1)->assert($data['is_public']);
@@ -107,7 +107,6 @@ class EventService extends AbstractService
         try {
             $user->events()->save($event, ['is_organisator' => 1, 'state' => 'accepted', 'is_here' => 0, 'comment' => '']);
         } catch (\Exception $e) {
-            echo ($e->getMessage());
             throw new \Exception("Erreur lors de la sauvegarde d'un évènement", 500);
         }
 
@@ -125,31 +124,38 @@ class EventService extends AbstractService
         return $event;
     }
 
-    final public function updateEvent($id, $data)
+    final public function updateEvent($id_event, $data)
     {
 
-        $event = Event::find($id);
+        $event = $this->getEventById($id_event);
 
         try {
-            v::stringType()->length(3, 100)->assert($data['title']);
+            v::stringType()->length(3, 80)->assert($data['title']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la modfication du titre", 400);
         }
         $event->title = $data['title'];
 
         try {
-            v::stringType()->length(3, 100)->assert($data['description']);
+            v::stringType()->length(3, 1000)->assert($data['description']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la modfication de la description", 400);
         }
         $event->description = $data['description'];
 
         try {
-            v::boolType()->assert($data['is_public']);
+            v::intVal()->length(1, 1)->assert($data['is_public']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la modfication de la visibilité", 400);
         }
         $event->is_public = $data['is_public'];
+
+        try {
+            v::intVal()->assert($data['date']);
+            $event->date = Carbon::createFromTimestamp($data['date']);
+        } catch (\Exception $e) {
+            throw new \Exception("Erreur lors de la création de la date", 400);
+        }
 
         try {
             $event->save();
