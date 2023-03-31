@@ -93,11 +93,7 @@ function on_submit() {
         router.push({ name: "signIn" })
       })
       .catch((error) => {
-        if (error.response.data.code == 409) {
-          form.email.error_message = 'Un compte est déjà associé à cet email.'
-        } else {
-          form.error_message = error.response.data.message;
-        }
+        form.error_message = error.response.data.message;
         form.pending = false;
       });
   }
