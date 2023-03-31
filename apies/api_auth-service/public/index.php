@@ -14,7 +14,7 @@ require_once "../vendor/autoload.php";
 /** ========================
  * Création de Eloquent
  * ====================== */
-$conf = parse_ini_file(__DIR__ . '/../conf/auth.db.ini.env');
+$conf = parse_ini_file(__DIR__ . '/../conf/auth.db.ini.dist');
 
 $capsule = new Capsule;
 $capsule->addConnection($conf);
