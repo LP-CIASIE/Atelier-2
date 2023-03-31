@@ -19,11 +19,12 @@ class GetCommentsAction extends AbstractAction
 
     $commentService = $this->container->get('service.comment');
 
-    $comments = $commentService->getComments($args['id_event']);
+    $comments = $commentService->getComments($args['id_event'], $params);
     $count = $commentService->getCount($args['id_event']);
 
     $data = FormatterAPI::formatPagination($request, 'get_comments', $page, $params, $count, $size);
     $data['comments'] = FormatterObject::Comments($comments);
+
 
     return FormatterAPI::formatResponse($request, $response, $data, 200);
   }

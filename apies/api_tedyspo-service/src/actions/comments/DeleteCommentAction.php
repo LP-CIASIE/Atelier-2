@@ -11,9 +11,10 @@ class DeleteCommentAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    $commentService = $this->container->get('service.comment');
+    $user = $this->parseJWT($request);
 
-    $commentService->delete($args['id_comment']);
+    $commentService = $this->container->get('service.comment');
+    $commentService->deleteComment($args['id_comment'], $user['uid']);
 
     return FormatterAPI::formatResponse($request, $response, [], 204);
   }
