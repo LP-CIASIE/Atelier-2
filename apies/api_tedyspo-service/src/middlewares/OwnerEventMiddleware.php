@@ -23,6 +23,7 @@ class OwnerEventMiddleware extends AbstractMiddleware
 
     $event = $this->getEvent($request);
 
+
     $owner = $event->getOwner();
 
     if ($owner->id_user == $user['uid']) {
@@ -56,8 +57,8 @@ class OwnerEventMiddleware extends AbstractMiddleware
   public function getEvent(Request $request): Event
   {
     // Get id of the event
-    $route = $request->getAttribute('route');
-    $id_event = $route->getArgument('id_event');
+    $routeArguments = \Slim\Routing\RouteContext::fromRequest($request)->getRoute()->getArguments();
+    $id_event = $routeArguments['id_event'];
 
     // Get event
     $eventService = $this->container->get('service.event');
