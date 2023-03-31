@@ -8,6 +8,8 @@ export const useSessionStore = defineStore(
 		const user = reactive({
 			id: "",
 			email: "",
+			firstname: "",
+			lastname: "",
 			access_token: "",
 			refresh_token: "",
 		});
@@ -17,9 +19,54 @@ export const useSessionStore = defineStore(
 				email: form.email.content,
 				password: form.password.content,
 			})
-				.then((response) => {
+				.then(async (response) => {
+					user.id = response.data.id_user;
 					user.access_token = response.data["access-token"];
 					user.refresh_token = response.data["refresh-token"];
+					await getUser();
+					return {
+						ok: true,
+					};
+				})
+				.catch((error) => {
+					return {
+						ok: false,
+						message: error.response.data.message,
+					};
+				});
+		}
+
+		async function getUser() {
+			return API.get(`/users/${user.id}`, {
+				headers: {
+					Authorization: `Bearer ${user.access_token}`,
+				},
+			})
+				.then((response) => {
+					user.email = response.data.user.email;
+					user.firstname = response.data.user.firstname;
+					user.lastname = response.data.user.lastname || "";
+					return {
+						ok: true,
+					};
+				})
+				.catch((error) => {
+					return {
+						ok: false,
+						message: error.response.data.message,
+					};
+				});
+		}
+
+		async function updateUser(form) {
+			return API.put("/user", {
+				email: form.email.content,
+				password: form.password.content,
+				firstname: form.firstname.content,
+				lastname: form.lastname.content,
+			})
+				.then((response) => {
+					user.email = response.data.email;
 					return {
 						ok: true,
 					};

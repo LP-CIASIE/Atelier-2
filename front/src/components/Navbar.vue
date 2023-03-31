@@ -11,18 +11,7 @@ const items = ref([
 	{
 		label: "Profile",
 		icon: "pi pi-fw pi-user",
-		items: [
-			{
-				label: "Account",
-				icon: "pi pi-fw pi-user",
-				to: "/profile",
-			},
-			{
-				label: "Settings",
-				icon: "pi pi-fw pi-cog",
-				to: "/settings",
-			},
-		],
+		to: { name: "profile" },
 	},
 	{
 		label: "Disconnect",
