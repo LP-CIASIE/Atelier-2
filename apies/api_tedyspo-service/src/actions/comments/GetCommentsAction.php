@@ -25,7 +25,6 @@ class GetCommentsAction extends AbstractAction
     $data = FormatterAPI::formatPagination($request, 'get_comments', $page, $params, $count, $size);
     $data['comments'] = FormatterObject::Comments($comments);
 
-
     return FormatterAPI::formatResponse($request, $response, $data, 200);
   }
 }
