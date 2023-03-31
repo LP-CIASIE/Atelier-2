@@ -62,51 +62,55 @@ class EventService extends AbstractService
         try {
             $event = Event::findOrFail($id);
         } catch (\Exception $e) {
-            throw new \Exception("Erreur lors de la récupérations d'un évènement", 400);
+            throw new \Exception("Erreur lors de la récupérations d'un évènement", 500);
         }
 
         return  $event;
     }
 
-    final public function createEvent($data)
+    final public function createEvent($id_user, $data)
     {
         $event = new Event();
         $event->id_event = Uuid::uuid4();
 
-        try {
+        $userService = $this->container->get('service.user');
+        $user = $userService->getUserById($id_user);
 
-            v::stringType()->length(3, 100)->assert($data['title']);
+        try {
+            v::stringType()->length(3, 80)->assert($data['title']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création du titre", 400);
         }
         $event->title = $data['title'];
 
         try {
-            v::stringType()->length(3, 100)->assert($data['description']);
+            v::stringType()->length(3, 1000)->assert($data['description']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la description", 400);
         }
         $event->description = $data['description'];
 
         try {
-            v::stringType()->length(3, 100)->assert($data['date']);
+            v::intVal()->assert($data['date']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la date", 400);
         }
-        $event->date = Carbon::now()->tz('Europe/Amsterdam');
+        $event->date = Carbon::createFromTimestamp($data['date']);
 
         try {
-            v::boolType()->assert($data['is_public']);
+            v::intVal()->length(1, 1)->assert($data['is_public']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la visibilité", 400);
         }
         $event->is_public = $data['is_public'];
 
         try {
-            $event->save();
+            $user->events()->save($event, ['is_organisator' => 1, 'state' => 'accepted', 'is_here' => 0, 'comment' => '']);
         } catch (\Exception $e) {
-            throw new \Exception("Erreur lors de la sauvegarde d'un évènement", 400);
+            echo ($e->getMessage());
+            throw new \Exception("Erreur lors de la sauvegarde d'un évènement", 500);
         }
+
         return $event;
     }
 
