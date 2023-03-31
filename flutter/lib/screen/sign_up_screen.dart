@@ -202,7 +202,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Mot de passe',
+                        labelText: 'Confirmez votre mot de passe',
                       ),
                     ),
                   ),
