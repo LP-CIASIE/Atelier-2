@@ -57,7 +57,7 @@ class CommentService extends AbstractService
     return $comment;
   }
 
-  public function getComments($id_event): Collection
+  public function getComments($id_event, $data): Collection
   {
     try {
       $event = Event::findOrFail($id_event);
@@ -65,9 +65,32 @@ class CommentService extends AbstractService
       throw new \Exception('Cette événement n\'existe pas ou plus', 404);
     }
 
+    if (isset($data['page'])) {
+      try {
+        v::key('page', v::intVal()->positive())
+          ->assert($data);
+      } catch (\Exception $e) {
+        throw new \Exception('Données pour la pagination invalides', 400);
+      }
+    } else {
+      $data['page'] = 1;
+    }
+
+    if (isset($data['size'])) {
+      try {
+        v::key('size', v::intVal()->positive())
+          ->assert($data);
+      } catch (\Exception $e) {
+        throw new \Exception('Données pour la pagination invalides', 400);
+      }
+    } else {
+      $data['size'] = 10;
+    }
+
     try {
-      $comments = $event->comments()->get();
+      $comments = $event->comments()->skip($data['size'] * ($data['page'] - 1))->take($data['size'])->get();
     } catch (\Exception $e) {
+      echo $e->getMessage();
       throw new \Exception('Erreur lors de la récupération des commentaires', 500);
     }
 
@@ -132,7 +155,7 @@ class CommentService extends AbstractService
       throw new \Exception('Ce commentaire n\'existe pas ou plus', 404);
     }
 
-    if ($comment->id_user === $id_user) {
+    if ($comment->id_user != $id_user) {
       throw new \Exception('Vous n\'êtes pas le propriétaire de ce commentaire', 403);
     }
 
