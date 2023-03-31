@@ -16,7 +16,11 @@ class CreateEventAction extends AbstractAction
 
     $eventService = $this->container->get('service.event');
     $eventService->createEvent($data);
+    $data = [
+      'message' => 'Event created successfully',
+      'data' => $data
+    ];
 
-    return FormatterAPI::formatResponse($request, $response, [], 204);
+    return FormatterAPI::formatResponse($request, $response, $data, 201);
   }
 }
