@@ -2,18 +2,15 @@
 
 namespace atelier\auth\services;
 
+use atelier\auth\models\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Respect\Validation\Validator as v;
 
 final class TokenService
 {
-
-  static public function createToken($username)
+  static public function generateToken(User $user): array
   {
-    $c = new \MongoDB\Client("mongodb://mongo.auth:27017");
-    $db = $c->auth_service;
-    $user = $db->users->findOne(['usermail' => $username]);
-
     $data = require __DIR__ . '/../../data/settings.php';
     $secret = $data['JWT_SECRET'];
 
@@ -21,28 +18,28 @@ final class TokenService
       'iss' => 'http://auth.myapp.net',
       'aud' => 'http://api.myapp.net',
       'iat' => time(), 'exp' => time() + 3600,
-      'uid' => $user->_id,
-      'mail' => $user->usermail,
-      'lvl' => $user->userlevel,
+      'uid' => $user->id_user,
+      'email' => $user->email,
+      'role' => $user->role,
     ];
 
     $accessToken = JWT::encode($payload, $secret, 'HS512');
     $refreshToken = $user->refresh_token;
 
 
-    return (['access' => $accessToken, 'refresh' => $refreshToken]);
+    return (['access' => $accessToken, 'refresh_token' => $refreshToken]);
   }
 
   function verifyToken($fullToken)
   {
     if (empty($fullToken)) {
-      throw new \Exception("Token manquant.");
+      throw new \Exception("Token manquant.", 400);
     }
 
-    $tokenJWT = sscanf($fullToken, "Bearer %s")[0];
+    $tokenJWT = sscanf($fullToken[0], "Bearer %s")[0];
 
     if (empty($tokenJWT)) {
-      throw new \Exception("Format du token invalide.");
+      throw new \Exception("Format du token invalide.", 400);
     }
 
     $params = require __DIR__ . '/../../data/settings.php';
@@ -51,7 +48,34 @@ final class TokenService
     try {
       JWT::decode($tokenJWT, new Key($secret, 'HS512'));
     } catch (\Exception $e) {
-      throw new \Exception("Token invalide.");
+      throw new \Exception("Token invalide.", 401);
     }
+  }
+
+  public function decodeDataOfJWT($Authorization): array
+  {
+    $jwt = $Authorization[0] ?? '';
+
+    try {
+      v::stringType()->notEmpty()->validate($jwt);
+    } catch (\Exception $e) {
+      throw new \Exception('Token manquant', 400);
+    }
+
+    $jwt = explode('.', $jwt);
+
+    if (count($jwt) !== 3) {
+      throw new \Exception('Token invalide', 400);
+    }
+
+    $jwt = $jwt[1];
+    $jwt = base64_decode($jwt);
+
+    if ($jwt === false) {
+      throw new \Exception('Token invalide', 400);
+    }
+
+    $jwt = json_decode($jwt, true);
+    return $jwt;
   }
 }

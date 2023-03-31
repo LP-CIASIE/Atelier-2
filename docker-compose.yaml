@@ -16,52 +16,54 @@ services:
       - atelier.net
 
 # ===============================
-#    Docker for Reunionou API
+#    Docker for tedyspo API
 # ===============================
-  reunionou.api:
+  tedyspo.api:
     image: 'canals/php:latest'
-    command: "composer install"
+    # command: 'composer install'
     environment:
-      - VHOST_HOSTNAME=reunionou.atelier.local
+      - VHOST_HOSTNAME=tedyspo.atelier.local
       - VHOST_DOCROOT=/var/www/public
     ports:
       - '8010:80'
+      - '8011:443'
     volumes:
-      - './apies/api_reunionou-service:/var/www/'
+      - './apies/api_tedyspo-service:/var/www/'
     working_dir: /var/www/
     networks:
       atelier.net:
         aliases:
-          - reunionou.atelier.local
+          - tedyspo.atelier.local
     depends_on:
-      - reunionou.db
+      - tedyspo.db
   
-  reunionou.db:
+  tedyspo.db:
     image: 'mariadb:latest'
     command: '--default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci'
     environment:
       - MYSQL_ROOT_PASSWORD=atelier
       - MYSQL_USER=atelier
       - MYSQL_PASSWORD=atelier
-      - MYSQL_DATABASE=reunionou
+      - MYSQL_DATABASE=tedyspo
     ports:
       - '3307:3306'
     networks:
       - atelier.net
     volumes:
-      - './api/sql:/var/sql'
+      - './apies/api_tedyspo-service/sql:/var/sql'
 
 # ===============================
 #     Docker for Auth API
 # ===============================
   auth.api:
     image: 'canals/php:latest'
-    command: "composer install"
+    # command: 'composer install'
     environment:
       - VHOST_HOSTNAME=auth.atelier.local
       - VHOST_DOCROOT=/var/www/public
     ports:
       - '8020:80'
+      - '8021:443'
     volumes:
       - './apies/api_auth-service:/var/www/'
     working_dir: /var/www/
@@ -85,19 +87,20 @@ services:
     networks:
       - atelier.net
     volumes:
-      - './api/sql:/var/sql'
+      - './apies/api_auth-service/sql:/var/sql'
 
 # ===============================
 #     Docker for Gateway API
 # ===============================
   gateway.api:
     image: 'canals/php:latest'
-    command: "composer install"
+    # command: 'composer install'
     environment:
       - VHOST_HOSTNAME=gateway.atelier.local
       - VHOST_DOCROOT=/var/www/public
     ports:
       - '8000:80'
+      - '8001:443'
     volumes:
       - './apies/api_gateway-service:/var/www/'
     working_dir: /var/www/
@@ -107,4 +110,24 @@ services:
           - gateway.atelier.local
     depends_on:
       - auth.api
-      - reunionou.api
+      - tedyspo.api
+
+# ===============================
+#     Docker for FakeData
+# ===============================
+  fake_data.api:
+    image: 'canals/php:latest'
+    # command: 'composer install'
+    ports:
+      - '8030:80'
+      - '8031:443'
+    volumes:
+      - './apies/fake_data:/var/www/'
+    working_dir: /var/www/
+    networks:
+      atelier.net:
+        aliases:
+          - fake_data.atelier.local
+    depends_on:
+      - auth.api
+      - tedyspo.api

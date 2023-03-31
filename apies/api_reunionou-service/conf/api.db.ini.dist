@@ -1,7 +1,0 @@
-driver=mysql
-username=atelier
-password=atelier
-host=api.db
-database=
-charset=utf8
-collation=utf8_unicode_ci

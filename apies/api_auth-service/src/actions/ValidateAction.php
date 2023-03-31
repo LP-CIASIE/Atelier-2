@@ -7,31 +7,21 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 use atelier\auth\services\utils\FormatterAPI as FormatterAPI;
 use atelier\auth\services\TokenService as TokenService;
+use Exception;
 
 final class ValidateAction
 {
-  public function __invoke(Request $request, Response $rs): Response
+  public function __invoke(Request $request, Response $response): Response
   {
-    $token = $request->getHeader('Authorization')[0];;
-
-    $tokenService = new TokenService();
+    $authorization = $request->getHeader('Authorization');
 
     try {
-      $tokenService->verifyToken($token);
+      $tokenService = new TokenService();
+      $tokenService->verifyToken($authorization);
 
-      $data = [
-        'type' => 'success',
-        'message' => 'Token valide',
-      ];
-      return FormatterAPI::formatResponse($request, $rs, $data, 200); // 200 = OK
-
+      return FormatterAPI::formatResponse($request, $response, [], 204); // 204 = No Content
     } catch (\Exception $e) {
-      $data = [
-        'type' => 'error',
-        'error' => 401,
-        'message' => $e->getMessage(),
-      ];
-      return FormatterAPI::formatResponse($request, $rs, $data, 401); // 401 = Unauthorized
+      throw new Exception('Token invalide.', 401);
     }
   }
 }
