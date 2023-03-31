@@ -16,10 +16,11 @@ class EventService extends AbstractService
     {
         $page = $parameters['page'] ?? 1;
         $size = $parameters['size'] ?? 10;
-        
-        try{
-            v::intVal()->min(1)->assert($size);}
-        catch (\Exception $e){  
+        $email = $parameters['email'] ?? '';
+
+        try {
+            v::intVal()->min(1)->assert($size);
+        } catch (\Exception $e) {
             throw new \InvalidArgumentException('Format de donnée pour la taille est incorrect.', 400);
         }
         try {
@@ -31,10 +32,6 @@ class EventService extends AbstractService
         try {
 
 
-            $event = Event::orderBy('email', 'desc')
-            ->skip(($page - 1) * $size)
-            ->take($size);
-        }catch (\Exception $e){
             $event = Event::all()
                 ->orderBy('email', 'desc')
                 ->skip(($page - 1) * $size)
@@ -77,23 +74,17 @@ class EventService extends AbstractService
             throw new \Exception("Erreur lors de la création de la description", 400);
         }
         $event->description = $data['description'];
-        
-
-        try{
-            $event->date = Carbon::now()->tz('Europe/Amsterdam');
-
-        }catch (\Exception $e){
 
         try {
             v::stringType()->length(3, 100)->assert($data['date']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la date", 400);
         }
-        
-        try{
-            v::between(0, 1)->validate($data['is_public']);
-        }
-        catch (\Exception $e){
+        $event->date = Carbon::now()->tz('Europe/Amsterdam');
+
+        try {
+            v::boolType()->assert($data['is_public']);
+        } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création de la visibilité", 400);
         }
         $event->is_public = $data['is_public'];
