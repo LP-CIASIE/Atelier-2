@@ -167,7 +167,6 @@ class UserService extends AbstractService
     try {
       $user->save();
     } catch (\Exception $e) {
-      echo ($e->getMessage());
       throw new \Exception('Erreur lors de la création de l\'utilisateur', 500);
     }
 
