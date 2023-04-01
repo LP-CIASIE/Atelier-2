@@ -31,6 +31,7 @@ abstract class AbstractAction
       $client = $this->container->get('client.auth.service');
     }
 
+
     try {
       if ($method === "post") {
         $responseHTTP = $client->post($route, [
@@ -88,9 +89,13 @@ abstract class AbstractAction
       return $response->withStatus($exceptionData['code']);
     }
 
+
     $logger = $this->container->get('logger');
     $logger->info("{$method} | {$this->container->get('gateway.atelier.local')}{$route} | {$responseHTTP->getStatusCode()}");
 
-    return $responseHTTP;
+    $response = new ResponseSlim();
+    $response->getBody()->write($responseHTTP->getBody()->getContents());
+    $response = $response->withHeader('Content-Type', 'application/json');
+    return $response->withStatus($responseHTTP->getStatusCode());
   }
 }
