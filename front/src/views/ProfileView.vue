@@ -53,7 +53,7 @@ function on_submit() {
 	Session.updateUser(form).then((result) => {
 		console.log(result);
 		if (result.ok) {
-			toast.add({ severity: "success", summary: "Succès", detail: "Vos informations ont bien été modifié", life: 3000 });
+			toast.add({ severity: "success", summary: "Succès", detail: "Vos informations ont bien été modifié", life: 5000 });
 		} else {
 			form.error_message = result.message;
 		}
