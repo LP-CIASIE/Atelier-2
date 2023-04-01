@@ -9,7 +9,7 @@ use atelier\tedyspo\models\User;
 class InvitationService extends AbstractService
 {
 
-  final public function getEventsUser($id_user)
+  final public function getEventsByUser($id_user)
   {
     if ($id_user == null) {
       throw new \Exception("Il manque l'id de l'utilisateur ou celui de l'événement.", 400);
@@ -27,7 +27,7 @@ class InvitationService extends AbstractService
     }
   }
 
-  final public function getEventUser($id_user, $id_event)
+  final public function getEventByUser($id_user, $id_event)
   {
     if ($id_user == null || $id_event == null) {
       throw new \Exception("Il manque l'id de l'utilisateur ou celui de l'événement.", 400);
@@ -79,7 +79,7 @@ class InvitationService extends AbstractService
     return $event;
   }
 
-  final public function getUserEvent($id_event, $id_user)
+  final public function getUserByEvent($id_event, $id_user)
   {
     if ($id_user == null || $id_event == null) {
       throw new \Exception("Il manque l'id de l'utilisateur ou celui de l'événement.", 400);
@@ -97,7 +97,7 @@ class InvitationService extends AbstractService
     }
   }
 
-  final public function getUsersEvent($id_event)
+  final public function getUsersByEvent($id_event)
   {
     if ($id_event == null) {
       throw new \Exception("Il manque l'id de l'utilisateur ou celui de l'événement.", 400);
@@ -137,7 +137,7 @@ class InvitationService extends AbstractService
         throw new \Exception("L'état de l'utilisateur n'est pas valide.", 400);
       }
       try {
-        $event = $this->getEventUser($id_user, $id_event);
+        $event = $this->getEventByUser($id_user, $id_event);
         $event->pivot->state = $data['state'];
         $event->pivot->comment = $data['comment'];
         $event->pivot->save();

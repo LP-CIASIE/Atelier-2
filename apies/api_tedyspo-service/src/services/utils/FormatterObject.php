@@ -121,4 +121,13 @@ class FormatterObject
       ]
     ];
   }
+
+  public static function EventUsers(Collection $data)
+  {
+    $dataArray = [];
+    foreach ($data as $d) {
+      $dataArray[] = self::EventUser($d);
+    }
+    return $dataArray;
+  }
 }

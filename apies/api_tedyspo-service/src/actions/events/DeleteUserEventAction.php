@@ -15,10 +15,8 @@ class DeleteUserEventAction extends AbstractAction
     $id_user = $args['id_user'];
     $id_event = $args['id_event'];
 
-    $event = $InvitationService->deleteUserEvent($id_event, $id_user);
+    $InvitationService->deleteUserEvent($id_event, $id_user);
 
-    $data['events'] = $event;
-
-    return FormatterAPI::formatResponse($request, $response, $data, 204);
+    return FormatterAPI::formatResponse($request, $response, [], 204);
   }
 }
