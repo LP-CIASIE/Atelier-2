@@ -51,6 +51,7 @@ $app->get('/', function (Request $request, Response $response, $args) {
 $app->post('/signin[/]', atelier\auth\actions\SignInAction::class);
 $app->post('/signup[/]', atelier\auth\actions\SignUpAction::class);
 $app->put('/users[/]', atelier\auth\actions\UpdateUserAction::class);
+$app->delete('/users/{id_user}[/]', atelier\auth\actions\DeleteUserAction::class);
 $app->post('/validate[/]', atelier\auth\actions\ValidateAction::class);
 
 $app->run();
