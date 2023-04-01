@@ -18,9 +18,13 @@ class ExceptionPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Container(
-            alignment: Alignment.center,
-            child: Text(error.toString()),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text(
+              error.toString(),
+              textAlign: TextAlign.start,
+              style: const TextStyle(fontSize: 19.6),
+            ),
           ),
         ],
       ),
