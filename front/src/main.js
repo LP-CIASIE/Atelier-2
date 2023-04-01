@@ -4,7 +4,11 @@ import App from "./App.vue";
 
 // Router and Store
 import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import router from "./router";
+
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
 // PrimeVue
 import PrimeVue from "primevue/config";
@@ -16,7 +20,7 @@ import "primeflex/primeflex.css";
 // Create App
 const app = createApp(App);
 
-app.use(createPinia());
+app.use(pinia);
 app.use(router);
 app.use(PrimeVue);
 

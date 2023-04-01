@@ -1,9 +1,8 @@
 import { defineStore } from "pinia";
 import { inject, reactive } from "vue";
 
-export const useSessionStore = defineStore(
-	"session",
-	() => {
+export const useSessionStore = defineStore("session", {
+	state: () => {
 		const API = inject("api");
 		const user = reactive({
 			id: "",
@@ -19,14 +18,19 @@ export const useSessionStore = defineStore(
 				email: form.email.content,
 				password: form.password.content,
 			})
-				.then(async (response) => {
+				.then((response) => {
 					user.id = response.data.id_user;
 					user.access_token = response.data["access-token"];
 					user.refresh_token = response.data["refresh-token"];
-					await getUser();
-					return {
-						ok: true,
-					};
+					return getUser().then((userResponse) => {
+						console.log(userResponse);
+						user.email = userResponse.user.email;
+						user.firstname = userResponse.user.firstname;
+						user.lastname = userResponse.user.lastname || "";
+						return {
+							ok: true,
+						};
+					});
 				})
 				.catch((error) => {
 					return {
@@ -43,11 +47,9 @@ export const useSessionStore = defineStore(
 				},
 			})
 				.then((response) => {
-					user.email = response.data.user.email;
-					user.firstname = response.data.user.firstname;
-					user.lastname = response.data.user.lastname || "";
 					return {
 						ok: true,
+						user: response.data.user,
 					};
 				})
 				.catch((error) => {
@@ -86,9 +88,7 @@ export const useSessionStore = defineStore(
 			user["refresh-token"] = "";
 		}
 
-		return { user, signIn, signOut };
+		return { user, signIn, signOut, updateUser, getUser };
 	},
-	{
-		persist: true,
-	}
-);
+	persist: true,
+});
