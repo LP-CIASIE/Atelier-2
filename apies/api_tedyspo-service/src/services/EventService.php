@@ -5,7 +5,6 @@ namespace atelier\tedyspo\services;
 use Ramsey\Uuid\Uuid;
 use atelier\tedyspo\models\Event;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Respect\Validation\Validator as v;
 use atelier\tedyspo\models\User;
 
