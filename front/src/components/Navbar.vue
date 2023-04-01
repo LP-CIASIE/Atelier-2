@@ -9,12 +9,17 @@ const Session = useSessionStore();
 
 const items = ref([
 	{
+		label: "Evénements",
+		icon: "pi pi-fw pi-calendar",
+		to: { name: "home" },
+	},
+	{
 		label: "Profile",
 		icon: "pi pi-fw pi-user",
 		to: { name: "profile" },
 	},
 	{
-		label: "Disconnect",
+		label: "Déconnexion",
 		icon: "pi pi-fw pi-power-off",
 		command: () => {
 			Session.signOut();
