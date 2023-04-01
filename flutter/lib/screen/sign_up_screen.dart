@@ -174,11 +174,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       obscureText: true,
                       controller: _passwordController,
                       validator: (value) {
-                        if (value.toString().length < 8) {
-                          return 'Mot de passe trop court';
-                        }
                         if (value == null || value.isEmpty) {
                           return 'Mot de passe non renseigné';
+                        }
+                        if (value.toString().length < 8) {
+                          return 'Mot de passe trop court';
                         }
                         return null;
                       },
