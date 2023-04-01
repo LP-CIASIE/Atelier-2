@@ -1,5 +1,6 @@
 <script setup>
 import EventsList from "@/components/EventsList.vue";
+import Button from "primevue/button";
 
 import { ref, inject, onMounted } from "vue";
 import { useSessionStore } from "@/stores/session.js";
@@ -11,6 +12,7 @@ const events = ref();
 const eventsFiltered = ref([]);
 
 function getEvents() {
+	// Temporaire pour ne pas avoir à faire des requêtes à l'API
 	fetch("/tempEvents.json")
 		.then((response) => {
 			return response.json();
@@ -47,9 +49,17 @@ onMounted(() => {
 </script>
 
 <template>
-	<h1>Listes des événements</h1>
-	<div id="sorter"></div>
+	<div class="title">
+		<h1>Listes des événements</h1>
+		<Button label="Créer un événement" icon="pi pi-plus" @click="$router.push('/event/create')" />
+	</div>
 	<EventsList :events="eventsFiltered" />
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.title {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+</style>
