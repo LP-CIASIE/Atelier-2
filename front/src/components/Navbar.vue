@@ -14,7 +14,7 @@ const items = ref([
 		to: { name: "home" },
 	},
 	{
-		label: "Profile",
+		label: "Profil",
 		icon: "pi pi-fw pi-user",
 		to: { name: "profile" },
 	},

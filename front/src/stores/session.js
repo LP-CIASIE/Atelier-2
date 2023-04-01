@@ -61,14 +61,25 @@ export const useSessionStore = defineStore("session", {
 		}
 
 		async function updateUser(form) {
-			return API.put("/user", {
-				email: form.email.content,
-				password: form.password.content,
-				firstname: form.firstname.content,
-				lastname: form.lastname.content,
-			})
+			return API.put(
+				"/users",
+				{
+					email: form.email.content,
+					password: form.password.content,
+					firstname: form.firstname.content,
+					lastname: form.lastname.content,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${user.access_token}`,
+					},
+				}
+			)
 				.then((response) => {
-					user.email = response.data.email;
+					user.email = form.email.content;
+					user.firstname = form.firstname.content;
+					user.lastname = form.lastname.content;
+
 					return {
 						ok: true,
 					};
@@ -84,6 +95,8 @@ export const useSessionStore = defineStore("session", {
 		function signOut() {
 			user.id = "";
 			user.email = "";
+			user.firstname = "";
+			user.lastname = "";
 			user["access-token"] = "";
 			user["refresh-token"] = "";
 		}
