@@ -15,9 +15,7 @@ class _SignInPageState extends State<SignInPage> {
   bool formPending = false;
   String errorMessage = '';
   final _emailController = TextEditingController();
-  String errorMessageMail = '';
   final _passwordController = TextEditingController();
-  String errorMessagePassword = '';
 
   Future<void> _submitForm(context) async {
     setState(() {

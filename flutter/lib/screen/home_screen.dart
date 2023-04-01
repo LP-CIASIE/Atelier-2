@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lp1_ciasie_atelier_2/screen/profil_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/sign_in_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/sign_up_screen.dart';
 
@@ -44,7 +44,8 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ProfilPage()),
+              MaterialPageRoute(
+                  builder: (context) => const ProfilBuilderPage()),
             );
           },
           child: const Text("Mon Profil"),
