@@ -4,7 +4,6 @@ namespace atelier\gateway\actions;
 
 use Psr\Container\ContainerInterface;
 
-use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Psr7\Response as ResponseSlim;
@@ -18,28 +17,23 @@ abstract class AbstractAction
     $this->container = $container;
   }
 
-  public function sendRequest(Request $request, Response $response, $route, $method = 'get')
+  public function sendRequest(Request $request, Response $response, $route, $method = 'get', $serveur = 'tedyspo')
   {
 
     // Récupère le token
     $token = $request->getHeader('Authorization')[0] ?? '';
 
 
-    // récupère les clients Auth et Tedyspo
-    $clientAuth = $this->container->get('client.auth.service');
-    $clientTedyspo = $this->container->get('client.tedyspo.service');
+    // récupère le client nécessaire
+    if ($serveur === 'tedyspo') {
+      $client = $this->container->get('client.tedyspo.service');
+    } else if ($serveur === 'auth') {
+      $client = $this->container->get('client.auth.service');
+    }
 
-    if ($route === '/signup') {
-      try {
-        $responseHTTP = $clientAuth->post($route, [
-          'query' => $request->getQueryParams(),
-          'headers' => [
-            'Authorization' => $token,
-            'Content-Type' => $this->container->get('content.type')
-          ],
-          'body' => json_encode($request->getParsedBody()),
-        ]);
-        $responseHTTP = $clientTedyspo->post($route, [
+    try {
+      if ($method === "post") {
+        $responseHTTP = $client->post($route, [
           'query' => $request->getQueryParams(),
           'headers' => [
             'Authorization' => $token,

@@ -10,6 +10,6 @@ class GetEventsAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    return $this->sendRequest($request, $response, '/events/' . $args['id_event'], 'get');
+    return $this->sendRequest($request, $response, '/events', 'get');
   }
 }

@@ -15,7 +15,7 @@ class DeleteEventAction extends AbstractAction
   {
     $eventService = $this->container->get('service.event');
     $eventService->deleteEvent($args['id_event']);
-    
+
     return FormatterAPI::formatResponse($request, $response, [], 204);
   }
 }

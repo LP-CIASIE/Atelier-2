@@ -4,7 +4,7 @@ return [
   'error.logErrors' => true,
   'error.logErrorDetails' => false,
 
-  'timeout.request.HTTP' => 10.0,
+  'timeout.request.HTTP' => 1000.0,
   'content.type' => 'application/json',
 
   'auth.atelier.local' => 'http://auth.atelier.local',

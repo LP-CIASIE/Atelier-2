@@ -22,4 +22,7 @@ return [
   'service.jwt' => function (\Psr\Container\ContainerInterface  $c) {
     return new atelier\tedyspo\services\JWTService($c);
   },
+  'service.invitation' => function (\Psr\Container\ContainerInterface  $c) {
+    return new atelier\tedyspo\services\InvitationService($c);
+  },
 ];
