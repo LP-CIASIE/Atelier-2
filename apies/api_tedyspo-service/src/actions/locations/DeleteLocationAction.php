@@ -16,9 +16,8 @@ class DeleteLocationAction extends AbstractAction
     $id_location = $args['id_location'];
     $id_event = $args['id_event'];
     $location  = $locationService->deleteLocation($id_event, $id_location);
-    $data = [
-      'locations' => FormatterObject::Location($location)
-    ];
+
+    
     return FormatterAPI::formatResponse($request, $response, [] , 200);
   }
 }

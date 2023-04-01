@@ -82,8 +82,23 @@ class LocationService extends AbstractService
     }
 
     final public function deleteLocation($id_event, $id_location){
-
-        $location = Location::where('id_event', $id_event)->where('id_location', $id_location)->first();
+        try{
+            v::uuid()->validate($id_event);
+        }
+        catch (\Exception $e){
+            throw new \Exception("Erreur lors de la récupération des locations", 400);
+        }
+        try{
+            v::uuid()->validate($id_location);
+        }
+        catch (\Exception $e){
+            throw new \Exception("Erreur lors de la récupération des locations", 400);
+        }
+        try{
+            $location = Location::where('id_event', $id_event)->where('id_location', $id_location)->firstOrFail();
+        }catch (\Exception $e){
+            throw new \Exception("Erreur lors de la récupération d'une location", 400);
+        }
         $location->delete();
 
         return $location;

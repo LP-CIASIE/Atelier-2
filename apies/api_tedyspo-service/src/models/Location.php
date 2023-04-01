@@ -20,6 +20,6 @@ class Location extends Model
     'lat',
     'long',
     'is_related',
-    'id-event'
+    'id_event'
   ];
 }
