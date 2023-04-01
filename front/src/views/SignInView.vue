@@ -88,19 +88,22 @@ function on_submit() {
 
 		<small v-if="form.error_message.length > 0" class="p-error" id="text-error">{{ form.error_message || "&nbsp;" }}</small>
 
-		<div class="button-on-right">
-			<Button v-if="form.pending" type="submit" label="Se connecter" disabled />
-			<Button v-else type="submit" label="Se connecter" />
+		<div class="list-button">
+			<Button type="button" label="Créer un compte" @click="router.push({ name: 'signUp' })" outlined />
+			<Button type="submit" label="Se connecter" :disabled="form.pending" />
 		</div>
 	</form>
 </template>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/variables.scss";
+
 article {
 	align-items: center;
 }
 form {
 	max-width: $max-width;
+	width: 100%;
 	margin: auto;
 	padding-bottom: 150px;
 }
@@ -109,8 +112,14 @@ input {
 	width: 100%;
 }
 
-.button-on-right {
-	text-align: right;
-	margin: 1.25em 0;
+.list-button {
+	display: flex;
+	justify-content: space-between;
+	gap: 2px 5px;
+	flex-wrap: wrap;
+
+	button {
+		flex-grow: 1;
+	}
 }
 </style>
