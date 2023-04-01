@@ -26,7 +26,7 @@ const eventFormated = reactive({
 });
 
 eventFormated.description = props.event.description.length > 400 ? eventFormated.description.substring(0, 400) + "..." : eventFormated.description;
-eventFormated.date = new Date(props.event.date).toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+eventFormated.date = new Date(props.event.date).toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" });
 </script>
 
 <template>
