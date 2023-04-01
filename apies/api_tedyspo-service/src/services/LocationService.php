@@ -22,7 +22,7 @@ class LocationService extends AbstractService
         $location->name = $data['name'];
              
         try{
-            v::decimals(2)->validate($data['lat']);
+            v::floatType()->validate($data['lat']);
         }catch (\Exception $e){
             throw new \Exception("Erreur lors de la création de la latitude", 400);
         }
@@ -30,10 +30,10 @@ class LocationService extends AbstractService
         
 
         try{
-            v::decimals(2)->validate($data['long']);
+            v::floatType()->validate($data['long']);
 
         }catch (\Exception $e){
-            throw new \Exception("Erreur lors de la création de la date", 400);
+            throw new \Exception("Erreur lors de la longitude", 400);
         }
         $location->long = $data['long'];
         try{
@@ -44,11 +44,109 @@ class LocationService extends AbstractService
         }
         $location->is_related = $data['is_related'];
         try{
-            v::uuid()->validate($data['id_event']);
+            v::uuid()->validate($id_event);
         }
         catch (\Exception $e){
-            throw new \Exception("Erreur lors de la création de l'event", 400);
+            throw new \Exception("Erreur lors de la crétion de l'event lié", 400);
         }
         $location->id_event = $id_event;
+        
+
+        try {
+            $location->save();
+          } catch (\Exception $e) {
+            echo ($e->getMessage());
+            throw new \Exception('Erreur lors de la création de la Location', 500);
+          }
+
+        return $location;
     }
+
+    final public function getLocations($id_event){
+        try{
+            v::uuid()->validate($id_event);
+        }
+        catch (\Exception $e){
+            throw new \Exception("Erreur lors de la récupération des locations", 400);
+        }
+        $locations = Location::where('id_event', $id_event)->get();
+        
+        return $locations;
+    }
+
+    final public function getLocation($id_event, $id_location){
+
+        $location = Location::where('id_event', $id_event)->where('id_location', $id_location)->first();
+
+        return $location;
+    }
+
+    final public function deleteLocation($id_event, $id_location){
+
+        $location = Location::where('id_event', $id_event)->where('id_location', $id_location)->first();
+        $location->delete();
+
+        return $location;
+    }
+
+    final public function updateLocation($data, $id_event, $id_location){
+    
+
+    $locations= Location::where('id_event', $id_event)->where('id_location', $id_location)->first();
+
+    try{
+        v::stringType()->length(3, 100)->assert($data['name']);
+    }
+    catch (\Exception $e){
+        throw new \Exception("Erreur lors de la création du titre", 400);
+    }
+
+    $locations->name = $data['name'];
+
+    try{
+        v::floatType()->validate($data['lat']);
+    }catch (\Exception $e){
+        throw new \Exception("Erreur lors de la création de la latitude", 400);
+    }
+
+
+    $locations->lat = $data['lat'];
+
+    try{
+        v::floatType()->validate($data['long']);
+    }catch (\Exception $e){
+        throw new \Exception("Erreur lors de la longitude", 400);
+    }
+
+    $locations->long = $data['long'];
+
+    try{
+        v::between(0, 1)->validate($data['is_related']);
+    }
+    catch (\Exception $e){
+        throw new \Exception("Erreur lors de la création de la visibilité", 400);
+    }
+
+    $locations->is_related = $data['is_related'];
+
+    try{
+        v::uuid()->validate($id_event);
+    }
+    catch (\Exception $e){
+        throw new \Exception("Erreur lors de la crétion de l'event lié", 400);
+    }
+
+    $locations->id_event = $id_event;
+    try {
+        $locations->save();
+      } catch (\Exception $e) {
+        echo ($e->getMessage());
+        throw new \Exception('Erreur lors de la création de la Location', 500);
+      }
+    
+    return $locations;
+        
+
+    }
+    
 }
