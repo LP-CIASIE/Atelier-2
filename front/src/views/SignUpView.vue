@@ -9,6 +9,7 @@ import ProgressSpinner from "primevue/progressspinner";
 const API = inject("api");
 const router = useRouter();
 const Session = useSessionStore();
+
 var form = reactive({
 	email: {
 		content: "",
@@ -89,7 +90,9 @@ function on_submit() {
 
 		API.post("/signup", body)
 			.then((response) => {
-				router.push({ name: "signIn" });
+				router.push({
+					name: "signIn",
+				});
 			})
 			.catch((error) => {
 				if (error.response.data.code == 409) {
@@ -109,13 +112,7 @@ function on_submit() {
 
 		<div>
 			<span class="p-float-label">
-				<InputText
-					id="mail"
-					v-model="form.email.content"
-					type="text"
-					:class="{ 'p-invalid': form.email.error_message }"
-					aria-describedby="text-error"
-				/>
+				<InputText id="mail" v-model="form.email.content" type="text" :class="{ 'p-invalid': form.email.error_message }" aria-describedby="text-error" />
 				<label for="mail">Email</label>
 			</span>
 			<small v-if="form.email.error_message.length > 0" class="p-error" id="text-error">{{ form.email.error_message || "&nbsp;" }}</small>
@@ -123,18 +120,10 @@ function on_submit() {
 
 		<div>
 			<span class="p-float-label">
-				<InputText
-					id="firstname"
-					v-model="form.firstname.content"
-					type="text"
-					:class="{ 'p-invalid': form.firstname.error_message }"
-					aria-describedby="text-error"
-				/>
+				<InputText id="firstname" v-model="form.firstname.content" type="text" :class="{ 'p-invalid': form.firstname.error_message }" aria-describedby="text-error" />
 				<label for="firstname">Prénom</label>
 			</span>
-			<small v-if="form.firstname.error_message.length > 0" class="p-error" id="text-error">{{
-				form.firstname.error_message || "&nbsp;"
-			}}</small>
+			<small v-if="form.firstname.error_message.length > 0" class="p-error" id="text-error">{{ form.firstname.error_message || "&nbsp;" }}</small>
 		</div>
 
 		<div>
@@ -146,28 +135,14 @@ function on_submit() {
 
 		<div>
 			<span class="p-float-label">
-				<InputText
-					id="password"
-					v-model="form.password.content"
-					type="password"
-					:class="{ 'p-invalid': form.password.error_message }"
-					aria-describedby="text-error"
-				/>
+				<InputText id="password" v-model="form.password.content" type="password" :class="{ 'p-invalid': form.password.error_message }" aria-describedby="text-error" />
 				<label for="password">Mot de passe</label>
 			</span>
 			<span class="p-float-label">
-				<InputText
-					id="confirmPassword"
-					v-model="form.password.confirmation"
-					type="password"
-					:class="{ 'p-invalid': form.password.error_message }"
-					aria-describedby="text-error"
-				/>
+				<InputText id="confirmPassword" v-model="form.password.confirmation" type="password" :class="{ 'p-invalid': form.password.error_message }" aria-describedby="text-error" />
 				<label for="confirmPassword">Confirmez votre mot de passe</label>
 			</span>
-			<small v-if="form.password.error_message.length > 0" class="p-error" id="text-error">{{
-				form.password.error_message || "&nbsp;"
-			}}</small>
+			<small v-if="form.password.error_message.length > 0" class="p-error" id="text-error">{{ form.password.error_message || "&nbsp;" }}</small>
 		</div>
 
 		<small v-if="form.error_message.length > 0" class="p-error" id="text-error">{{ form.error_message || "&nbsp;" }}</small>
