@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lp1_ciasie_atelier_2/screen/profil_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/sign_in_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/sign_up_screen.dart';
 
@@ -38,6 +39,15 @@ class _HomePageState extends State<HomePage> {
             );
           },
           child: const Text("S'inscrire"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfilPage()),
+            );
+          },
+          child: const Text("Mon Profil"),
         ),
       ]),
     );
