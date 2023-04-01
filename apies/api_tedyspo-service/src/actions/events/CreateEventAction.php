@@ -16,12 +16,12 @@ class CreateEventAction extends AbstractAction
     $user = $this->parseJWT($request);
 
     $eventService = $this->container->get('service.event');
+
     $event = $eventService->createEvent($user['uid'], $data);
 
     $data = [
       'event' => FormatterObject::Event($event)
     ];
-
     return FormatterAPI::formatResponse($request, $response, $data, 201);
   }
 }
