@@ -6,10 +6,10 @@ use atelier\gateway\actions\AbstractAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class CreateUserEventAction extends AbstractAction
+class UpdateEventUserAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    return $this->sendRequest($request, $response, '/events/' . $args['id_event'] . '/users/' . $args['id_user'], 'post');
+    return $this->sendRequest($request, $response, '/events/' . $args['id_event'] . '/users/' . $args['id_user'], 'put');
   }
 }

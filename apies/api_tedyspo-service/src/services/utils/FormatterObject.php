@@ -103,31 +103,32 @@ class FormatterObject
     return $eventsArray;
   }
 
-  public static function EventUser($data)
+  public static function EventUser($eventUser)
   {
+
     return [
-      'state' => $data['state'],
-      'comment' => $data['comment'],
+      'state' => $eventUser->state,
+      'comment' => $eventUser->comment,
       'links' => [
         'self' => [
-          'href' => '/events/' . $data['id_event'] . '/users/' . $data['id_user']
+          'href' => '/events/' . $eventUser->id_event . '/users/' . $eventUser->id_user
         ],
         'user' => [
-          'href' => '/users/' . $data['id_user']
+          'href' => '/users/' . $eventUser->id_user
         ],
         'event' => [
-          'href' => '/events/' . $data['id_event']
+          'href' => '/events/' . $eventUser->id_event
         ],
       ]
     ];
   }
 
-  public static function EventUsers(Collection $data)
+  public static function EventUsers($eventUsers)
   {
-    $dataArray = [];
-    foreach ($data as $d) {
-      $dataArray[] = self::EventUser($d);
+    $eventUsersArray = [];
+    foreach ($eventUsers as $eventUser) {
+      $eventUsersArray[] = self::EventUser($eventUser->pivot);
     }
-    return $dataArray;
+    return $eventUsersArray;
   }
 }

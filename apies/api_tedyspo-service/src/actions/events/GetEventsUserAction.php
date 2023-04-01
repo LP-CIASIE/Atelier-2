@@ -16,7 +16,7 @@ class GetEventsUserAction extends AbstractAction
 
     $id_user = $args['id_user'];
 
-    $events = $invitationService->getEventsByUser($id_user);
+    $events = $invitationService->getEventsUser($id_user);
 
     $events = FormatterObject::Events($events);
 

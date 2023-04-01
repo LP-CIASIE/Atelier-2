@@ -72,14 +72,16 @@ $app->delete('/users/{id_user}[/]', atelier\gateway\actions\users\DeleteUserActi
 // GET
 $app->get('/users/{id_user}/events/{id_event}[/]', atelier\gateway\actions\events\GetEventUserAction::class)->add(new TokenMiddleware($container));
 
+$app->get('/users/{id_user}/events[/]', atelier\gateway\actions\events\GetEventsUserAction::class)->add(new TokenMiddleware($container));
+
 // POST
-$app->post('/users/{id_user}/events/{id_event}[/]', atelier\gateway\actions\events\CreateUserEventAction::class)->add(new TokenMiddleware($container));
+$app->post('/users/{id_user}/events/{id_event}[/]', atelier\gateway\actions\events\CreateEventUserAction::class)->add(new TokenMiddleware($container));
 
 // PUT
-$app->put('/users/{id_user}/events/{id_event}[/]', atelier\gateway\actions\events\UpdateUserEventAction::class)->add(new TokenMiddleware($container));
+$app->put('/users/{id_user}/events/{id_event}[/]', atelier\gateway\actions\events\UpdateEventUserAction::class)->add(new TokenMiddleware($container));
 
 // DELETE
-$app->delete('/users/{id_user}/events/{id_event}[/]', atelier\gateway\actions\events\DeleteUserEventAction::class)->add(new TokenMiddleware($container));
+$app->delete('/users/{id_user}/events/{id_event}[/]', atelier\gateway\actions\events\DeleteEventUserAction::class)->add(new TokenMiddleware($container));
 
 /** =========================
  *    Collection Evenements
@@ -110,17 +112,17 @@ $app->delete('/events/{id_event}[/]', atelier\gateway\actions\events\DeleteEvent
 
 // Collection Share Evenements
 // GET
-$app->get('/events/{id_event}/users[/]', atelier\gateway\actions\events\GetEventUsersAction::class)->add(new TokenMiddleware($container));
+$app->get('/events/{id_event}/users[/]', atelier\gateway\actions\events\GetUsersEventAction::class)->add(new TokenMiddleware($container));
 $app->get('/events/{id_event}/users/{id_user}[/]', atelier\gateway\actions\events\GetEventUserAction::class)->add(new TokenMiddleware($container));
 
 // POST
-$app->post('/events/{id_event}/users/{id_user}[/]', atelier\gateway\actions\events\CreateUserEventAction::class)->add(new TokenMiddleware($container));
+$app->post('/events/{id_event}/users/{id_user}[/]', atelier\gateway\actions\events\CreateEventUserAction::class)->add(new TokenMiddleware($container));
 
 // PUT
-$app->put('/events/{id_event}/users/{id_user}[/]', atelier\gateway\actions\events\UpdateUserEventAction::class)->add(new TokenMiddleware($container));
+$app->put('/events/{id_event}/users/{id_user}[/]', atelier\gateway\actions\events\UpdateEventUserAction::class)->add(new TokenMiddleware($container));
 
 // DELETE
-$app->delete('/events/{id_event}/users/{id_user}[/]', atelier\gateway\actions\events\DeleteUserEventAction::class)->add(new TokenMiddleware($container));
+$app->delete('/events/{id_event}/users/{id_user}[/]', atelier\gateway\actions\events\DeleteEventUserAction::class)->add(new TokenMiddleware($container));
 
 // Collection Commentaires
 // GET
