@@ -23,7 +23,6 @@ const items = ref([
 		icon: "pi pi-fw pi-power-off",
 		command: () => {
 			Session.signOut();
-			router.push({ name: "signIn" });
 		},
 	},
 ]);

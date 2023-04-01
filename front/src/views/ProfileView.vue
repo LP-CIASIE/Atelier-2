@@ -60,6 +60,22 @@ function on_submit() {
 		form.pending = false;
 	});
 }
+
+function deleteUser() {
+	form.pending = true;
+	if (!confirm("Voulez-vous vraiment supprimer votre compte ?")) {
+		form.pending = false;
+		return;
+	}
+	Session.deleteUser().then((result) => {
+		if (result.ok) {
+			toast.add({ severity: "success", summary: "Succès", detail: "Votre compte a bien été supprimé", life: 5000 });
+		} else {
+			form.error_message = result.message;
+		}
+		form.pending = false;
+	});
+}
 </script>
 
 <template>
@@ -119,7 +135,8 @@ function on_submit() {
 					</div>
 				</div>
 				<small v-if="form.error_message.length > 0" class="p-error" id="text-error">{{ form.error_message || "&nbsp;" }}</small>
-				<Button type="submit" class="p-button p-button-rounded" :class="{ 'p-button-primary': form.success_message == '', 'p-button-success': form.success_message }" :disabled="form.pending">Editer les propriétés du profil</Button>
+				<Button type="submit" class="p-button" :class="{ 'p-button-primary': form.success_message == '', 'p-button-success': form.success_message }" :disabled="form.pending">Editer les propriétés du profil</Button>
+				<Button type="button" class="p-button" :disabled="form.pending" severity="danger" @click="deleteUser()">Supprimer le compte</Button>
 			</form>
 		</template>
 	</Card>

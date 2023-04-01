@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
 import { inject, reactive } from "vue";
+import { useRouter } from "vue-router";
 
 export const useSessionStore = defineStore("session", {
 	state: () => {
+		const router = useRouter();
 		const API = inject("api");
 		const user = reactive({
 			id: "",
@@ -23,7 +25,6 @@ export const useSessionStore = defineStore("session", {
 					user.access_token = response.data["access-token"];
 					user.refresh_token = response.data["refresh-token"];
 					return getUser().then((userResponse) => {
-						console.log(userResponse);
 						user.email = userResponse.user.email;
 						user.firstname = userResponse.user.firstname;
 						user.lastname = userResponse.user.lastname || "";
@@ -33,6 +34,7 @@ export const useSessionStore = defineStore("session", {
 					});
 				})
 				.catch((error) => {
+					console.log(error);
 					return {
 						ok: false,
 						message: error.response.data.message,
@@ -92,6 +94,26 @@ export const useSessionStore = defineStore("session", {
 				});
 		}
 
+		async function deleteUser() {
+			return API.delete(`/users/${user.id}`, {
+				headers: {
+					Authorization: `Bearer ${user.access_token}`,
+				},
+			})
+				.then((response) => {
+					signOut();
+					return {
+						ok: true,
+					};
+				})
+				.catch((error) => {
+					return {
+						ok: false,
+						message: error.response.data.message,
+					};
+				});
+		}
+
 		function signOut() {
 			user.id = "";
 			user.email = "";
@@ -99,9 +121,11 @@ export const useSessionStore = defineStore("session", {
 			user.lastname = "";
 			user["access-token"] = "";
 			user["refresh-token"] = "";
+
+			router.push({ name: "signIn" });
 		}
 
-		return { user, signIn, signOut, updateUser, getUser };
+		return { user, signIn, signOut, updateUser, getUser, deleteUser };
 	},
 	persist: true,
 });
