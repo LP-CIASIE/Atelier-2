@@ -124,13 +124,13 @@ function on_submit() {
 		<div>
 			<span class="p-float-label">
 				<InputText
-					id="mail"
+					id="firstname"
 					v-model="form.firstname.content"
 					type="text"
 					:class="{ 'p-invalid': form.firstname.error_message }"
 					aria-describedby="text-error"
 				/>
-				<label for="mail">Prénom</label>
+				<label for="firstname">Prénom</label>
 			</span>
 			<small v-if="form.firstname.error_message.length > 0" class="p-error" id="text-error">{{
 				form.firstname.error_message || "&nbsp;"
