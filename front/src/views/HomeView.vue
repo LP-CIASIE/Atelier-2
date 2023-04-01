@@ -8,39 +8,26 @@ import { useSessionStore } from "@/stores/session.js";
 const API = inject("api");
 const Session = useSessionStore();
 
-const events = ref();
-const eventsFiltered = ref([]);
+const events = ref([]);
+const loading = ref(true);
 
 function getEvents() {
-	// Temporaire pour ne pas avoir à faire des requêtes à l'API
-	fetch("/tempEvents.json")
-		.then((response) => {
-			return response.json();
+	API.get("/events", {
+		params: {
+			page: "1",
+			size: "10000",
+		},
+		headers: {
+			Authorization: "Bearer " + Session.user.access_token,
+		},
+	})
+		.then((result) => {
+			events.value = result.data.events;
+			loading.value = false;
 		})
-		.then((data) => {
-			console.log(data.events);
-			events.value = data.events;
-			eventsFiltered.value = events.value;
+		.catch((error) => {
+			console.log(error);
 		});
-
-	// API.get("/events", {
-	// 	params: {
-	// 		page: "1",
-	// 		size: "10000",
-	// 	},
-	// 	headers: {
-	// 		Authorization: "Bearer " + Session.user.access_token,
-	// 	},
-	// })
-	// 	.then((result) => {
-	// 		events.value = result.data.events;
-	// 		eventsFiltered.value = events.value;
-
-	// 		console.log(events.value);
-	// 	})
-	// 	.catch((error) => {
-	// 		console.log(error);
-	// 	});
 }
 
 onMounted(() => {
@@ -53,7 +40,17 @@ onMounted(() => {
 		<h1>Listes des événements</h1>
 		<Button label="Créer un événement" icon="pi pi-plus" @click="$router.push('/event/create')" />
 	</div>
-	<EventsList :events="eventsFiltered" />
+	<template v-if="loading">
+		<p>Chargement...</p>
+	</template>
+	<template v-else>
+		<template v-if="events.length === 0">
+			<p>Vous n'avez pas encore d'événement</p>
+		</template>
+		<template v-else>
+			<EventsList :events="events" />
+		</template>
+	</template>
 </template>
 
 <style lang="scss" scoped>
