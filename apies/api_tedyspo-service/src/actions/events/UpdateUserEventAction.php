@@ -4,6 +4,7 @@ namespace atelier\tedyspo\actions\events;
 
 use atelier\tedyspo\services\utils\FormatterAPI;
 use atelier\tedyspo\actions\AbstractAction;
+use atelier\tedyspo\services\utils\FormatterObject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -20,10 +21,9 @@ class UpdateUserEventAction extends AbstractAction
 
     $eventUser = $InvitationService->updateStateUserEvent($id_event, $id_user, $data);
 
-
-    // Si jamais on veut renvoyer l'objet modifié    
+    $eventUser = FormatterObject::EventUser($eventUser);
     $data = [
-      'event' => $eventUser
+      'eventUser' => $eventUser
     ];
 
     return FormatterAPI::formatResponse($request, $response, $data, 200);

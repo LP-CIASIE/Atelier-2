@@ -9,7 +9,7 @@ use atelier\tedyspo\models\User;
 class InvitationService extends AbstractService
 {
 
-  final public function getEventsByUser($id_user)
+  final public function getEventsUser($id_user)
   {
     if ($id_user == null) {
       throw new \Exception("Il manque l'id de l'utilisateur ou celui de l'événement.", 400);
@@ -27,7 +27,7 @@ class InvitationService extends AbstractService
     }
   }
 
-  final public function getEventByUser($id_user, $id_event)
+  final public function getEventUser($id_user, $id_event)
   {
     if ($id_user == null || $id_event == null) {
       throw new \Exception("Il manque l'id de l'utilisateur ou celui de l'événement.", 400);
@@ -54,7 +54,7 @@ class InvitationService extends AbstractService
     } else {
       try {
         $event = Event::find($id_event);
-        $event->users()->attach($id_user, ['id_user' => $id_user, 'id_event' => $id_event, 'is_organisator' => false, 'state' => 'pending', 'is_here' => false, 'comment' => 'En attente de validation par l\'utilisateur']);
+        $event->users()->attach($id_user, ['is_organisator' => false, 'state' => 'pending', 'is_here' => false, 'comment' => 'En attente de validation par l\'utilisateur']);
       } catch (\Exception $e) {
         throw new \Exception("Erreur lors de l'invitation à l'événement.'", 400);
       }
@@ -71,7 +71,7 @@ class InvitationService extends AbstractService
     } else {
       try {
         $event = Event::find($id_event);
-        $event->users()->detach($id_user, ['id_user' => $id_user, 'id_event' => $id_event]);
+        $event->users()->detach($id_user);
       } catch (\Exception $e) {
         throw new \Exception("Erreur lors de la suppression de l'invitation à l'événement.", 400);
       }
@@ -79,7 +79,7 @@ class InvitationService extends AbstractService
     return $event;
   }
 
-  final public function getUserFromEvent($id_event, $id_user)
+  final public function getUserEvent($id_event, $id_user)
   {
     if ($id_user == null || $id_event == null) {
       throw new \Exception("Il manque l'id de l'utilisateur ou celui de l'événement.", 400);
@@ -97,7 +97,7 @@ class InvitationService extends AbstractService
     }
   }
 
-  final public function getUsersFromEvent($id_event)
+  final public function getUsersEvent($id_event)
   {
     if ($id_event == null) {
       throw new \Exception("Il manque l'id de l'utilisateur ou celui de l'événement.", 400);
@@ -114,6 +114,8 @@ class InvitationService extends AbstractService
       return $users;
     }
   }
+
+  // A gérer : uniquement l'organisateur ainsi que l'utilisateur concerné peut modifier l'état
 
   final public function updateStateUserEvent($id_event, $id_user, $data)
   {
@@ -135,15 +137,14 @@ class InvitationService extends AbstractService
         throw new \Exception("L'état de l'utilisateur n'est pas valide.", 400);
       }
       try {
-        $EventUser = $this->getEventByUser($id_user, $id_event);
-        $EventUser->pivot->state = $data['state'];
-        $EventUser->pivot->comment = $data['comment'];
-        $EventUser->pivot->save();
-        $event = Event::find($id_event);
+        $event = $this->getEventUser($id_user, $id_event);
+        $event->pivot->state = $data['state'];
+        $event->pivot->comment = $data['comment'];
+        $event->pivot->save();
       } catch (\Exception $e) {
         throw new \Exception("Erreur lors de la mise à jour de l'état de l'utilisateur.", 400);
       }
     }
-    return $EventUser;
+    return ['id_user' => $id_user, 'id_event' => $id_event, 'state' => $data['state'], 'comment' => $data['comment']];
   }
 }

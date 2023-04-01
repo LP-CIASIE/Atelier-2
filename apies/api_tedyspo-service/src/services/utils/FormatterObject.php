@@ -102,4 +102,23 @@ class FormatterObject
     }
     return $eventsArray;
   }
+
+  public static function EventUser($data)
+  {
+    return [
+      'state' => $data['state'],
+      'comment' => $data['comment'],
+      'links' => [
+        'self' => [
+          'href' => '/events/' . $data['id_event'] . '/users/' . $data['id_user']
+        ],
+        'user' => [
+          'href' => '/users/' . $data['id_user']
+        ],
+        'event' => [
+          'href' => '/events/' . $data['id_event']
+        ],
+      ]
+    ];
+  }
 }
