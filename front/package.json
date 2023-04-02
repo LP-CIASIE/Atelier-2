@@ -18,10 +18,10 @@
 		"primevue": "^3.26.1",
 		"sass": "^1.57.1",
 		"vue": "^3.2.45",
-		"@vue-leaflet/vue-leaflet": "^0.9.0",
 		"vue-router": "^4.1.6"
 	},
 	"devDependencies": {
+		"@types/leaflet": "^1.9.3",
 		"@vitejs/plugin-vue": "^4.0.0",
 		"node-sass": "^8.0.0",
 		"sass-loader": "^13.2.0",

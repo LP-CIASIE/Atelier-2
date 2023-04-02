@@ -1,11 +1,11 @@
 <script setup>
 // Leaflet
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer, LMarker, LTooltip } from "@vue-leaflet/vue-leaflet";
+import L from "leaflet";
 
 import Button from "primevue/button";
 
-import { defineProps, reactive } from "vue";
+import { reactive, computed, onMounted } from "vue";
 
 const props = defineProps({
 	event: {
@@ -25,23 +25,61 @@ const eventFormated = reactive({
 	date: props.event.date,
 });
 
-eventFormated.description = props.event.description.length > 400 ? eventFormated.description.substring(0, 400) + "..." : eventFormated.description;
-eventFormated.date = new Date(props.event.date).toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" });
+const eventTitle = computed(() => props.event.title);
+const eventDescription = computed(() => {
+	return props.event.description.length > 400 ? props.event.description.substring(0, 400) + "..." : props.event.description;
+});
+const eventDate = computed(() => {
+	return new Date(props.event.date).toLocaleDateString("fr-FR", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		hour: "numeric",
+		minute: "numeric",
+	});
+});
+
+var mapLeaflet = undefined;
+
+function createMap() {
+	try {
+		mapLeaflet = L.map("map-" + props.event.id, {
+			center: map.center,
+			zoom: map.zoom,
+			zoomControl: false,
+			attributionControl: false,
+		}).setView(map.center, map.zoom);
+		mapLeaflet.dragging.disable();
+		mapLeaflet.doubleClickZoom.disable();
+		mapLeaflet.touchZoom.disable();
+		mapLeaflet.scrollWheelZoom.disable();
+
+		// Marker
+		const marker = L.marker(map.center).addTo(mapLeaflet);
+		marker.bindTooltip("Point de rendez-vous", { direction: "top", offset: [-15, -10] });
+
+		L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+			subdomains: ["mt0", "mt1", "mt2", "mt3"],
+		}).addTo(mapLeaflet);
+	} catch (e) {}
+}
+
+onMounted(() => {
+	setTimeout(() => {
+		createMap();
+	}, 100);
+});
 </script>
 
 <template>
 	<div class="event">
-		<l-map class="map-event" :options="{ dragging: false, doubleClickZoom: false, zoomControl: false, attributionControl: false }" ref="map" :zoom="map.zoom" :center="map.center">
-			<l-tile-layer :subdomains="['mt0', 'mt1', 'mt2', 'mt3']" url="https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" layer-type="base" name="Google Maps" />
-			<l-marker name="Point de rendez-vous" :lat-lng="map.center" attribution="test">
-				<l-tooltip :options="{ direction: 'top', offset: [-15, -10] }"><span>Point de rendez-vous</span></l-tooltip>
-			</l-marker>
-		</l-map>
+		<div :id="'map-' + event.id" class="map-event"></div>
 		<div class="event__description">
-			<p class="title">{{ eventFormated.title }}</p>
-			<p class="desc">{{ eventFormated.description }}</p>
+			<p class="title">{{ eventTitle }}</p>
+			<p class="desc">{{ eventDescription }}</p>
 			<div class="bottom">
-				<p class="date">{{ eventFormated.date }}</p>
+				<p class="date">{{ eventDate }}</p>
 				<Button class="button" @click="$router.push('/event/' + event.id)" label="Voir l'évenement" size="small" />
 			</div>
 		</div>
