@@ -5,6 +5,7 @@ namespace atelier\tedyspo\services\utils;
 use atelier\tedyspo\models\Comment;
 use atelier\tedyspo\models\Event;
 use atelier\tedyspo\models\User;
+use atelier\tedyspo\models\Location;
 use Illuminate\Database\Eloquent\Collection;
 
 class FormatterObject
@@ -84,12 +85,14 @@ class FormatterObject
         'participants' => [
           'href' => '/events/' . $event->id_event . '/users'
         ],
+
         'locations' => [
           'href' => '/events/' . $event->id_event . '/locations'
         ],
         'urls' => [
           'href' => '/events/' . $event->id_event . '/links'
         ],
+
       ]
     ];
   }
@@ -101,5 +104,33 @@ class FormatterObject
       $eventsArray[] = self::Event($event);
     }
     return $eventsArray;
+  }
+
+
+  public static function Location(Location $location)
+  {
+    return [
+      'id' => $location->id_location,
+      'name' => $location->name,
+      'lat' => $location->lat,
+      'long' => $location->long,
+      'is_related' => $location->is_related,
+      'links' => [
+        'self' => [
+          'href' => '/events/' . $location->id_event . '/locations/' . $location->id_location
+        ],
+        'event' => [
+          'href' => '/events/' . $location->id_event
+        ],
+      ]
+    ];
+  }
+  public static function Locations(Collection $locations)
+  {
+    $locationsArray = [];
+    foreach ($locations as $location) {
+      $locationsArray[] = self::Location($location);
+    }
+    return $locationsArray;
   }
 }
