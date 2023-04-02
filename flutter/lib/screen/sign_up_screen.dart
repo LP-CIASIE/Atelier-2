@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -218,19 +219,37 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: formPending
-                            ? null
-                            : () async {
-                                if (_formKey.currentState!.validate()) {
-                                  final BuildContext context = this.context;
-                                  _submitForm(context);
-                                }
-                              },
-                        child: const Text("S'inscrire"),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: OutlinedButton(
+                            onPressed: formPending
+                                ? null
+                                : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SignInPage()),
+                                    );
+                                  },
+                            child: const Text("Se connecter"),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: formPending
+                              ? null
+                              : () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    final BuildContext context = this.context;
+                                    _submitForm(context);
+                                  }
+                                },
+                          child: const Text("S'inscrire"),
+                        ),
+                      ],
                     ),
                   ),
                 ],
