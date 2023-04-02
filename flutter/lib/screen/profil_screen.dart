@@ -1,20 +1,89 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class ProfilPage extends StatelessWidget {
+class ProfilPage extends StatefulWidget {
   final Map<String, dynamic>? user;
-  const ProfilPage({super.key, required this.user});
+  const ProfilPage({super.key, this.user});
 
-  // This widget is the root of your application.
+  @override
+  State<ProfilPage> createState() => _ProfilPageState();
+}
+
+class _ProfilPageState extends State<ProfilPage> {
+  final _formKey = GlobalKey<FormState>();
+  bool formPending = false;
+  late final TextEditingController _emailController;
+  late final TextEditingController _lastnameController;
+  late final TextEditingController _firstnameController;
+  late final TextEditingController _passwordController;
+  late final TextEditingController _passwordConfirmController;
+
+  @override
+  void initState() {
+    _emailController = TextEditingController(text: widget.user?['email']);
+    _lastnameController = TextEditingController(text: widget.user?['lastname']);
+    _firstnameController =
+        TextEditingController(text: widget.user?['firstname']);
+    _passwordController = TextEditingController();
+    _passwordConfirmController = TextEditingController();
+    super.initState();
+  }
+
+  Future<void> _submitForm(context) async {
+    setState(() {
+      formPending = true;
+    });
+
+    Map bodyHttp = {
+      'email': _emailController.text,
+      'lastname': _lastnameController.text,
+      'firstname': _firstnameController.text
+    };
+    if (_passwordController.text != '') {
+      bodyHttp['password'] = _passwordController.text;
+    }
+
+    try {
+      dynamic responseHttp = await http.put(
+        Uri.parse('http://gateway.atelier.local:8000/users'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${widget.user!['accessToken']}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodyHttp),
+      );
+
+      if (!responseHttp.body.isEmpty) {
+        Map<String, dynamic> response = jsonDecode(responseHttp.body);
+
+        if (response.containsKey('code')) {
+          setState(() {
+            SnackBar(content: Text(utf8.decode(response['message'].codeUnits)));
+          });
+        }
+        setState(() {
+          formPending = false;
+        });
+      } else {
+        setState(() {
+          formPending = false;
+        });
+        const SnackBar(content: Text('Modifications enregistrées'));
+      }
+    } catch (error) {
+      setState(() {
+        const SnackBar(
+            content: Text(
+                'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer'));
+        formPending = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    bool formPending = false;
-    String errorMessage = '';
-    final emailController = TextEditingController(text: user?['email']);
-    final lastnameController = TextEditingController(text: user?['lastname']);
-    final firstnameController = TextEditingController(text: user?['firstname']);
-    final passwordController = TextEditingController();
-    final passwordConfirmController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the FruitMaster object that was created by
@@ -26,14 +95,14 @@ class ProfilPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(12),
             child: Form(
-              key: formKey,
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: TextFormField(
-                      controller: emailController,
+                      controller: _emailController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Email non renseignée';
@@ -54,7 +123,7 @@ class ProfilPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: TextFormField(
-                      controller: firstnameController,
+                      controller: _firstnameController,
                       validator: (value) {
                         if (value.toString().length < 2) {
                           return 'Prénom trop court';
@@ -73,7 +142,7 @@ class ProfilPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: TextFormField(
-                      controller: lastnameController,
+                      controller: _lastnameController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Nom',
@@ -84,13 +153,10 @@ class ProfilPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: TextFormField(
                       obscureText: true,
-                      controller: passwordController,
+                      controller: _passwordController,
                       validator: (value) {
-                        if (value.toString().length < 8) {
+                        if (value!.isNotEmpty && value.toString().length < 8) {
                           return 'Mot de passe trop court';
-                        }
-                        if (value == null || value.isEmpty) {
-                          return 'Mot de passe non renseigné';
                         }
                         return null;
                       },
@@ -104,9 +170,9 @@ class ProfilPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: TextFormField(
                       obscureText: true,
-                      controller: passwordConfirmController,
+                      controller: _passwordConfirmController,
                       validator: (value) {
-                        if (value.toString() != passwordController.text) {
+                        if (value.toString() != _passwordController.text) {
                           return 'Mots de passe non identiques';
                         }
                         return null;
@@ -117,24 +183,20 @@ class ProfilPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Visibility(
-                    visible: errorMessage != '',
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(
-                        errorMessage,
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Container(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
-                        onPressed: formPending ? null : null,
-                        child: const Text("S'inscrire"),
+                        onPressed: formPending
+                            ? null
+                            : () async {
+                                if (_formKey.currentState!.validate()) {
+                                  final BuildContext context = this.context;
+                                  _submitForm(context);
+                                }
+                              },
+                        child: const Text("Enregistrer les modifications"),
                       ),
                     ),
                   ),
