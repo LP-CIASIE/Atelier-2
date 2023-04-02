@@ -2,7 +2,7 @@
 import VirtualScroller from "primevue/virtualscroller";
 import EventsListElement from "@/components/assets/EventsListElement.vue";
 
-import { defineProps, ref } from "vue";
+import { ref, inject } from "vue";
 
 const props = defineProps({
 	events: {
@@ -42,13 +42,14 @@ function scrollToToday() {
 const scroller = ref(null);
 
 // Run ScrollToToday after props are loaded
-setTimeout(() => {
+const BUS = inject("bus");
+BUS.on("showEventClosestDay", () => {
 	scrollToToday();
-}, 500);
+});
 </script>
 
 <template>
-	<VirtualScroller ref="scroller" :items="events" :itemSize="200" :lazy="true" :delay="10">
+	<VirtualScroller ref="scroller" :items="events" :itemSize="200" :delay="100">
 		<template v-slot:item="{ item, options }">
 			<EventsListElement :event="item" :ref="'event-' + item.id" :key="item.id" />
 		</template>

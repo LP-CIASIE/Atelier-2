@@ -6,6 +6,7 @@ import { ref, inject, onMounted } from "vue";
 import { useSessionStore } from "@/stores/session.js";
 
 const API = inject("api");
+const BUS = inject("bus");
 const Session = useSessionStore();
 
 const events = ref([]);
@@ -24,6 +25,10 @@ function getEvents() {
 		.then((result) => {
 			events.value = result.data.events;
 			loading.value = false;
+
+			setTimeout(() => {
+				BUS.emit("showEventClosestDay", "run");
+			}, 200);
 		})
 		.catch((error) => {
 			console.log(error);
