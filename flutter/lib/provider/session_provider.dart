@@ -33,7 +33,7 @@ class SessionProvider extends ChangeNotifier {
           throw CustomException(message: response['message']);
         }
         throw CustomException(
-            message: "Une erreur est survenue : ${response['code']}");
+            message: "Une erreur est survenue : ${response['code']}.");
       }
 
       Map<String, dynamic> user = response['user'];
@@ -45,7 +45,7 @@ class SessionProvider extends ChangeNotifier {
       if (error is! CustomException) {
         throw CustomException(
             message:
-                'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer');
+                'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.');
       }
       rethrow;
     }
@@ -87,7 +87,7 @@ class SessionProvider extends ChangeNotifier {
       return {
         "ok": false,
         "message":
-            'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer',
+            'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.',
       };
     }
   }

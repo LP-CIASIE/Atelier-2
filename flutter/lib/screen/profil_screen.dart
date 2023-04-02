@@ -59,9 +59,10 @@ class _ProfilPageState extends State<ProfilPage> {
         Map<String, dynamic> response = jsonDecode(responseHttp.body);
 
         if (response.containsKey('code')) {
-          setState(() {
-            SnackBar(content: Text(utf8.decode(response['message'].codeUnits)));
-          });
+          SnackBar snackBar = SnackBar(
+            content: Text(utf8.decode(response['message'].codeUnits)),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         setState(() {
           formPending = false;
@@ -70,14 +71,21 @@ class _ProfilPageState extends State<ProfilPage> {
         setState(() {
           formPending = false;
         });
-        const SnackBar(content: Text('Modifications enregistrées'));
+
+        formPending = false;
+        SnackBar snackBar = const SnackBar(
+          content: Text('Modifications enregistrées.'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } catch (error) {
       setState(() {
-        const SnackBar(
-            content: Text(
-                'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer'));
         formPending = false;
+        SnackBar snackBar = const SnackBar(
+          content: Text(
+              'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       });
     }
   }

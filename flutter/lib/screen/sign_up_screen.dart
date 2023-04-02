@@ -76,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
     } catch (error) {
       setState(() {
         errorMessage =
-            'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer';
+            'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.';
         formPending = false;
       });
     }
