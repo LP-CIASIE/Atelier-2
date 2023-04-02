@@ -35,7 +35,7 @@ const router = createRouter({
 			redirect: "/",
 			children: [
 				{
-					path: "{id}",
+					path: ":id",
 					name: "event",
 					component: () => import("@/views/event/EventView.vue"),
 				},
