@@ -3,9 +3,9 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-import Button from "primevue/button";
+import Card from "primevue/card";
 
-import { reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, inject } from "vue";
 
 const props = defineProps({
 	event: {
@@ -14,16 +14,7 @@ const props = defineProps({
 	},
 });
 
-const map = reactive({
-	zoom: 12,
-	center: [48.692054, 6.184417],
-});
-
-const eventFormated = reactive({
-	title: props.event.title,
-	description: props.event.description,
-	date: props.event.date,
-});
+const API = inject("api");
 
 const eventTitle = computed(() => props.event.title);
 const eventDescription = computed(() => {
@@ -40,59 +31,77 @@ const eventDate = computed(() => {
 	});
 });
 
-var mapLeaflet = undefined;
+const eventLocation = ref("");
 
-function createMap() {
-	try {
-		mapLeaflet = L.map("map-" + props.event.id, {
-			center: map.center,
-			zoom: map.zoom,
-			zoomControl: false,
-			attributionControl: false,
-		}).setView(map.center, map.zoom);
-		mapLeaflet.dragging.disable();
-		mapLeaflet.doubleClickZoom.disable();
-		mapLeaflet.touchZoom.disable();
-		mapLeaflet.scrollWheelZoom.disable();
-
-		// Marker
-		const marker = L.marker(map.center).addTo(mapLeaflet);
-		marker.bindTooltip("Point de rendez-vous", { direction: "top", offset: [-15, -10] });
-
-		L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
-			subdomains: ["mt0", "mt1", "mt2", "mt3"],
-		}).addTo(mapLeaflet);
-	} catch (e) {}
+function getLocation() {
+	API.get(`https://api-adresse.data.gouv.fr/reverse/?lon=6.184417&lat=48.692054`).then((response) => {
+		eventLocation.value = response.data.features[0].properties.label;
+	});
 }
 
-onMounted(() => {
-	setTimeout(() => {
-		createMap();
-	}, 100);
-});
+getLocation();
+
+// const map = reactive({
+// 	zoom: 12,
+// 	center: [48.692054, 6.184417],
+// });
+
+// var mapLeaflet = undefined;
+
+// function createMap() {
+// 	try {
+// 		mapLeaflet = L.map("map-" + props.event.id, {
+// 			center: map.center,
+// 			zoom: map.zoom,
+// 			zoomControl: false,
+// 			attributionControl: false,
+// 		}).setView(map.center, map.zoom);
+// 		mapLeaflet.dragging.disable();
+// 		mapLeaflet.doubleClickZoom.disable();
+// 		mapLeaflet.touchZoom.disable();
+// 		mapLeaflet.scrollWheelZoom.disable();
+
+// 		// Marker
+// 		const marker = L.marker(map.center).addTo(mapLeaflet);
+// 		marker.bindTooltip("Point de rendez-vous", { direction: "top", offset: [-15, -10] });
+
+// 		L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+// 			subdomains: ["mt0", "mt1", "mt2", "mt3"],
+// 		}).addTo(mapLeaflet);
+// 	} catch (e) {}
+// }
+
+// onMounted(() => {
+// 	setTimeout(() => {
+// 		createMap();
+// 	}, 100);
+// });
 </script>
 
 <template>
-	<div class="event">
-		<div :id="'map-' + event.id" class="map-event"></div>
-		<div class="event__description">
-			<p class="title">{{ eventTitle }}</p>
-			<p class="desc">{{ eventDescription }}</p>
-			<div class="bottom">
-				<p class="date">{{ eventDate }}</p>
-				<Button class="button" @click="$router.push('/event/' + event.id)" label="Voir l'évenement" size="small" />
-			</div>
-		</div>
-	</div>
+	<RouterLink :to="{ name: 'event', params: { id: event.id } }" class="eventCard">
+		<Card>
+			<template #content>
+				<p class="title">{{ eventTitle }}</p>
+				<p class="desc">{{ eventDescription }}</p>
+				<div class="bottom">
+					<p class="date">{{ eventDate }}</p>
+					<p class="location">{{ eventLocation }}</p>
+				</div>
+			</template>
+		</Card>
+	</RouterLink>
 </template>
 
-<style lang="scss" scoped>
-.event {
-	height: 200px;
+<style lang="scss">
+.eventCard > .p-card {
+	height: 120px;
 	width: 100%;
 	display: flex;
-	padding: 0.5rem;
+	padding: 0 0.5rem;
+	margin: 1rem 0;
 	gap: 0.5rem;
+	color: #333;
 
 	.map-event {
 		height: 100%;
@@ -101,42 +110,45 @@ onMounted(() => {
 		border-radius: 4px;
 	}
 
-	&__description {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		gap: 0.5rem;
-		padding: 0.5rem;
-		padding-top: 0;
+	.p-card-body {
 		width: 100%;
 
-		.bottom {
+		.p-card-content {
 			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
+			flex-direction: column;
+			gap: 0.5rem;
+			padding: 0;
+			width: 100%;
+			height: 100%;
 
-		& > * {
-			margin: 0;
-		}
+			.bottom {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
 
-		.title {
-			margin-top: 0.5rem;
-			font-size: 1.2rem;
-			font-weight: 600;
-		}
+			& > * {
+				margin: 0;
+			}
 
-		.desc {
-			overflow: auto;
-			flex-grow: 1;
-			font-size: 0.9rem;
-			opacity: 0.8;
-		}
+			.title {
+				font-size: 1.2rem;
+				font-weight: 600;
+			}
 
-		.date {
-			font-size: 0.8rem;
-			opacity: 0.8;
-			margin: 0;
+			.desc {
+				overflow: auto;
+				flex-grow: 1;
+				font-size: 0.9rem;
+				opacity: 0.8;
+			}
+
+			.date,
+			.location {
+				font-size: 0.8rem;
+				opacity: 0.8;
+				margin: 0;
+			}
 		}
 	}
 }

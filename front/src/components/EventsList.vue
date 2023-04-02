@@ -49,7 +49,7 @@ BUS.on("showEventClosestDay", () => {
 </script>
 
 <template>
-	<VirtualScroller ref="scroller" :items="events" :itemSize="200" :delay="100">
+	<VirtualScroller ref="scroller" :items="events" :itemSize="152 - 16" :delay="200">
 		<template v-slot:item="{ item, options }">
 			<EventsListElement :event="item" :ref="'event-' + item.id" :key="item.id" />
 		</template>

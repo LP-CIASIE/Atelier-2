@@ -109,7 +109,6 @@ function createEvent() {
 	)
 		.then((response) => {
 			let data = response.data;
-			console.log(data);
 			form.selectedUsers.content.forEach((user) => {
 				promiseAll.push(inviteUser(data.event.id, user.id));
 			});
@@ -139,7 +138,7 @@ function createEvent() {
 			</span>
 		</div>
 		<div class="group">
-			<MultiSelect v-model="form.selectedUsers.content" :options="usersFind" filter optionLabel="name" placeholder="Invite tes amis !" class="w-full md:w-20rem" @filter="searchUsers">
+			<MultiSelect v-model="form.selectedUsers.content" :options="usersFind" filter optionLabel="name" placeholder="Invite tes amis !" class="w-full" @filter="searchUsers">
 				<template #empty>
 					<span class="p-d-block p-py-2 p-px-3">Pour commencer la recherche, il faut avoir écrit au moins 3 lettres</span>
 				</template>
@@ -154,7 +153,7 @@ function createEvent() {
 			</MultiSelect>
 			<Calendar id="calendar-24h" v-model="form.date.content" showTime hourFormat="24" date-format="dd/mm/yy" />
 		</div>
-		<div class="list-button">
+		<div class="group">
 			<Button type="button" label="Annuler" @click="router.push({ name: 'signUp' })" outlined />
 			<Button type="submit" label="Créer" :disabled="form.pending" />
 		</div>
@@ -164,32 +163,20 @@ function createEvent() {
 <style lang="scss" scoped>
 form {
 	display: flex;
-	gap: 1rem;
 	flex-direction: column;
 
 	.group {
-		display: flex;
-
-		flex-wrap: wrap;
-		gap: 1rem;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 1rem;
+		margin-bottom: 1rem;
 
 		& > * {
-			flex-grow: 1;
-			display: flex;
-			margin: 0;
-			input {
-				flex-grow: 1;
-			}
-		}
-	}
-	.list-button {
-		display: flex;
-		justify-content: space-between;
-		gap: 0.5rem 1rem;
-		flex-wrap: wrap;
+			grid-row: 1 / 2;
 
-		button {
-			flex-grow: 1;
+			& > input {
+				width: 100%;
+			}
 		}
 	}
 }
