@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
+import 'package:lp1_ciasie_atelier_2/screen/sign_up_screen.dart';
+import 'package:provider/provider.dart';
 
 class ProfilPage extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -90,12 +93,60 @@ class _ProfilPageState extends State<ProfilPage> {
     }
   }
 
+  Future<void> deleteUser(context) async {
+    setState(() {
+      formPending = true;
+    });
+
+    try {
+      dynamic responseHttp = await http.delete(
+        Uri.parse(
+            'http://gateway.atelier.local:8000/users/${widget.user!['id']}'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${widget.user!['accessToken']}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (!responseHttp.body.isEmpty) {
+        Map<String, dynamic> response = jsonDecode(responseHttp.body);
+
+        if (response.containsKey('code')) {
+          SnackBar snackBar = SnackBar(
+            content: Text(utf8.decode(response['message'].codeUnits)),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+        setState(() {
+          formPending = false;
+        });
+      } else {
+        setState(() {
+          formPending = false;
+        });
+
+        formPending = false;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SignUpPage()),
+        );
+      }
+    } catch (error) {
+      setState(() {
+        formPending = false;
+        SnackBar snackBar = const SnackBar(
+          content: Text(
+              'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the FruitMaster object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: const Text('Mon Profil'),
       ),
       body: Column(
@@ -193,19 +244,40 @@ class _ProfilPageState extends State<ProfilPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: formPending
-                            ? null
-                            : () async {
-                                if (_formKey.currentState!.validate()) {
-                                  final BuildContext context = this.context;
-                                  _submitForm(context);
-                                }
-                              },
-                        child: const Text("Enregistrer les modifications"),
+                    child: OutlinedButton(
+                      onPressed: formPending
+                          ? null
+                          : () async {
+                              if (_formKey.currentState!.validate()) {
+                                final BuildContext context = this.context;
+                                _submitForm(context);
+                              }
+                            },
+                      child: const Text("Enregistrer les modifications"),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: OutlinedButton(
+                      style:
+                          OutlinedButton.styleFrom(foregroundColor: Colors.red),
+                      onPressed: formPending ? null : () => deleteUser(context),
+                      child: const Text(
+                        "Supprimer mon compte",
                       ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: ElevatedButton(
+                      onPressed: formPending
+                          ? null
+                          : () => {
+                                Provider.of<SessionProvider>(context,
+                                        listen: false)
+                                    .signOut(context)
+                              },
+                      child: const Text("Me déconnecter"),
                     ),
                   ),
                 ],

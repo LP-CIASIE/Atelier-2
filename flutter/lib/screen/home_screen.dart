@@ -11,10 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-//   User user = User(accessToken: ' ', refreshToken: '');
-//   Provider.of<Session
-// // Provider.of<SessionProvider>(context, listen: false).set()
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
+import 'package:lp1_ciasie_atelier_2/screen/sign_in_screen.dart';
 import '../class/user.dart';
 
 class SessionProvider extends ChangeNotifier {
@@ -90,5 +91,13 @@ class SessionProvider extends ChangeNotifier {
             'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.',
       };
     }
+  }
+
+  void signOut(context) {
+    _user = User(id: '', accessToken: '', refreshToken: '');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignInPage()),
+    );
   }
 }
