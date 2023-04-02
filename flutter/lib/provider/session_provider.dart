@@ -29,9 +29,18 @@ class SessionProvider extends ChangeNotifier {
           throw CustomException(
               message: "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
+        if (response.containsKey('message')) {
+          throw CustomException(message: response['message']);
+        }
+        throw CustomException(
+            message: "Une erreur est survenue : ${response['code']}");
       }
 
-      return response['user'];
+      Map<String, dynamic> user = response['user'];
+      user['accessToken'] = _user.accessToken;
+      user['refreshToken'] = _user.refreshToken;
+
+      return user;
     } catch (error) {
       if (error is! CustomException) {
         throw CustomException(
@@ -81,19 +90,5 @@ class SessionProvider extends ChangeNotifier {
             'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer',
       };
     }
-
-    //     if (response.statusCode == 200) {
-    //   Provider.of<SessionProvider>(context, listen: false)
-    //       .setUser(response.body);
-    //   setState(() {
-    //     errorMessage = "Connexion réussie";
-    //   });
-    // } else {
-    //   setState(() {
-    //     _passwordController.text = '';
-    //     errorMessage = "Un problème est survenu lors de la connexion";
-    //   });
-    //   // Erreur lors de l'envoi des données
-    // }
   }
 }
