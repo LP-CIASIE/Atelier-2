@@ -3,22 +3,22 @@
 namespace atelier\tedyspo\services;
 
 use atelier\tedyspo\models\Link;
+use atelier\tedyspo\models\Event;
 use Respect\Validation\Validator as v;
+use Illuminate\Database\Eloquent\Collection;
 
 
 class LinkService extends AbstractService
 {
-    public function getCount($params = []): int
+    public function getCount($id_event)
     {
-        if (count($params) == 0) {
-            return Link::count();
-        }
-
-        $counter = Link::where($params[0][0], $params[0][1], $params[0][2]);
-        for ($i = 1; $i < count($params); $i++) {
-            $counter = $counter->where($params[$i][0], $params[$i][1], $params[$i][2]);
-        }
-        return $counter->count();
+      try {
+        $event = Event::findOrFail($id_event);
+      } catch (\Exception $e) {
+        throw new \Exception('Cette événement n\'existe pas', 404);
+      }
+  
+      return $event->links()->count();
     }
 
     public function createLinkByEventId($data, $id_event) : Link
@@ -63,7 +63,7 @@ class LinkService extends AbstractService
         return $link;
     }
 
-    public function getLinksByEventId($id_event) : Link
+    public function getLinks($id_event) : Collection
     {
         try{
             v::uuid()->assert($id_event);
@@ -71,8 +71,14 @@ class LinkService extends AbstractService
             throw new \InvalidArgumentException('L\'id de l\'événement n\'est pas valide.', 400);
         }
 
+        try {
+            $event = Event::findOrFail($id_event);
+        } catch (\Exception $e) {
+            throw new \Exception('Cette événement n\'existe pas ou plus', 404);
+        }
+
         try{
-            $links = Link::where('id_event', $id_event)->get();
+            $links = $event->links()->get();
         } catch (\Exception $e){
             throw new \InvalidArgumentException('Erreur lors de la récupération des liens.', 500);
         }
