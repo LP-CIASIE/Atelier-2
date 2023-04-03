@@ -1,0 +1,281 @@
+{
+    "count": 120,
+    "links": {
+        "self": "\/events\/?page=1&size=10",
+        "first": "\/events\/?page=1&size=10",
+        "last": "\/events\/?page=12&size=10",
+        "next": "\/events\/?page=2&size=10"
+    },
+    "events": [
+        {
+            "id": "d5340432-7358-30ef-a54e-4277ff3b05d7",
+            "title": "Sit unde sed.",
+            "description": "Dolores et qui sed quod sunt non. Et et odio ipsum aut reprehenderit dolor sed enim. Expedita qui exercitationem ea ea fugiat tempora beatae autem. Facilis veniam laborum qui culpa. Dolor enim error perferendis harum sint.",
+            "date": "2024-03-30 10:10:10",
+            "is_public": 0,
+            "links": {
+                "self": {
+                    "href": "\/events\/d5340432-7358-30ef-a54e-4277ff3b05d7"
+                },
+                "owner": {
+                    "href": "\/users\/960f7727-dc65-36ee-8973-023e1a142776"
+                },
+                "comments": {
+                    "href": "\/events\/d5340432-7358-30ef-a54e-4277ff3b05d7\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/d5340432-7358-30ef-a54e-4277ff3b05d7\/users"
+                },
+                "locations": {
+                    "href": "\/events\/d5340432-7358-30ef-a54e-4277ff3b05d7\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/d5340432-7358-30ef-a54e-4277ff3b05d7\/links"
+                }
+            }
+        },
+        {
+            "id": "afa0c61e-cc58-3e73-a6d3-004844e3f706",
+            "title": "Est itaque quae.",
+            "description": "Necessitatibus placeat laboriosam dolor quod fuga unde qui. Sint provident harum aut qui rerum et. Nihil qui ea suscipit eos voluptatum.",
+            "date": "2024-03-18 14:45:41",
+            "is_public": 0,
+            "links": {
+                "self": {
+                    "href": "\/events\/afa0c61e-cc58-3e73-a6d3-004844e3f706"
+                },
+                "owner": {
+                    "href": "\/users\/5933a54c-8464-3d8b-a29d-e5044857d5ec"
+                },
+                "comments": {
+                    "href": "\/events\/afa0c61e-cc58-3e73-a6d3-004844e3f706\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/afa0c61e-cc58-3e73-a6d3-004844e3f706\/users"
+                },
+                "locations": {
+                    "href": "\/events\/afa0c61e-cc58-3e73-a6d3-004844e3f706\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/afa0c61e-cc58-3e73-a6d3-004844e3f706\/links"
+                }
+            }
+        },
+        {
+            "id": "962c3f8f-7ac2-3d26-bb4c-a78062e5f363",
+            "title": "Fugiat vel odio.",
+            "description": "Beatae quia sed in iure blanditiis aspernatur autem. Dolorem omnis voluptates pariatur voluptate. Ab aut mollitia tenetur rerum natus et facere. Eaque recusandae eos similique pariatur iure molestiae quidem. Eligendi exercitationem in temporibus veritatis.",
+            "date": "2024-03-11 04:55:27",
+            "is_public": 0,
+            "links": {
+                "self": {
+                    "href": "\/events\/962c3f8f-7ac2-3d26-bb4c-a78062e5f363"
+                },
+                "owner": {
+                    "href": "\/users\/4ad52cd3-aad9-3cca-b4c8-080436ce3a56"
+                },
+                "comments": {
+                    "href": "\/events\/962c3f8f-7ac2-3d26-bb4c-a78062e5f363\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/962c3f8f-7ac2-3d26-bb4c-a78062e5f363\/users"
+                },
+                "locations": {
+                    "href": "\/events\/962c3f8f-7ac2-3d26-bb4c-a78062e5f363\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/962c3f8f-7ac2-3d26-bb4c-a78062e5f363\/links"
+                }
+            }
+        },
+        {
+            "id": "be6eb940-3978-301a-90c7-ebf878b703de",
+            "title": "Quia temporibus.",
+            "description": "Beatae aliquid nam dolorem non aperiam deserunt. Optio nam atque iusto et. Sint doloremque ex qui dolor recusandae et accusamus. Voluptates nihil quos molestiae quam ut enim aut.",
+            "date": "2024-03-03 22:06:13",
+            "is_public": 1,
+            "links": {
+                "self": {
+                    "href": "\/events\/be6eb940-3978-301a-90c7-ebf878b703de"
+                },
+                "owner": {
+                    "href": "\/users\/119999d4-fd68-3fa1-b0e3-bc8e146ea8ee"
+                },
+                "comments": {
+                    "href": "\/events\/be6eb940-3978-301a-90c7-ebf878b703de\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/be6eb940-3978-301a-90c7-ebf878b703de\/users"
+                },
+                "locations": {
+                    "href": "\/events\/be6eb940-3978-301a-90c7-ebf878b703de\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/be6eb940-3978-301a-90c7-ebf878b703de\/links"
+                }
+            }
+        },
+        {
+            "id": "eb15d250-bf28-32f5-b232-b40c9d9de308",
+            "title": "Facere ratione.",
+            "description": "Ea officiis voluptatibus sapiente quibusdam et ut. Quibusdam id hic consequatur et dolorem incidunt. Ad placeat sed rerum.",
+            "date": "2024-03-01 17:19:23",
+            "is_public": 1,
+            "links": {
+                "self": {
+                    "href": "\/events\/eb15d250-bf28-32f5-b232-b40c9d9de308"
+                },
+                "owner": {
+                    "href": "\/users\/00382b34-2e73-3de5-887c-15d26a2316d2"
+                },
+                "comments": {
+                    "href": "\/events\/eb15d250-bf28-32f5-b232-b40c9d9de308\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/eb15d250-bf28-32f5-b232-b40c9d9de308\/users"
+                },
+                "locations": {
+                    "href": "\/events\/eb15d250-bf28-32f5-b232-b40c9d9de308\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/eb15d250-bf28-32f5-b232-b40c9d9de308\/links"
+                }
+            }
+        },
+        {
+            "id": "6a5357cd-2ff5-3de2-983e-9e61038ac574",
+            "title": "Et fugiat numquam temporibus.",
+            "description": "Harum et architecto qui iure nesciunt odio hic nihil. Quo id laboriosam totam dolores. Iure eum sit aut.",
+            "date": "2024-02-24 01:41:31",
+            "is_public": 0,
+            "links": {
+                "self": {
+                    "href": "\/events\/6a5357cd-2ff5-3de2-983e-9e61038ac574"
+                },
+                "owner": {
+                    "href": "\/users\/00382b34-2e73-3de5-887c-15d26a2316d2"
+                },
+                "comments": {
+                    "href": "\/events\/6a5357cd-2ff5-3de2-983e-9e61038ac574\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/6a5357cd-2ff5-3de2-983e-9e61038ac574\/users"
+                },
+                "locations": {
+                    "href": "\/events\/6a5357cd-2ff5-3de2-983e-9e61038ac574\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/6a5357cd-2ff5-3de2-983e-9e61038ac574\/links"
+                }
+            }
+        },
+        {
+            "id": "922787da-3e18-38a9-910f-894c9d0d2200",
+            "title": "Eaque accusamus aspernatur.",
+            "description": "Est pariatur fugiat libero alias. Reprehenderit accusamus neque molestias cupiditate quos.",
+            "date": "2024-02-04 20:03:51",
+            "is_public": 0,
+            "links": {
+                "self": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200"
+                },
+                "owner": {
+                    "href": "\/users\/0328a0fb-9569-3acc-8904-8ea4eedbe158"
+                },
+                "comments": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200\/users"
+                },
+                "locations": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200\/links"
+                }
+            }
+        },
+        {
+            "id": "922787da-3e18-38a9-910f-894c9d0d2200",
+            "title": "Eaque accusamus aspernatur.",
+            "description": "Est pariatur fugiat libero alias. Reprehenderit accusamus neque molestias cupiditate quos.",
+            "date": "2024-02-04 20:03:51",
+            "is_public": 0,
+            "links": {
+                "self": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200"
+                },
+                "owner": {
+                    "href": "\/users\/0328a0fb-9569-3acc-8904-8ea4eedbe158"
+                },
+                "comments": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200\/users"
+                },
+                "locations": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/922787da-3e18-38a9-910f-894c9d0d2200\/links"
+                }
+            }
+        },
+        {
+            "id": "811058b6-ad55-391f-91ff-02e30f6b3899",
+            "title": "Consequatur accusamus quia.",
+            "description": "Placeat culpa autem nisi omnis sapiente. Laborum non quos in ut aut sint. Temporibus sed magnam sed maxime veritatis non maiores.",
+            "date": "2024-02-04 03:54:35",
+            "is_public": 1,
+            "links": {
+                "self": {
+                    "href": "\/events\/811058b6-ad55-391f-91ff-02e30f6b3899"
+                },
+                "owner": {
+                    "href": "\/users\/81ec744a-a785-35a1-b13d-f65c4e3e254f"
+                },
+                "comments": {
+                    "href": "\/events\/811058b6-ad55-391f-91ff-02e30f6b3899\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/811058b6-ad55-391f-91ff-02e30f6b3899\/users"
+                },
+                "locations": {
+                    "href": "\/events\/811058b6-ad55-391f-91ff-02e30f6b3899\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/811058b6-ad55-391f-91ff-02e30f6b3899\/links"
+                }
+            }
+        },
+        {
+            "id": "95488809-ac12-3ff6-8cf1-e8405dd28666",
+            "title": "Recusandae qui error nisi.",
+            "description": "Voluptas dolorem enim incidunt ut quo. Id officiis eum voluptatem accusantium tenetur. Possimus voluptas itaque aut nulla deleniti.",
+            "date": "2024-01-16 11:01:59",
+            "is_public": 0,
+            "links": {
+                "self": {
+                    "href": "\/events\/95488809-ac12-3ff6-8cf1-e8405dd28666"
+                },
+                "owner": {
+                    "href": "\/users\/078a1f50-a1a4-3aa1-ad26-1cf7adc43839"
+                },
+                "comments": {
+                    "href": "\/events\/95488809-ac12-3ff6-8cf1-e8405dd28666\/comments"
+                },
+                "participants": {
+                    "href": "\/events\/95488809-ac12-3ff6-8cf1-e8405dd28666\/users"
+                },
+                "locations": {
+                    "href": "\/events\/95488809-ac12-3ff6-8cf1-e8405dd28666\/locations"
+                },
+                "urls": {
+                    "href": "\/events\/95488809-ac12-3ff6-8cf1-e8405dd28666\/links"
+                }
+            }
+        }
+    ]
+}

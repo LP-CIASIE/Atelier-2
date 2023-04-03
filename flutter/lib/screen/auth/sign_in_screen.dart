@@ -30,7 +30,7 @@ class _SignInPageState extends State<SignInPage> {
     if (connection['ok']) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage( events: [],)),
       );
     } else {
       setState(() {
