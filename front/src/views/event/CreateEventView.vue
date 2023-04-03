@@ -171,8 +171,13 @@ form {
 		grid-gap: 1rem;
 		margin-bottom: 1rem;
 
+		@media screen and (max-width: 768px) {
+			grid-template-columns: 1fr;
+		}
+
 		& > * {
-			grid-row: 1 / 2;
+			grid-row: 1 span;
+			margin: 0;
 
 			& > input {
 				width: 100%;
