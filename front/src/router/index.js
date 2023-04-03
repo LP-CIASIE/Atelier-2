@@ -11,11 +11,6 @@ const router = createRouter({
 			component: HomeView,
 		},
 		{
-			path: "/test",
-			name: "test",
-			component: () => import("@/views/TestPrimeView.vue"),
-		},
-		{
 			path: "/sign-in",
 			name: "signIn",
 			component: () => import("@/views/SignInView.vue"),
@@ -29,6 +24,27 @@ const router = createRouter({
 			path: "/profile",
 			name: "profile",
 			component: () => import("@/views/ProfileView.vue"),
+		},
+		{
+			path: "/event",
+			redirect: "/",
+			children: [
+				{
+					path: ":id",
+					name: "event",
+					component: () => import("@/views/event/EventView.vue"),
+				},
+				{
+					path: "create",
+					name: "createEvent",
+					component: () => import("@/views/event/CreateEventView.vue"),
+				},
+				{
+					path: "edit/:id",
+					name: "editEvent",
+					component: () => import("@/views/event/EditEventView.vue"),
+				},
+			],
 		},
 	],
 });

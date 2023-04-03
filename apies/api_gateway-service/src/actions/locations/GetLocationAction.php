@@ -10,6 +10,6 @@ class GetLocationAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    return $this->sendRequest($request, $response, '/events/' . $args['id_event'] . '/locations', 'get');
+    return $this->sendRequest($request, $response, '/events/' . $args['id_event'] . '/location/' . $args['id_location'], 'get');
   }
 }

@@ -34,22 +34,41 @@ class EventService extends AbstractService
             $params['page'] = 1;
         }
 
+        if (isset($params['filter'])) {
+            try {
+                v::key('filter', v::stringType()->length(1, 10))->assert($params);
+            } catch (\Exception $e) {
+                throw new \Exception('Données pour le filtre invalides', 400);
+            }
+        } else {
+            $params['filter'] = 'none';
+        }
+
         $userService = $this->container->get('service.user');
 
         $user = $userService->getUserById($id_user);
 
-        try {
-            $event = $user->events()
-                ->orderBy('event.date', 'desc')
-                ->skip(($params['page'] - 1) * $params['size'])
-                ->take($params['size'])
-                ->get();
-        } catch (\Exception $e) {
-            echo ($e->getMessage());
-            throw new \Exception('Erreur lors de la récupérations de tout les évenements', 500);
+        $request = $user->events()
+            ->orderBy('event.date', 'desc')
+            ->skip(($params['page'] - 1) * $params['size'])
+            ->take($params['size']);
+
+        if ($params['filter'] === 'accepted') {
+            $request = $request->wherePivot('state', 'accepted');
+        } elseif ($params['filter'] === 'pending') {
+            $request = $request->wherePivot('state', 'pending');
+        } elseif ($params['filter'] === 'refused') {
+            $request = $request->wherePivot('state', 'refused');
         }
 
-        return $event;
+        try {
+            $events = $request->get();
+        } catch (\Exception $e) {
+            throw new \Exception('Erreur lors de la récupération des événements', 500);
+        }
+
+
+        return $events;
     }
     final public function getEventById($id)
     {

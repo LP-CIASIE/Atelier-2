@@ -15,9 +15,10 @@ class GetLocationsAction extends AbstractAction
     $locationService = $this->container->get('service.location');
     $id_event = $args['id_event'];
     $location  = $locationService->getLocations($id_event);
+
     $data = [
       'locations' => FormatterObject::Locations($location)
     ];
-    return FormatterAPI::formatResponse($request, $response, $data , 200);
+    return FormatterAPI::formatResponse($request, $response, $data, 200);
   }
 }
