@@ -11,39 +11,54 @@ import 'package:lp1_ciasie_atelier_2/screen/loading_screen.dart';
 import 'package:provider/provider.dart';
 
 class EventEditBuilderPage extends StatelessWidget {
-  const EventEditBuilderPage({super.key});
+  final String idEvent;
+  const EventEditBuilderPage({super.key, required this.idEvent});
 
   Future<Map<String, dynamic>> event(context) async {
     try {
       User user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(
-        Uri.parse('http://gateway.atelier.local:8000/users/${user.id}'),
+        Uri.parse('http://gateway.atelier.local:8000/events/$idEvent'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      Map<String, dynamic> response = jsonDecode(responseHttp.body);
 
-      if (response.containsKey('error')) {
-        if (response['error'] == 404) {
-          throw CustomException(message: "Cet utilisateur n'existe pas.");
-        }
-        if (response['error'] == 401) {
+      if (!responseHttp.body.isEmpty) {
+        Map<String, dynamic> response = jsonDecode(responseHttp.body);
+
+        if (response.containsKey('error')) {
+          print('KO');
+          if (response['error'] == 404) {
+            throw CustomException(message: "Cet utilisateur n'existe pas.");
+          }
+          if (response['error'] == 401) {
+            throw CustomException(
+                message:
+                    "Vous n'êtes pas autorisé à accéder à cette ressource.");
+          }
+          if (response.containsKey('message')) {
+            throw CustomException(message: response['message']);
+          }
           throw CustomException(
-              message: "Vous n'êtes pas autorisé à accéder à cette ressource.");
+              message: "Une erreur est survenue : ${response['code']}.");
+        } else if (response.containsKey('event')) {
+          print('OK');
+          print(response['event']);
+          return response['event'];
+        } else {
+          print('KO?');
+          throw CustomException(
+              message:
+                  "Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.");
         }
-        if (response.containsKey('message')) {
-          throw CustomException(message: response['message']);
-        }
+      } else {
         throw CustomException(
-            message: "Une erreur est survenue : ${response['code']}.");
+            message:
+                "Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.");
       }
-
-      Map<String, dynamic> event = response['user'];
-
-      return event;
     } catch (error) {
       if (error is! CustomException) {
         throw CustomException(

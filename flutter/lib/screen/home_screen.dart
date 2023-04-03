@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_add_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
@@ -51,10 +52,22 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const EventBuilderPage()),
+              MaterialPageRoute(builder: (context) => const EventAddPage()),
             );
           },
           child: const Text("Créer un évènement"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const EventEditBuilderPage(
+                        idEvent: '709b474e-2d47-36aa-bfc1-39fe14d51b1b',
+                      )),
+            );
+          },
+          child: const Text("Modifier un évènement"),
         ),
       ]),
     );
