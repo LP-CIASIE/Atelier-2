@@ -1,101 +1,43 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
-import 'package:lp1_ciasie_atelier_2/screen/sign_in_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
 import 'package:provider/provider.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   bool formPending = false;
   String errorMessage = '';
   final _emailController = TextEditingController();
-  final _lastnameController = TextEditingController();
-  final _firstnameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _passwordConfirmController = TextEditingController();
 
   Future<void> _submitForm(context) async {
     setState(() {
       formPending = true;
       errorMessage = '';
     });
+    Map<String, dynamic> connection =
+        await Provider.of<SessionProvider>(context, listen: false)
+            .signIn(_emailController.text, _passwordController.text);
 
-    Map bodyHttp = {
-      'email': _emailController.text,
-      'lastname': _lastnameController.text,
-      'firstname': _firstnameController.text,
-      'password': _passwordController.text,
-      'role': 'user'
-    };
-    try {
-      dynamic responseHttp = await http.post(
-        Uri.parse('http://gateway.atelier.local:8000/signup'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(bodyHttp),
+    if (connection['ok']) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
-
-      if (!responseHttp.body.isEmpty) {
-        Map<String, dynamic> response = jsonDecode(responseHttp.body);
-
-        if (response.containsKey('code')) {
-          setState(() {
-            errorMessage = utf8.decode(response['message'].codeUnits);
-          });
-        }
-        setState(() {
-          formPending = false;
-        });
-      } else {
-        Map<String, dynamic> connection =
-            await Provider.of<SessionProvider>(context, listen: false)
-                .signIn(_emailController.text, _passwordController.text);
-
-        if (connection['ok']) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-        } else {
-          setState(() {
-            formPending = false;
-            errorMessage = connection['message'];
-          });
-        }
-      }
-    } catch (error) {
+    } else {
       setState(() {
-        errorMessage =
-            'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.';
         formPending = false;
+        errorMessage = connection['message'];
       });
     }
-    // Map<String, dynamic> connection =
-    //     await Provider.of<SessionProvider>(context, listen: false)
-    //         .signUp(_emailController.text, _passwordController.text);
-
-    // if (connection['ok']) {
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => const HomePage()),
-    //   );
-    // } else {
-    //   setState(() {
-    //     formPending = false;
-    //     errorMessage = connection['message'];
-    //   });
-    // }
   }
 
   @override
@@ -115,7 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Text(
                       textAlign: TextAlign.start,
-                      'Inscription',
+                      'Connexion',
                       style: TextStyle(fontSize: 19.6),
                     ),
                   ),
@@ -143,66 +85,17 @@ class _SignUpPageState extends State<SignUpPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: TextFormField(
-                      controller: _firstnameController,
-                      validator: (value) {
-                        if (value.toString().length < 2) {
-                          return 'Prénom trop court';
-                        }
-                        if (value == null || value.isEmpty) {
-                          return 'Prénom non renseigné';
-                        }
-                        return null;
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Prénom',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
-                      controller: _lastnameController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Nom',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
                       obscureText: true,
                       controller: _passwordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Mot de passe non renseigné';
                         }
-                        if (value.toString().length < 8) {
-                          return 'Mot de passe trop court';
-                        }
                         return null;
                       },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Mot de passe',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: TextFormField(
-                      obscureText: true,
-                      controller: _passwordConfirmController,
-                      validator: (value) {
-                        if (value.toString() != _passwordController.text) {
-                          return 'Mots de passe non identiques';
-                        }
-                        return null;
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Confirmez votre mot de passe',
                       ),
                     ),
                   ),
@@ -232,10 +125,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const SignInPage()),
+                                              const SignUpPage()),
                                     );
                                   },
-                            child: const Text("Se connecter"),
+                            child: const Text("S'inscrire"),
                           ),
                         ),
                         ElevatedButton(
@@ -247,7 +140,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     _submitForm(context);
                                   }
                                 },
-                          child: const Text("S'inscrire"),
+                          child: const Text("Se connecter"),
                         ),
                       ],
                     ),
