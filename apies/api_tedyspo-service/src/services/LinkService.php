@@ -21,36 +21,30 @@ class LinkService extends AbstractService
       return $event->links()->count();
     }
 
-    public function createLinkByEventId($data, $id_event) : Link
+    public function createLink($data, $id_event) : Link
     {
         $link = new Link();
         $link->id_link = \Ramsey\Uuid\Uuid::uuid4();
-
-        try{
-            v::uuid()->assert($id_event);
+      
+        try {
+            Event::findOrFail($id_event);
             $link->id_event = $id_event;
-        } catch (\Exception $e){
-            throw new \InvalidArgumentException('L\'id de l\'événement n\'est pas valide.', 400);
+        } catch (\Exception $e) {
+            throw new \Exception('Identifiant de l\'événement invalide', 400);
         }
 
         try{
             v::stringVal()->length(1, 80)->assert($data['title']);
             $link->title = $data['title'];
         } catch (\Exception $e){
-            throw new \InvalidArgumentException('Le titre est trop long ou trop court.', 400);
+            throw new \InvalidArgumentException('Le titre n\'est pas valide', 400);
         }
 
         try{
-            v::url()->assert($data['link']);
-        } catch (\Exception $e){
-            throw new \InvalidArgumentException('Le lien n\'est pas valide.', 400);
-        }
-        
-        try{
-            v::length(1, 750)->assert($data['link']);
+            v::url()->length(1,750)->assert($data['link']);
             $link->link = $data['link'];
         } catch (\Exception $e){
-            throw new \InvalidArgumentException('Le lien est trop long ou trop court.', 400);
+            throw new \InvalidArgumentException('Le lien n\'est pas valide.', 400);
         }
 
         try{
@@ -86,7 +80,7 @@ class LinkService extends AbstractService
         return $links;
     }
 
-    public function getLinkById($id_link) : Link
+    public function getLink($id_link) : Link
     {
         try{
             v::uuid()->assert($id_link);

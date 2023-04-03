@@ -4,6 +4,7 @@ namespace atelier\tedyspo\actions\links;
 
 use atelier\tedyspo\services\utils\FormatterAPI;
 use atelier\tedyspo\actions\AbstractAction;
+use atelier\tedyspo\services\utils\FormatterObject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -18,7 +19,7 @@ class GetLinksAction extends AbstractAction
 
     $data = [
       'count' => $count,
-      'links' => $links
+      'urls' => FormatterObject::Links($links)
     ];
 
     return FormatterAPI::formatResponse($request, $response, $data, 200);
