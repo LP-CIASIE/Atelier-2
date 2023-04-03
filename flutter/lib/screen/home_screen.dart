@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lp1_ciasie_atelier_2/screen/sign_in_screen.dart';
-import 'package:lp1_ciasie_atelier_2/screen/sign_up_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,10 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-//   User user = User(accessToken: ' ', refreshToken: '');
-//   Provider.of<Session
-// // Provider.of<SessionProvider>(context, listen: false).set()
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +35,16 @@ class _HomePageState extends State<HomePage> {
             );
           },
           child: const Text("S'inscrire"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ProfilBuilderPage()),
+            );
+          },
+          child: const Text("Mon Profil"),
         ),
       ]),
     );

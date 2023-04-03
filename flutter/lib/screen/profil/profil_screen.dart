@@ -2,45 +2,57 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
-import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
 import 'package:provider/provider.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+class ProfilPage extends StatefulWidget {
+  final Map<String, dynamic>? user;
+  const ProfilPage({super.key, this.user});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<ProfilPage> createState() => _ProfilPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _ProfilPageState extends State<ProfilPage> {
   final _formKey = GlobalKey<FormState>();
   bool formPending = false;
-  String errorMessage = '';
-  final _emailController = TextEditingController();
-  final _lastnameController = TextEditingController();
-  final _firstnameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _passwordConfirmController = TextEditingController();
+  late final TextEditingController _emailController;
+  late final TextEditingController _lastnameController;
+  late final TextEditingController _firstnameController;
+  late final TextEditingController _passwordController;
+  late final TextEditingController _passwordConfirmController;
+
+  @override
+  void initState() {
+    _emailController = TextEditingController(text: widget.user?['email']);
+    _lastnameController = TextEditingController(text: widget.user?['lastname']);
+    _firstnameController =
+        TextEditingController(text: widget.user?['firstname']);
+    _passwordController = TextEditingController();
+    _passwordConfirmController = TextEditingController();
+    super.initState();
+  }
 
   Future<void> _submitForm(context) async {
     setState(() {
       formPending = true;
-      errorMessage = '';
     });
 
     Map bodyHttp = {
       'email': _emailController.text,
       'lastname': _lastnameController.text,
-      'firstname': _firstnameController.text,
-      'password': _passwordController.text,
-      'role': 'user'
+      'firstname': _firstnameController.text
     };
+    if (_passwordController.text != '') {
+      bodyHttp['password'] = _passwordController.text;
+    }
+
     try {
-      dynamic responseHttp = await http.post(
-        Uri.parse('http://gateway.atelier.local:8000/signup'),
+      dynamic responseHttp = await http.put(
+        Uri.parse('http://gateway.atelier.local:8000/users'),
         headers: <String, String>{
+          'Authorization': 'Bearer ${widget.user!['accessToken']}',
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(bodyHttp),
@@ -50,59 +62,94 @@ class _SignUpPageState extends State<SignUpPage> {
         Map<String, dynamic> response = jsonDecode(responseHttp.body);
 
         if (response.containsKey('code')) {
-          setState(() {
-            errorMessage = utf8.decode(response['message'].codeUnits);
-          });
+          SnackBar snackBar = SnackBar(
+            content: Text(utf8.decode(response['message'].codeUnits)),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         setState(() {
           formPending = false;
         });
       } else {
-        Map<String, dynamic> connection =
-            await Provider.of<SessionProvider>(context, listen: false)
-                .signIn(_emailController.text, _passwordController.text);
+        setState(() {
+          formPending = false;
+        });
 
-        if (connection['ok']) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-        } else {
-          setState(() {
-            formPending = false;
-            errorMessage = connection['message'];
-          });
-        }
+        formPending = false;
+        SnackBar snackBar = const SnackBar(
+          content: Text('Modifications enregistrées.'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } catch (error) {
       setState(() {
-        errorMessage =
-            'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer';
         formPending = false;
+        SnackBar snackBar = const SnackBar(
+          content: Text(
+              'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       });
     }
-    // Map<String, dynamic> connection =
-    //     await Provider.of<SessionProvider>(context, listen: false)
-    //         .signUp(_emailController.text, _passwordController.text);
+  }
 
-    // if (connection['ok']) {
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => const HomePage()),
-    //   );
-    // } else {
-    //   setState(() {
-    //     formPending = false;
-    //     errorMessage = connection['message'];
-    //   });
-    // }
+  Future<void> deleteUser(context) async {
+    setState(() {
+      formPending = true;
+    });
+
+    try {
+      dynamic responseHttp = await http.delete(
+        Uri.parse(
+            'http://gateway.atelier.local:8000/users/${widget.user!['id']}'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${widget.user!['accessToken']}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (!responseHttp.body.isEmpty) {
+        Map<String, dynamic> response = jsonDecode(responseHttp.body);
+
+        if (response.containsKey('code')) {
+          SnackBar snackBar = SnackBar(
+            content: Text(utf8.decode(response['message'].codeUnits)),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+        setState(() {
+          formPending = false;
+        });
+      } else {
+        setState(() {
+          formPending = false;
+        });
+
+        formPending = false;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SignUpPage()),
+        );
+      }
+    } catch (error) {
+      setState(() {
+        formPending = false;
+        SnackBar snackBar = const SnackBar(
+          content: Text(
+              'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mon Profil'),
+      ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
@@ -111,14 +158,6 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Text(
-                      textAlign: TextAlign.start,
-                      'Inscription',
-                      style: TextStyle(fontSize: 19.6),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: TextFormField(
@@ -175,11 +214,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       obscureText: true,
                       controller: _passwordController,
                       validator: (value) {
-                        if (value.toString().length < 8) {
+                        if (value!.isNotEmpty && value.toString().length < 8) {
                           return 'Mot de passe trop court';
-                        }
-                        if (value == null || value.isEmpty) {
-                          return 'Mot de passe non renseigné';
                         }
                         return null;
                       },
@@ -206,32 +242,42 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                   ),
-                  Visibility(
-                    visible: errorMessage != '',
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(
-                        errorMessage,
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(color: Colors.red),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: OutlinedButton(
+                      onPressed: formPending
+                          ? null
+                          : () async {
+                              if (_formKey.currentState!.validate()) {
+                                final BuildContext context = this.context;
+                                _submitForm(context);
+                              }
+                            },
+                      child: const Text("Enregistrer les modifications"),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: OutlinedButton(
+                      style:
+                          OutlinedButton.styleFrom(foregroundColor: Colors.red),
+                      onPressed: formPending ? null : () => deleteUser(context),
+                      child: const Text(
+                        "Supprimer mon compte",
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: formPending
-                            ? null
-                            : () async {
-                                if (_formKey.currentState!.validate()) {
-                                  final BuildContext context = this.context;
-                                  _submitForm(context);
-                                }
+                    child: ElevatedButton(
+                      onPressed: formPending
+                          ? null
+                          : () => {
+                                Provider.of<SessionProvider>(context,
+                                        listen: false)
+                                    .signOut(context)
                               },
-                        child: const Text("S'inscrire"),
-                      ),
+                      child: const Text("Me déconnecter"),
                     ),
                   ),
                 ],
