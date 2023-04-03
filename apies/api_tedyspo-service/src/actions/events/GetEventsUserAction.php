@@ -18,7 +18,7 @@ class GetEventsUserAction extends AbstractAction
 
     $eventsUser = $invitationService->getEventsUser($id_user);
 
-    $eventsUser = FormatterObject::Events($eventsUser);
+    $eventsUser = FormatterObject::EventUsers($eventsUser);
 
     $data = [
       'count' => count($eventsUser),

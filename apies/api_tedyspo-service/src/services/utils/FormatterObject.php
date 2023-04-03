@@ -110,6 +110,8 @@ class FormatterObject
   {
 
     return [
+      'id_user' => $eventUser->id_user,
+      'id_event' => $eventUser->id_event,
       'state' => $eventUser->state,
       'comment' => $eventUser->comment,
       'is_here' => $eventUser->is_here,
