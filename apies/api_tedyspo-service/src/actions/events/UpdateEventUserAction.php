@@ -4,22 +4,28 @@ namespace atelier\tedyspo\actions\events;
 
 use atelier\tedyspo\services\utils\FormatterAPI;
 use atelier\tedyspo\actions\AbstractAction;
+use atelier\tedyspo\services\utils\FormatterObject;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class CreateUserEventAction extends AbstractAction
+class UpdateEventUserAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
     $InvitationService = $this->container->get('service.invitation');
 
-    $id_user = $args['id_user'];
+    $data = $this->parseBody($request);
+
     $id_event = $args['id_event'];
+    $id_user = $args['id_user'];
 
-    $event = $InvitationService->createUserEvent($id_user, $id_event);
+    $eventUser = $InvitationService->updateEventUser($id_event, $id_user, $data);
 
-    $data['events'] = $event;
+    $eventUser = FormatterObject::EventUser($eventUser);
+    $data = [
+      'eventUser' => $eventUser
+    ];
 
-    return FormatterAPI::formatResponse($request, $response, $data, 204);
+    return FormatterAPI::formatResponse($request, $response, $data, 200);
   }
 }

@@ -107,6 +107,40 @@ class FormatterObject
     return $eventsArray;
   }
 
+  public static function EventUser($eventUser)
+  {
+    return [
+      'id_user' => $eventUser->id_user,
+      'id_event' => $eventUser->id_event,
+      'state' => $eventUser->state,
+      'comment' => $eventUser->comment,
+      'is_here' => $eventUser->is_here,
+      'is_organisator' => $eventUser->is_organisator,
+      'links' => [
+        'self' => [
+          'href' => '/events/' . $eventUser->id_event . '/users/' . $eventUser->id_user
+        ],
+        'user' => [
+          'href' => '/users/' . $eventUser->id_user
+        ],
+        'event' => [
+          'href' => '/events/' . $eventUser->id_event
+        ],
+      ]
+    ];
+  }
+
+  public static function EventUsers($eventUsers)
+  {
+    $eventUsersArray = [];
+    foreach ($eventUsers as $eventUser) {
+
+      $eventUsersArray[] = self::EventUser($eventUser->pivot);
+    }
+    return $eventUsersArray;
+  }
+
+
   public static function Location(Location $location)
   {
     return [
