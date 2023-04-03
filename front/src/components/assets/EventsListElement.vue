@@ -1,11 +1,8 @@
 <script setup>
-// Leaflet
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-
 import Card from "primevue/card";
 
-import { ref, reactive, computed, onMounted, inject } from "vue";
+import { ref, computed, inject } from "vue";
+import { useSessionStore } from "@/stores/session.js";
 
 const props = defineProps({
 	event: {
@@ -14,6 +11,7 @@ const props = defineProps({
 	},
 });
 
+const Session = useSessionStore();
 const API = inject("api");
 
 const eventTitle = computed(() => props.event.title);
@@ -34,8 +32,26 @@ const eventDate = computed(() => {
 const eventLocation = ref("");
 
 function getLocation() {
-	API.get(`https://api-adresse.data.gouv.fr/reverse/?lon=6.184417&lat=48.692054`).then((response) => {
-		eventLocation.value = response.data.features[0].properties.label;
+	API.getActionRequest(props.event.links.locations.href).then((data) => {
+		let mainLocation = null;
+
+		data.locations.forEach((location) => {
+			if (location.is_related == 0) {
+				mainLocation = location;
+			}
+		});
+
+		if (mainLocation == null) {
+			eventLocation.value = "Aucune adresse renseignée";
+			return;
+		}
+		API.get(`https://api-adresse.data.gouv.fr/reverse/?lon=${mainLocation.long}&lat=${mainLocation.lat}`).then((response) => {
+			if (response.data.features.length > 0) {
+				eventLocation.value = response.data.features[0].properties.label;
+			} else {
+				eventLocation.value = "Adresse inconnue";
+			}
+		});
 	});
 }
 
