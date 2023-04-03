@@ -120,4 +120,15 @@ class UserService
       throw new \Exception('Erreur lors de la mise à jour de l\'utilisateur', 500);
     }
   }
+
+  public function deleteUserById($id): void
+  {
+    $user = $this->getUserById($id);
+
+    try {
+      $user->delete();
+    } catch (\Exception $e) {
+      throw new \Exception('Erreur lors de la suppression de l\'utilisateur', 500);
+    }
+  }
 }
