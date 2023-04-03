@@ -53,26 +53,32 @@ class _SignUpPageState extends State<SignUpPage> {
           setState(() {
             errorMessage = utf8.decode(response['message'].codeUnits);
           });
+        } else if (response.containsKey('user')) {
+          Map<String, dynamic> connection =
+              await Provider.of<SessionProvider>(context, listen: false)
+                  .signIn(_emailController.text, _passwordController.text);
+
+          if (connection['ok']) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          } else {
+            setState(() {
+              formPending = false;
+              errorMessage = connection['message'];
+            });
+          }
         }
         setState(() {
           formPending = false;
         });
       } else {
-        Map<String, dynamic> connection =
-            await Provider.of<SessionProvider>(context, listen: false)
-                .signIn(_emailController.text, _passwordController.text);
-
-        if (connection['ok']) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-        } else {
-          setState(() {
-            formPending = false;
-            errorMessage = connection['message'];
-          });
-        }
+        setState(() {
+          errorMessage =
+              'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.';
+          formPending = false;
+        });
       }
     } catch (error) {
       setState(() {
