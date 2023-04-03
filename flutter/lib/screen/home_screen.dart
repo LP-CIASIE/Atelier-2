@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
