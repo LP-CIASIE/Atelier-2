@@ -5,6 +5,7 @@ import Skeleton from "primevue/skeleton";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import MultiSelect from "primevue/multiselect";
+import AutoComplete from "primevue/autocomplete";
 
 import ParticipantsListElement from "@/components/assets/ParticipantsListElement.vue";
 import "leaflet/dist/leaflet.css";
@@ -216,6 +217,70 @@ function hideAllMarker() {
 }
 
 // =========================================
+// Création de la carte pour l'ajout de location
+// =========================================
+const formCreateLocation = reactive({
+	name: "",
+	address: "",
+	autocompleteAddress: [],
+	latlng: [],
+	pending: false,
+	messageError: "",
+	modal: false,
+	marker: null,
+});
+
+var mapForm = null;
+
+function toggleModalCreateLocation() {
+	formCreateLocation.modal = true;
+	setTimeout(() => {
+		createMapForm();
+	}, 500);
+}
+
+function createMapForm() {
+	mapForm = L.map("mapForm", {
+		zoomControl: true,
+		attributionControl: false,
+	}).setView([48.85809, 2.431057], 8);
+	mapForm.doubleClickZoom.disable();
+
+	L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+		subdomains: ["mt0", "mt1", "mt2", "mt3"],
+	}).addTo(mapForm);
+
+	mapForm.on("click", function (e) {
+		if (formCreateLocation.marker != null) {
+			mapForm.removeLayer(formCreateLocation.marker);
+		}
+
+		formCreateLocation.address = "Chargement...";
+
+		formCreateLocation.marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mapForm);
+		formCreateLocation.marker.bindTooltip("Chargement...", { direction: "top", offset: [-15, -10] });
+		getAddress([e.latlng.lng, e.latlng.lat]).then((address) => {
+			formCreateLocation.marker.bindTooltip(`<p class='m-0'>${address}</p>`, { direction: "top", offset: [-15, -10] });
+			formCreateLocation.address = address;
+			formCreateLocation.latlng = [e.latlng.lat, e.latlng.lng];
+		});
+	});
+}
+
+function getAutoCompleteLocation() {
+	API.get(`https://api-adresse.data.gouv.fr/search/?q=${formCreateLocation.address}&limit=4`).then((response) => {
+		if (response.data.features.length >= 0) {
+			let addresses = response.data.features.map((feature) => {
+				return feature.properties.label;
+			});
+			formCreateLocation.autocompleteAddress = addresses;
+		} else {
+			formCreateLocation.autocompleteAddress = [];
+		}
+	});
+}
+
+// =========================================
 // Création du form pour l'invitation d'utilisation
 // =========================================
 const formInviteUsers = reactive({
@@ -320,13 +385,25 @@ onMounted(() => {
 						<p>{{ event.mainLocation.content.name }}</p>
 					</template>
 					<template #content>
-						<div id="map"></div>
-						<p>{{ event.mainLocation.address }}</p>
-						<template v-if="listMarker.length > 0">
-							<Button label="Cacher les autres lieux" icon="pi pi-map-marker" text @click="hideAllMarker" />
+						<template v-if="event.locations.length > 0">
+							<div id="map"></div>
+							<p>{{ event.mainLocation.address }}</p>
+							<template v-if="listMarker.length > 0">
+								<Button label="Cacher les autres lieux" icon="pi pi-map-marker" text @click="hideAllMarker" />
+							</template>
+							<template v-else>
+								<Button label="Voir les autres lieux" icon="pi pi-map-marker" text @click="showAllLocations" />
+							</template>
 						</template>
 						<template v-else>
-							<Button label="Voir les autres lieux" icon="pi pi-map-marker" text @click="showAllLocations" />
+							<p>Aucun lieu n'a été ajouté pour l'instant.</p>
+							<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation" />
+							<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true">
+								<form @submit.prevent="addLocation" id="addLocation">
+									<div id="mapForm"></div>
+									<AutoComplete v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress" :completeOnFocus="false" :minLength="3" :delay="300" @complete="getAutoCompleteLocation" />
+								</form>
+							</Dialog>
 						</template>
 					</template>
 				</Card>
@@ -405,6 +482,25 @@ form#inviteUsers {
 
 	.p-card-content {
 		padding: 0;
+	}
+}
+
+form#addLocation {
+	min-width: 500px;
+	width: 100%;
+	max-width: 500px;
+	#mapForm {
+		width: 100%;
+		height: 20rem;
+	}
+
+	.p-autocomplete {
+		margin-top: 1rem;
+		width: 100%;
+
+		input {
+			width: 100%;
+		}
 	}
 }
 </style>
