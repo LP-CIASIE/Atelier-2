@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
@@ -45,6 +46,15 @@ class _HomePageState extends State<HomePage> {
             );
           },
           child: const Text("Mon Profil"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EventBuilderPage()),
+            );
+          },
+          child: const Text("Créer un évènement"),
         ),
       ]),
     );
