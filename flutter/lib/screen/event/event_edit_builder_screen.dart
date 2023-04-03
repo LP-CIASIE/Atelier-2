@@ -10,8 +10,8 @@ import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/loading_screen.dart';
 import 'package:provider/provider.dart';
 
-class EventBuilderPage extends StatelessWidget {
-  const EventBuilderPage({super.key});
+class EventEditBuilderPage extends StatelessWidget {
+  const EventEditBuilderPage({super.key});
 
   Future<Map<String, dynamic>> event(context) async {
     try {
