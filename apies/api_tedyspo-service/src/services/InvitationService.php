@@ -25,7 +25,7 @@ class InvitationService extends AbstractService
 
     $event = $this->eventService->getEventById($id_event);
     try {
-      $usersEvent = $event->users()->withPivot('state', 'comment', 'id_user')->get();
+      $usersEvent = $event->users()->withPivot('state', 'comment', 'is_here', 'is_organisator')->get();
     } catch (\Exception $e) {
       throw new \Exception("Un problème est survenu lors de la recherche des utilisateurs", 404);
     }
@@ -48,7 +48,7 @@ class InvitationService extends AbstractService
     $user = $this->userService->getUserById($id_user);
     $this->eventService->getEventById($id_event);
     try {
-      $eventUser = $user->events()->where('event_user.id_event', $id_event)->withPivot('state', 'comment')->first()->pivot;
+      $eventUser = $user->events()->where('event_user.id_event', $id_event)->withPivot('state', 'comment', 'is_here', 'is_organisator')->first()->pivot;
       if ($eventUser === null) {
         throw new \Exception("L'utilisateur n'est pas invité à cet événement.", 400);
       }

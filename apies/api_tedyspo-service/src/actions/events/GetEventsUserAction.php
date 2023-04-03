@@ -16,12 +16,13 @@ class GetEventsUserAction extends AbstractAction
 
     $id_user = $args['id_user'];
 
-    $events = $invitationService->getEventsUser($id_user);
+    $eventsUser = $invitationService->getEventsUser($id_user);
 
-    $events = FormatterObject::Events($events);
+    $eventsUser = FormatterObject::Events($eventsUser);
 
     $data = [
-      'events' => $events,
+      'count' => count($eventsUser),
+      'eventsUser' => $eventsUser,
     ];
 
     return FormatterAPI::formatResponse($request, $response, $data, 200);

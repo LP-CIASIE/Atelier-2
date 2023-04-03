@@ -109,6 +109,8 @@ class FormatterObject
     return [
       'state' => $eventUser->state,
       'comment' => $eventUser->comment,
+      'is_here' => $eventUser->is_here,
+      'is_organisator' => $eventUser->is_organisator,
       'links' => [
         'self' => [
           'href' => '/events/' . $eventUser->id_event . '/users/' . $eventUser->id_user
@@ -127,6 +129,7 @@ class FormatterObject
   {
     $eventUsersArray = [];
     foreach ($eventUsers as $eventUser) {
+
       $eventUsersArray[] = self::EventUser($eventUser->pivot);
     }
     return $eventUsersArray;
