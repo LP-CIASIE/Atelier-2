@@ -13,26 +13,18 @@ const events = ref([]);
 const loading = ref(true);
 
 function getEvents() {
-	API.get("/events", {
-		params: {
-			page: "1",
-			size: "10000",
-		},
-		headers: {
-			Authorization: "Bearer " + Session.user.access_token,
-		},
-	})
-		.then((result) => {
-			events.value = result.data.events;
-			loading.value = false;
+	API.getActionRequest("/events", {
+		page: 1,
+		size: 10000,
+		filter: "accepted",
+	}).then((data) => {
+		events.value = data.events;
+		loading.value = false;
 
-			setTimeout(() => {
-				BUS.emit("showEventClosestDay", "run");
-			}, 300);
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+		setTimeout(() => {
+			BUS.emit("showEventClosestDay", "run");
+		}, 300);
+	});
 }
 
 onMounted(() => {
