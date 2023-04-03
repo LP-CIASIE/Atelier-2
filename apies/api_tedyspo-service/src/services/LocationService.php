@@ -69,7 +69,7 @@ class LocationService extends AbstractService
         try {
             $locations = Location::where('id_event', $id_event)->get();
         } catch (\Exception $e) {
-            throw new \Exception("Erreur lors de la récupération des locations", 400);
+            throw new \Exception("Erreur lors de la récupération des locations", 500);
         }
 
         return $locations;
