@@ -10,6 +10,7 @@ final class DeleteUserAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
-    return $this->sendRequest($request, $response, '/users' . '/' . $args['id_user'], 'delete', 'tedyspo');
+    $this->sendRequest($request, $response, '/users' . '/' . $args['id_user'], 'delete', 'auth');
+    $this->sendRequest($request, $response, '/users' . '/' . $args['id_user'], 'delete', 'tedyspo');
   }
 }
