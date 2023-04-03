@@ -45,47 +45,24 @@ function searchUsers(event) {
 
 	usersFindPending.value = true;
 
-	API.get("/users", {
-		params: {
-			email: value,
-		},
-		headers: {
-			Authorization: "Bearer " + Session.user.access_token,
-		},
-	})
-		.then((response) => {
-			let data = response.data;
-
-			usersFind.value = data.users.map((user) => {
-				return {
-					name: user.email,
-					id: user.id,
-				};
-			});
-			usersFind.value = Array.from(new Set([...usersFind.value, ...form.selectedUsers.content]));
-			usersFind.value = [...usersFind.value, ...form.selectedUsers.content.filter((obj2) => !usersFind.value.some((obj1) => obj1.id === obj2.id))];
-			usersFind.value = usersFind.value.filter((obj1) => Session.user.id !== obj1.id);
-			usersFindPending.value = false;
-		})
-		.catch((error) => {
-			console.log(error);
+	API.getActionRequest(`/users?email=${value}`, { email: value }).then((data) => {
+		usersFind.value = data.users.map((user) => {
+			return {
+				name: user.email,
+				id: user.id,
+			};
 		});
+		usersFind.value = Array.from(new Set([...usersFind.value, ...form.selectedUsers.content]));
+		usersFind.value = [...usersFind.value, ...form.selectedUsers.content.filter((obj2) => !usersFind.value.some((obj1) => obj1.id === obj2.id))];
+		usersFind.value = usersFind.value.filter((obj1) => Session.user.id !== obj1.id);
+		usersFindPending.value = false;
+	});
 }
 
 function inviteUser(id_event, id_user) {
 	console.log("inviteUser", id_event, id_user);
-	return API.post("/events/" + id_event + "/users/" + id_user, {
-		headers: {
-			Authorization: "Bearer " + Session.user.access_token,
-		},
-	})
-		.then((response) => {
-			let data = response.data;
-			console.log(data);
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+
+	return API.postActionRequest("/events/" + id_event + "/users/" + id_user, {}, {});
 }
 
 function createEvent() {
@@ -93,34 +70,26 @@ function createEvent() {
 	form.pending = true;
 
 	let promiseAll = [];
-	API.post(
+
+	API.postActionRequest(
 		"/events",
+		{},
 		{
 			title: form.title.content,
 			description: form.description.content,
 			date: Math.floor(Date.now() / 1000),
 			is_public: 0,
-		},
-		{
-			headers: {
-				Authorization: "Bearer " + Session.user.access_token,
-			},
 		}
-	)
-		.then((response) => {
-			let data = response.data;
-			form.selectedUsers.content.forEach((user) => {
-				promiseAll.push(inviteUser(data.event.id, user.id));
-			});
-
-			Promise.all(promiseAll).then(() => {
-				form.pending = false;
-				router.push({ name: "event", params: { id: data.event.id } });
-			});
-		})
-		.catch((error) => {
-			console.log(error);
+	).then((data) => {
+		form.selectedUsers.content.forEach((user) => {
+			promiseAll.push(inviteUser(data.event.id, user.id));
 		});
+
+		Promise.all(promiseAll).then(() => {
+			form.pending = false;
+			router.push({ name: "event", params: { id: data.event.id } });
+		});
+	});
 }
 </script>
 
