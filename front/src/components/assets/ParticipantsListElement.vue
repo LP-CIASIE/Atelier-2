@@ -50,7 +50,7 @@ onMounted(() => {
 					</div>
 					<div class="tag">
 						<Tag v-if="participant.is_here" value="Sur place" class="p-tag-rounded" />
-						<Tag v-if="participant.state == 'accepted'" value="Accepté" class="p-tag-rounded p-tag-success" />
+						<Tag v-if="participant.state == 'accepted' && !participant.is_here" value="Accepté" class="p-tag-rounded p-tag-success" />
 						<Tag v-if="participant.state == 'pending'" value="En attente" class="p-tag-rounded p-tag-warning" />
 						<Tag v-if="participant.state == 'refused'" value="Refusé" class="p-tag-rounded p-tag-danger" />
 					</div>
@@ -106,7 +106,7 @@ onMounted(() => {
 		.tag {
 			position: absolute;
 			right: 0;
-			top: 0;
+			top: -3px;
 
 			display: flex;
 			gap: 0.3rem;
