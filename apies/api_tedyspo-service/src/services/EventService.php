@@ -104,6 +104,10 @@ class EventService extends AbstractService
         }
         $event->is_public = $data['is_public'];
 
+        $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+
+        $event->code_share = substr(str_shuffle($alphabet), 0, 5);
+
         try {
             $user->events()->save($event, ['is_organisator' => 1, 'state' => 'accepted', 'is_here' => 0, 'comment' => '']);
         } catch (\Exception $e) {

@@ -72,6 +72,7 @@ class FormatterObject
       'description' => $event->description,
       'date' => $event->date,
       'is_public' => $event->is_public,
+      'code_share' => $event->code_share,
       'links' => [
         'self' => [
           'href' => '/events/' . $event->id_event
