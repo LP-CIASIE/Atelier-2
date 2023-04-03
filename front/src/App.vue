@@ -1,4 +1,6 @@
 <script setup>
+import Navbar from "@/components/Navbar.vue";
+
 import { RouterView } from "vue-router";
 import { provide } from "vue";
 import axios from "axios";
@@ -12,19 +14,20 @@ const API = axios.create({
 	},
 	mode: "cors",
 });
+
 provide("api", API);
 </script>
 
 <template>
-	<!-- <header>
-				<Navbar />
-			</header> -->
+	<template v-if="!['/sign-in', '/sign-up'].includes($route.path)">
+		<header>
+			<Navbar />
+		</header>
+	</template>
 
-	<article>
+	<article class="container">
 		<router-view v-slot="{ Component }">
-			<transition name="fade" mode="out-in">
-				<component :is="Component" />
-			</transition>
+			<component :is="Component" />
 		</router-view>
 	</article>
 

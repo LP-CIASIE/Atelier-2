@@ -10,6 +10,7 @@ use atelier\tedyspo\models\User;
 
 class EventService extends AbstractService
 {
+
     final public function getEvents($id_user, $params)
     {
 
