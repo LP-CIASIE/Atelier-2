@@ -1,8 +1,11 @@
 <script setup>
 import Card from "primevue/card";
+import Divider from "primevue/divider";
 import Skeleton from "primevue/skeleton";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
+import MultiSelect from "primevue/multiselect";
+
 import ParticipantsListElement from "@/components/assets/ParticipantsListElement.vue";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -17,6 +20,7 @@ const route = useRoute();
 const API = inject("api");
 
 const event = reactive({
+	id: "",
 	title: "",
 	description: "",
 	date: "",
@@ -29,30 +33,37 @@ const event = reactive({
 		address: "",
 		addressOfApi: false,
 	},
-	links: [],
+	urls: [],
+	links: {},
 	comments: [],
 	pending: true,
 });
 
 const modalActive = ref(false);
 
+// =========================================
+// 	  Importation donnée pour l'affichage
+// =========================================
 function getEvent() {
 	return API.getActionRequest(`/events/${route.params.id}`).then((data) => {
+		event.id = data.event.id;
 		event.title = data.event.title;
 		event.description = data.event.description;
 		event.date = data.event.date;
 		event.is_public = data.event.is_public;
 
-		let links = data.event.links;
-		getOwner(links.owner.href);
+		event.links = data.event.links;
+		getOwner(event.links.owner.href);
 
 		// Attendre les routes API
-		getParticipants(links.participants.href);
-		getLocations(links.locations.href).then(() => {
-			createMap();
+		getParticipants(event.links.participants.href);
+		getLocations(event.links.locations.href).then(() => {
+			if (event.locations.length > 0) {
+				createMap();
+			}
 		});
-		// getLinks(links.urls.href);
-		getComments(links.comments.href);
+		// getLinks(event.links.urls.href);
+		getComments(event.links.comments.href);
 
 		event.pending = false;
 	});
@@ -152,6 +163,9 @@ function getAddress(lonLat) {
 	});
 }
 
+// =========================================
+// 	 Création de la carte pour l'événement
+// =========================================
 var mapLeaflet = null;
 
 function createMap() {
@@ -201,6 +215,76 @@ function hideAllMarker() {
 	listMarker.value = [];
 }
 
+// =========================================
+// Création du form pour l'invitation d'utilisation
+// =========================================
+const formInviteUsers = reactive({
+	selectedUsers: [],
+	pending: false,
+	messageError: "",
+});
+
+const usersFind = reactive({
+	list: [],
+	pending: false,
+});
+
+function searchUsers(event) {
+	let value = event.value;
+	if (value.length < 3) {
+		usersFind.list = formInviteUsers.selectedUsers;
+		usersFind.pending = false;
+		return;
+	}
+
+	usersFind.pending = true;
+
+	API.getActionRequest(`/users?email=${value}`, { email: value }).then((data) => {
+		usersFind.list = data.users.map((user) => {
+			return {
+				name: user.email,
+				id: user.id,
+			};
+		});
+		usersFind.list = Array.from(new Set([...usersFind.list, ...formInviteUsers.selectedUsers]));
+		usersFind.list = [...usersFind.list, ...formInviteUsers.selectedUsers.filter((obj2) => !usersFind.list.some((obj1) => obj1.id === obj2.id))];
+		usersFind.list = usersFind.list.filter((obj1) => Session.user.id !== obj1.id);
+		usersFind.pending = false;
+	});
+}
+
+function inviteUser(id_event, id_user) {
+	console.log("inviteUser", id_event, id_user);
+
+	return API.postActionRequest("/events/" + id_event + "/users/" + id_user, {}, {});
+}
+
+function inviteUsers() {
+	formInviteUsers.pending = true;
+	formInviteUsers.messageError = "";
+
+	let promises = [];
+
+	formInviteUsers.selectedUsers.forEach((user) => {
+		promises.push(inviteUser(event.id, user.id));
+	});
+
+	Promise.all(promises)
+		.then((data) => {
+			formInviteUsers.pending = false;
+			formInviteUsers.selectedUsers = [];
+			usersFind.list = [];
+			getParticipants(event.links.participants.href);
+		})
+		.catch((error) => {
+			formInviteUsers.pending = false;
+			formInviteUsers.messageError = error.response.data.message;
+		});
+}
+
+// =========================================
+// 	  Lancement de la récupération des données
+// =========================================
 onMounted(() => {
 	getEvent();
 });
@@ -215,7 +299,7 @@ onMounted(() => {
 			</template>
 			<template #content>
 				<Skeleton type="text" width="100%" height="4rem" />
-				<Skeleton type="text" width="100%" height="20rem" class="mt-3" />
+				<Skeleton type="text" width="100%" height="30rem" class="mt-3" />
 			</template>
 		</Card>
 	</template>
@@ -226,6 +310,7 @@ onMounted(() => {
 				<h2>
 					{{ new Date(event.date).toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }) }}
 				</h2>
+				<Divider />
 			</template>
 			<template #content>
 				<p>{{ event.description }}</p>
@@ -247,33 +332,79 @@ onMounted(() => {
 				</Card>
 			</template>
 		</Card>
-
-		<Card class="mt-5">
-			<template #title>
-				<h3>Participants</h3>
-			</template>
-			<template #content>
-				<Button label="Voir la listes des participants" text @click="modalActive = !modalActive" />
-				<template v-if="event.participants.length > 0">
-					<Dialog v-model:visible="modalActive" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true">
-						<div class="listParticipants">
-							<template v-for="participant in event.participants">
-								<ParticipantsListElement :participant="participant" />
-							</template>
-						</div>
-					</Dialog>
-				</template>
-			</template>
-		</Card>
 	</template>
+	<Card class="mt-5">
+		<template #title>
+			<h3>Participants</h3>
+		</template>
+		<template #content>
+			<Button label="Voir la listes des participants" text @click="modalActive = !modalActive" />
+			<template v-if="event.participants.length > 0">
+				<Dialog v-model:visible="modalActive" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true">
+					<form @submit.prevent="inviteUsers" id="inviteUsers" v-if="event.owner.id == Session.user.id">
+						<MultiSelect v-model="formInviteUsers.selectedUsers" :options="usersFind.list" filter optionLabel="name" placeholder="Invite tes amis !" @filter="searchUsers">
+							<template #empty>
+								<span class="p-d-block p-py-2 p-px-3">Ecrivez minimum 3 lettres.</span>
+							</template>
+							<template #emptyfilter>
+								<template v-if="usersFind.pending">
+									<span class="p-d-block p-py-2 p-px-3">Recherche en cours...</span>
+								</template>
+								<template v-else>
+									<span class="p-d-block p-py-2 p-px-3">Aucun résultat.</span>
+								</template>
+							</template>
+						</MultiSelect>
+						<Button type="submit" label="Inviter" :disabled="formInviteUsers.selectedUsers.length === 0" />
+					</form>
+					<div class="listParticipants">
+						<template v-for="participant in event.participants">
+							<ParticipantsListElement :participant="participant" />
+						</template>
+					</div>
+				</Dialog>
+			</template>
+		</template>
+	</Card>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #map {
 	width: 100%;
 	height: 20rem;
 }
 .p-dialog .p-dialog-content {
 	padding-top: 2rem;
+}
+
+form#inviteUsers {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+
+	.p-multiselect {
+		width: 100%;
+		max-width: 350px;
+	}
+
+	button {
+		width: 100%;
+	}
+}
+
+.event-view {
+	h1 {
+		font-size: 2rem;
+		margin: 0;
+	}
+	h2 {
+		font-size: 1rem;
+	}
+
+	.p-card-content {
+		padding: 0;
+	}
 }
 </style>
