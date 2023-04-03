@@ -62,7 +62,7 @@ class _SignUpPageState extends State<SignUpPage> {
           if (connection['ok']) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) => const HomePage(events: [],)),
             );
           } else {
             setState(() {
