@@ -32,7 +32,9 @@ function findClosestDateIndex(targetDate) {
 
 function scrollToItem(targetDate) {
 	let closestDateIndex = findClosestDateIndex(targetDate);
-	scroller.value.scrollToIndex(closestDateIndex);
+	if (scroller.value) {
+		scroller.value.scrollToIndex(closestDateIndex);
+	}
 }
 
 function scrollToToday() {

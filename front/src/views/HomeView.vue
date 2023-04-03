@@ -28,7 +28,7 @@ function getEvents() {
 
 			setTimeout(() => {
 				BUS.emit("showEventClosestDay", "run");
-			}, 200);
+			}, 300);
 		})
 		.catch((error) => {
 			console.log(error);
