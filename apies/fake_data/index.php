@@ -33,11 +33,12 @@ use atelier\fakedata\models\UserTedyspo;
 // Create a Faker instance
 $faker = Factory::create('fr_FR');
 
+
 // Generate users
 $users = [];
 
 echo "Generating users...\n";
-for ($i = 0; $i < 500; $i++) {
+for ($i = 0; $i < 400; $i++) {
   $id = $faker->uuid;
   $email = $faker->email;
 
@@ -172,8 +173,8 @@ foreach ($events as $event) {
     $location = new Location();
     $location->id_location = $id;
     $location->name = $faker->sentence(3);
-    $location->lat = $faker->latitude(-90, 90);
-    $location->long = $faker->longitude(-180, 180);
+    $location->lat = $faker->latitude(43.0000, 49.0000);
+    $location->long = $faker->longitude(-1.0000, 7.0000);
 
     if ($i == 0) {
       $location->is_related = 0;
