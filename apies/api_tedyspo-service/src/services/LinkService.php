@@ -12,23 +12,26 @@ class LinkService extends AbstractService
 {
     public function getCount($id_event)
     {
-      try {
-        $event = Event::findOrFail($id_event);
-      } catch (\Exception $e) {
+        $eventService = $this->container->get('service.event');
+
+        try {
+        $event = $eventService->getEvent($id_event);
+        } catch (\Exception $e) {
         throw new \Exception('Cette événement n\'existe pas', 404);
-      }
-  
-      return $event->links()->count();
+        }
+
+        return $event->links()->count();
     }
 
     public function createLink($data, $id_event) : Link
     {
-        
+        $eventService = $this->container->get('service.event');
+
         $link = new Link();
         $link->id_link = \Ramsey\Uuid\Uuid::uuid4();
         
         try {
-            $event = Event::findOrFail($id_event);
+            $event = $eventService->getEvent($id_event);
             $link->id_event = $id_event;
         } catch (\Exception $e) {
             throw new \Exception('Identifiant de l\'événement invalide', 400);
@@ -64,6 +67,8 @@ class LinkService extends AbstractService
 
     public function getLinks($id_event) : Collection
     {
+        $eventService = $this->container->get('service.event');
+
         try{
             v::uuid()->assert($id_event);
         } catch (\Exception $e){
@@ -71,7 +76,7 @@ class LinkService extends AbstractService
         }
 
         try {
-            $event = Event::findOrFail($id_event);
+            $event = $eventService->getEvent($id_event);
         } catch (\Exception $e) {
             throw new \Exception('Cette événement n\'existe pas ou plus', 404);
         }
@@ -105,7 +110,7 @@ class LinkService extends AbstractService
     public function updateLink($data, $id_link) : Link
     {
         try{
-            $link = Link::findOrFail($id_link);
+            $link = $this->getLink($id_link);
         } catch (\Exception $e){
             throw new \InvalidArgumentException('Lien introuvable', 404);
         }
