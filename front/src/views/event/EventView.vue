@@ -6,6 +6,8 @@ import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import MultiSelect from "primevue/multiselect";
 import AutoComplete from "primevue/autocomplete";
+import InputText from "primevue/inputtext";
+import InlineMessage from "primevue/inlinemessage";
 
 import ParticipantsListElement from "@/components/assets/ParticipantsListElement.vue";
 import "leaflet/dist/leaflet.css";
@@ -19,7 +21,6 @@ const Session = useSessionStore();
 const router = useRouter();
 const route = useRoute();
 const API = inject("api");
-
 const event = reactive({
 	id: "",
 	title: "",
@@ -127,7 +128,7 @@ function getLocations(url) {
 
 		event.mainLocation.content = mainLocation;
 
-		return getAddress([mainLocation.long, mainLocation.lat]).then((address) => {
+		return getAddressFromLonLat([mainLocation.long, mainLocation.lat]).then((address) => {
 			event.mainLocation.address = address;
 			if (address == "Adresse inconnue") {
 				event.mainLocation.addressOfApi = true;
@@ -154,12 +155,24 @@ function getOwner(url) {
 	});
 }
 
-function getAddress(lonLat) {
+function getAddressFromLonLat(lonLat) {
 	return API.get(`https://api-adresse.data.gouv.fr/reverse/?lon=${lonLat[0]}&lat=${lonLat[1]}`).then((response) => {
 		if (response.data.features.length > 0) {
 			return response.data.features[0].properties.label;
 		} else {
 			return "Adresse inconnue";
+		}
+	});
+}
+
+function getLonLatFromAddress(address) {
+	return API.get(`https://api-adresse.data.gouv.fr/search/?q=${address}`).then((response) => {
+		if (response.data.features.length > 0) {
+			console.log("==================================");
+			console.log(response.data.features[0].geometry.coordinates);
+			return response.data.features[0].geometry.coordinates;
+		} else {
+			return null;
 		}
 	});
 }
@@ -170,6 +183,8 @@ function getAddress(lonLat) {
 var mapLeaflet = null;
 
 function createMap() {
+	console.log("===================");
+	console.log(event.mainLocation.content);
 	mapLeaflet = L.map("map", {
 		zoomControl: true,
 		attributionControl: false,
@@ -186,22 +201,22 @@ function createMap() {
 
 var listMarker = ref([]);
 
-function showAllLocations() {
-	var greenIcon = new L.Icon({
-		iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
-		shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-		iconSize: [25, 41],
-		iconAnchor: [12, 41],
-		popupAnchor: [1, -34],
-		shadowSize: [41, 41],
-	});
+var greenIcon = new L.Icon({
+	iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+	shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41],
+});
 
+function showAllLocations() {
 	event.locations.forEach((location) => {
 		if (location.is_related == 1) {
 			const marker = L.marker([location.lat, location.long], { icon: greenIcon }).addTo(mapLeaflet);
 			marker.bindTooltip("Chargement...", { direction: "top", offset: [0, -37] });
 			listMarker.value.push(marker);
-			getAddress([location.long, location.lat]).then((address) => {
+			getAddressFromLonLat([location.long, location.lat]).then((address) => {
 				marker.bindTooltip(`<p class='m-0'>${location.name}</p><p class='m-0'>${address}</p>`, { direction: "top", offset: [0, -37] });
 			});
 		}
@@ -223,11 +238,10 @@ const formCreateLocation = reactive({
 	name: "",
 	address: "",
 	autocompleteAddress: [],
-	latlng: [],
 	pending: false,
 	messageError: "",
 	modal: false,
-	marker: null,
+	marker: [],
 });
 
 var mapForm = null;
@@ -251,24 +265,87 @@ function createMapForm() {
 	}).addTo(mapForm);
 
 	mapForm.on("click", function (e) {
-		if (formCreateLocation.marker != null) {
-			mapForm.removeLayer(formCreateLocation.marker);
+		if (formCreateLocation.marker.length >= 5) {
+			formCreateLocation.messageError = "Vous ne pouvez pas ajouter plus de 5 lieux";
+			return;
 		}
 
-		formCreateLocation.address = "Chargement...";
+		let marker = null;
+		if (formCreateLocation.marker.length > 0) {
+			marker = L.marker([e.latlng.lat, e.latlng.lng], { icon: greenIcon }).addTo(mapForm);
+		} else {
+			marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mapForm);
+		}
+		marker.bindTooltip("Chargement...", { direction: "top", offset: [-15, -10] });
+		getAddressFromLonLat([e.latlng.lng, e.latlng.lat]).then((address) => {
+			marker.bindTooltip(`<p class='m-0'>${address}</p>`, { direction: "top", offset: [-15, -10] });
+			marker.address = address;
+			marker.name = formCreateLocation.name ? formCreateLocation.name : "Sans nom";
+		});
 
-		formCreateLocation.marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mapForm);
-		formCreateLocation.marker.bindTooltip("Chargement...", { direction: "top", offset: [-15, -10] });
-		getAddress([e.latlng.lng, e.latlng.lat]).then((address) => {
-			formCreateLocation.marker.bindTooltip(`<p class='m-0'>${address}</p>`, { direction: "top", offset: [-15, -10] });
-			formCreateLocation.address = address;
-			formCreateLocation.latlng = [e.latlng.lat, e.latlng.lng];
+		formCreateLocation.marker.push(marker);
+
+		console.log(formCreateLocation.marker);
+		marker.on("click", function (e) {
+			if (formCreateLocation.marker.indexOf(marker) == 0 && formCreateLocation.marker.length > 1) {
+				let newMainLocation = formCreateLocation.marker[1];
+				newMainLocation.setIcon(new L.Icon.Default());
+			}
+			mapForm.removeLayer(marker);
+			formCreateLocation.marker.splice(formCreateLocation.marker.indexOf(marker), 1);
+			formCreateLocation.messageError = "";
+		});
+	});
+}
+
+function addMarkerFromAddressMap() {
+	if (formCreateLocation.marker.length >= 5) {
+		formCreateLocation.messageError = "Vous ne pouvez pas ajouter plus de 5 lieux";
+		return;
+	}
+
+	getLonLatFromAddress(formCreateLocation.address).then((lonlat) => {
+		if (lonlat == null) {
+			formCreateLocation.messageError = "L'adresse n'a pas été trouvée";
+			return;
+		}
+		let marker = null;
+		if (formCreateLocation.marker.length > 0) {
+			marker = L.marker([lonlat[1], lonlat[0]], { icon: greenIcon }).addTo(mapForm);
+		} else {
+			marker = L.marker([lonlat[1], lonlat[0]]).addTo(mapForm);
+		}
+		marker.bindTooltip("Chargement...", { direction: "top", offset: [-15, -10] });
+		getAddressFromLonLat([lonlat[0], lonlat[1]]).then((address) => {
+			marker.address = address;
+			marker.name = formCreateLocation.name ? formCreateLocation.name : "Sans nom";
+			if (marker.name != "" && marker.name != null) {
+				marker.bindTooltip(`<p class='m-0'>${marker.name}</p><p class='m-0'>${marker.address}</p>`, { direction: "top", offset: [-15, -10] });
+			} else {
+				marker.bindTooltip(`<p class='m-0'>${marker.address}</p>`, { direction: "top", offset: [-15, -10] });
+			}
+
+			formCreateLocation.address = "";
+			formCreateLocation.name = "";
+		});
+
+		formCreateLocation.marker.push(marker);
+
+		console.log(formCreateLocation.marker);
+		marker.on("click", function (e) {
+			if (formCreateLocation.marker.indexOf(marker) == 0 && formCreateLocation.marker.length > 1) {
+				let newMainLocation = formCreateLocation.marker[1];
+				newMainLocation.setIcon(new L.Icon.Default());
+			}
+			mapForm.removeLayer(marker);
+			formCreateLocation.marker.splice(formCreateLocation.marker.indexOf(marker), 1);
+			formCreateLocation.messageError = "";
 		});
 	});
 }
 
 function getAutoCompleteLocation() {
-	API.get(`https://api-adresse.data.gouv.fr/search/?q=${formCreateLocation.address}&limit=4`).then((response) => {
+	API.get(`https://api-adresse.data.gouv.fr/search/?q=${formCreateLocation.address}&limit=3`).then((response) => {
 		if (response.data.features.length >= 0) {
 			let addresses = response.data.features.map((feature) => {
 				return feature.properties.label;
@@ -277,7 +354,41 @@ function getAutoCompleteLocation() {
 		} else {
 			formCreateLocation.autocompleteAddress = [];
 		}
+		formCreateLocation.latlng = [];
 	});
+}
+
+function postLocations() {
+	formCreateLocation.pending = true;
+	let locations = formCreateLocation.marker.map((marker) => {
+		let latLng = marker.getLatLng();
+		return {
+			name: marker.name,
+			lat: latLng.lat,
+			long: latLng.lng,
+			is_related: marker == formCreateLocation.marker[0] ? 0 : 1,
+		};
+	});
+
+	console.log("=============================");
+	console.log(locations);
+
+	let promises = [];
+	locations.map((location) => {
+		promises.push(API.postActionRequest(`/events/${event.id}/locations`, {}, location));
+	});
+
+	Promise.all(promises)
+		.then((data) => {
+			getLocations(event.links.locations.href);
+			formCreateLocation.pending = false;
+			formCreateLocation.modal = false;
+		})
+		.catch((error) => {
+			formCreateLocation.pending = false;
+			formCreateLocation.messageError = "Une erreur est survenue";
+			console.log(error);
+		});
 }
 
 // =========================================
@@ -397,11 +508,17 @@ onMounted(() => {
 						</template>
 						<template v-else>
 							<p>Aucun lieu n'a été ajouté pour l'instant.</p>
-							<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation" />
-							<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true">
+							<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation" v-if="event.owner.id == Session.user.id" />
+							<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true" v-if="event.owner.id == Session.user.id">
 								<form @submit.prevent="addLocation" id="addLocation">
+									<InlineMessage v-if="formCreateLocation.messageError" severity="error">{{ formCreateLocation.messageError }}</InlineMessage>
 									<div id="mapForm"></div>
-									<AutoComplete v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress" :completeOnFocus="false" :minLength="3" :delay="300" @complete="getAutoCompleteLocation" />
+									<div class="p-inputgroup flex-1">
+										<AutoComplete class="w-full" placeholder="Lieu du rendez-vous (ex: 19 Rue Murillo 75008 Paris)" v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress" :completeOnFocus="false" :minLength="3" :delay="100" @complete="getAutoCompleteLocation" />
+										<Button icon="pi pi-plus" class="p-inputgroup-addon" @click="addMarkerFromAddressMap" :disabled="formCreateLocation.address == ''" />
+									</div>
+									<InputText v-model="formCreateLocation.name" placeholder="Nom du lieu (ex: Maison, Travail...)" />
+									<Button type="submit" label="Ajouter ce lieu" :disabled="formCreateLocation.marker.length == 0 || formCreateLocation.pending" @click="postLocations" />
 								</form>
 							</Dialog>
 						</template>
@@ -494,13 +611,24 @@ form#addLocation {
 		height: 20rem;
 	}
 
-	.p-autocomplete {
-		margin-top: 1rem;
+	.p-inline-message,
+	input {
 		width: 100%;
+	}
 
-		input {
-			width: 100%;
-		}
+	.p-inline-message {
+		margin-bottom: 0.5rem;
+	}
+
+	input {
+		margin-top: 0.5rem;
+	}
+
+	.p-autocomplete {
+		margin-top: 0.5rem;
+	}
+	button {
+		margin-top: 1rem;
 	}
 }
 </style>
