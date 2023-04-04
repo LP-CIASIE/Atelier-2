@@ -12,6 +12,6 @@ final class HomeAction
     Response $response
   ): Response {
     $response->getBody()->write('Hello, World!');
-    return $$response;
+    return $response;
   }
 }
