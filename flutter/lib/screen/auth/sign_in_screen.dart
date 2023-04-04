@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
@@ -15,9 +16,7 @@ class _SignInPageState extends State<SignInPage> {
   bool formPending = false;
   String errorMessage = '';
   final _emailController = TextEditingController();
-  String errorMessageMail = '';
   final _passwordController = TextEditingController();
-  String errorMessagePassword = '';
 
   Future<void> _submitForm(context) async {
     setState(() {
@@ -57,7 +56,6 @@ class _SignInPageState extends State<SignInPage> {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Text(
-                      textAlign: TextAlign.start,
                       'Connexion',
                       style: TextStyle(fontSize: 19.6),
                     ),
@@ -92,6 +90,9 @@ class _SignInPageState extends State<SignInPage> {
                         if (value == null || value.isEmpty) {
                           return 'Mot de passe non renseigné';
                         }
+                        if (value.toString().length < 8) {
+                          return 'Mot de passe trop court';
+                        }
                         return null;
                       },
                       decoration: const InputDecoration(
@@ -106,26 +107,43 @@ class _SignInPageState extends State<SignInPage> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         errorMessage,
-                        textAlign: TextAlign.start,
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: formPending
-                            ? null
-                            : () async {
-                                if (_formKey.currentState!.validate()) {
-                                  final BuildContext context = this.context;
-                                  _submitForm(context);
-                                }
-                              },
-                        child: const Text("Se connecter"),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: OutlinedButton(
+                            onPressed: formPending
+                                ? null
+                                : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SignUpPage()),
+                                    );
+                                  },
+                            child: const Text("S'inscrire"),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: formPending
+                              ? null
+                              : () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    final BuildContext context = this.context;
+                                    _submitForm(context);
+                                  }
+                                },
+                          child: const Text("Se connecter"),
+                        ),
+                      ],
                     ),
                   ),
                 ],

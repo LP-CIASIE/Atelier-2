@@ -46,4 +46,9 @@ class Event extends Model
   {
     return $this->hasMany(Comment::class, 'id_event');
   }
+
+  public function links()
+  {
+    return $this->hasMany(Link::class, 'id_event');
+  }
 }
