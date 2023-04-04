@@ -52,6 +52,7 @@ class _SignUpPageState extends State<SignUpPage> {
         if (response.containsKey('code')) {
           setState(() {
             errorMessage = utf8.decode(response['message'].codeUnits);
+            formPending = false;
           });
         } else if (response.containsKey('user')) {
           Map<String, dynamic> connection =
@@ -69,10 +70,13 @@ class _SignUpPageState extends State<SignUpPage> {
               errorMessage = connection['message'];
             });
           }
+        } else {
+          setState(() {
+            errorMessage =
+                'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.';
+            formPending = false;
+          });
         }
-        setState(() {
-          formPending = false;
-        });
       } else {
         setState(() {
           errorMessage =
@@ -87,21 +91,6 @@ class _SignUpPageState extends State<SignUpPage> {
         formPending = false;
       });
     }
-    // Map<String, dynamic> connection =
-    //     await Provider.of<SessionProvider>(context, listen: false)
-    //         .signUp(_emailController.text, _passwordController.text);
-
-    // if (connection['ok']) {
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => const HomePage()),
-    //   );
-    // } else {
-    //   setState(() {
-    //     formPending = false;
-    //     errorMessage = connection['message'];
-    //   });
-    // }
   }
 
   @override
@@ -120,7 +109,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Text(
-                      textAlign: TextAlign.start,
                       'Inscription',
                       style: TextStyle(fontSize: 19.6),
                     ),
@@ -218,7 +206,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         errorMessage,
-                        textAlign: TextAlign.start,
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),

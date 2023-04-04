@@ -56,7 +56,6 @@ class _SignInPageState extends State<SignInPage> {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Text(
-                      textAlign: TextAlign.start,
                       'Connexion',
                       style: TextStyle(fontSize: 19.6),
                     ),
@@ -91,6 +90,9 @@ class _SignInPageState extends State<SignInPage> {
                         if (value == null || value.isEmpty) {
                           return 'Mot de passe non renseigné';
                         }
+                        if (value.toString().length < 8) {
+                          return 'Mot de passe trop court';
+                        }
                         return null;
                       },
                       decoration: const InputDecoration(
@@ -105,7 +107,6 @@ class _SignInPageState extends State<SignInPage> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         errorMessage,
-                        textAlign: TextAlign.start,
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
