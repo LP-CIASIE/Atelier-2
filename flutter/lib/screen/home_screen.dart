@@ -1,15 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
-import 'package:lp1_ciasie_atelier_2/class/event.dart';
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
-import 'package:lp1_ciasie_atelier_2/screen/Event/event_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
-import 'package:http/http.dart' as http;
-import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final List<Event> events;
@@ -21,13 +14,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<List<Event>> futureEvents = Future.value([]);
-
-  @override
-  void initState() {
-    super.initState();
-    futureEvents = fetchEvents(context);
-  }
+//   User user = User(accessToken: ' ', refreshToken: '');
+//   Provider.of<Session
+// // Provider.of<SessionProvider>(context, listen: false).set()
 
   @override
   Widget build(BuildContext context) {
@@ -37,81 +26,26 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      body: 
-      FutureBuilder<List<Event>>(
-        future: futureEvents,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data?.length,
-              itemBuilder: (context, index) {
-                final event = snapshot.data?[index];
-                return Card(
-                  
-                child: Column(
-                  children: [
-                 ListTile(
-    
-                  title: Text(event?.title ?? ''),
-                  subtitle: Text(event?.description ?? ''),
-                  trailing: Text(event?.date.toString() ?? ''),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EventPage(
-                        events: snapshot.data ?? [],
-                        idEvent: event?.idEvent ?? '',
-                      ),
-                    ),
-                  )
-                ),
-                  ],
-                ),
-
-              );
-              },
+      body: Column(children: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SignInPage()),
             );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Failed to load events: ${snapshot.error}'),
+          },
+          child: const Text("Se connecter"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SignUpPage()),
             );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      bottomNavigationBar: Row(
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SignInPage()),
-              );
-            },
-            child: const Text("Se connecter"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SignUpPage()),
-              );
-            },
-            child: const Text("S'inscrire"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ProfilBuilderPage()),
-              );
-            },
-            child: const Text("Mon Profil"),
-          ),
-        ],
-      ),
+          },
+          child: const Text("S'inscrire"),
+        ),
+      ]),
     );
   }
 }
