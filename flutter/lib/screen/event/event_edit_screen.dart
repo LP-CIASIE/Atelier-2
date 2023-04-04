@@ -44,6 +44,7 @@ class _EventEditPageState extends State<EventEditPage> {
     Map bodyHttp = {
       'title': _titleController.text,
       'description': _descriptionController.text,
+      'is_public': 0,
       'date': DateTime(
             _dateController.year,
             _dateController.month,
@@ -68,7 +69,7 @@ class _EventEditPageState extends State<EventEditPage> {
       );
 
       if (!responseHttp.body.isEmpty) {
-        Map<String, dynamic> response = jsonDecode(responseHttp.body);
+        Map response = jsonDecode(responseHttp.body);
 
         if (response.containsKey('code')) {
           SnackBar snackBar = SnackBar(
@@ -84,7 +85,6 @@ class _EventEditPageState extends State<EventEditPage> {
           formPending = false;
         });
 
-        formPending = false;
         SnackBar snackBar = const SnackBar(
           content: Text('Modifications enregistrées.'),
         );
@@ -109,7 +109,6 @@ class _EventEditPageState extends State<EventEditPage> {
       initialDate: _dateController,
       firstDate: DateTime.now().subtract(const Duration(days: 365250)),
       lastDate: DateTime.now().add(const Duration(days: 365250)),
-      helpText: 'Select a date',
     );
 
     if (dateSelected != null) {

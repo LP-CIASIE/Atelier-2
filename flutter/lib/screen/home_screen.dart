@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const EventEditBuilderPage(
-                                idEvent: '709b474e-2d47-36aa-bfc1-39fe14d51b1b',
+                                idEvent: '4eb1ece2-1979-3aaa-8400-8a3c658a3101',
                               )),
                     )
                   },
