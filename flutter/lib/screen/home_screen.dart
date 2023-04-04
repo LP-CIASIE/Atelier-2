@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
+import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
+import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/Event/event_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
-import 'package:http/http.dart' as http;
-import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,8 +30,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Event>> fetchEvents(context) async {
     try {
-      User user =
-          Provider.of<SessionProvider>(context, listen: false).userDataSession;
+      User user = Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
       dynamic responseHttp = await http.get(
         Uri.parse('http://gateway.atelier.local:8000/events?page=1&size=150'),
