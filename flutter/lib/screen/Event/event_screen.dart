@@ -38,12 +38,31 @@ class _EventPageState extends State<EventPage> {
         future: fetchEvent(context),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return ListView(
-              children: [
-                Title(color: Colors.black, child: Text(snapshot.data!.title)),
-                Text(snapshot.data!.description),
-                Text(snapshot.data!.date.toString()),
-              ],
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text( 
+                
+                      snapshot.data!.title,
+                        style: const TextStyle(fontSize: 24.6)),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                    snapshot.data!.date.toString(),
+                        style: const TextStyle(fontSize: 19.6)),
+                  ),
+                                    Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(snapshot.data!.description,
+                       ),
+                  ),
+                ],
+              ),
             );
           } else if (snapshot.hasError) {
             return Center(
@@ -69,8 +88,6 @@ class _EventPageState extends State<EventPage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      print(responseHttp.body);
-      print(widget.idEvent);
       if (user.accessToken == "") {
         Navigator.push(
           context,
