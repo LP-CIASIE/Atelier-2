@@ -1,11 +1,8 @@
 <script setup>
-// Leaflet
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-
 import Card from "primevue/card";
 
-import { ref, reactive, computed, onMounted, inject } from "vue";
+import { ref, computed, inject } from "vue";
+import { useSessionStore } from "@/stores/session.js";
 
 const props = defineProps({
 	event: {
@@ -14,6 +11,7 @@ const props = defineProps({
 	},
 });
 
+const Session = useSessionStore();
 const API = inject("api");
 
 const eventTitle = computed(() => props.event.title);
@@ -34,48 +32,30 @@ const eventDate = computed(() => {
 const eventLocation = ref("");
 
 function getLocation() {
-	API.get(`https://api-adresse.data.gouv.fr/reverse/?lon=6.184417&lat=48.692054`).then((response) => {
-		eventLocation.value = response.data.features[0].properties.label;
+	API.getActionRequest(props.event.links.locations.href).then((data) => {
+		let mainLocation = null;
+
+		data.locations.forEach((location) => {
+			if (location.is_related == 0) {
+				mainLocation = location;
+			}
+		});
+
+		if (mainLocation == null) {
+			eventLocation.value = "Aucune adresse renseignée";
+			return;
+		}
+		API.get(`https://api-adresse.data.gouv.fr/reverse/?lon=${mainLocation.long}&lat=${mainLocation.lat}`).then((response) => {
+			if (response.data.features.length > 0) {
+				eventLocation.value = response.data.features[0].properties.label;
+			} else {
+				eventLocation.value = "Adresse inconnue";
+			}
+		});
 	});
 }
 
 getLocation();
-
-// const map = reactive({
-// 	zoom: 12,
-// 	center: [48.692054, 6.184417],
-// });
-
-// var mapLeaflet = undefined;
-
-// function createMap() {
-// 	try {
-// 		mapLeaflet = L.map("map-" + props.event.id, {
-// 			center: map.center,
-// 			zoom: map.zoom,
-// 			zoomControl: false,
-// 			attributionControl: false,
-// 		}).setView(map.center, map.zoom);
-// 		mapLeaflet.dragging.disable();
-// 		mapLeaflet.doubleClickZoom.disable();
-// 		mapLeaflet.touchZoom.disable();
-// 		mapLeaflet.scrollWheelZoom.disable();
-
-// 		// Marker
-// 		const marker = L.marker(map.center).addTo(mapLeaflet);
-// 		marker.bindTooltip("Point de rendez-vous", { direction: "top", offset: [-15, -10] });
-
-// 		L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
-// 			subdomains: ["mt0", "mt1", "mt2", "mt3"],
-// 		}).addTo(mapLeaflet);
-// 	} catch (e) {}
-// }
-
-// onMounted(() => {
-// 	setTimeout(() => {
-// 		createMap();
-// 	}, 100);
-// });
 </script>
 
 <template>

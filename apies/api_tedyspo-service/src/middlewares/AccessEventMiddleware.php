@@ -40,10 +40,7 @@ class AccessEventMiddleware extends AbstractMiddleware
    */
   public function ErrorMiddleware(): array
   {
-    return [
-      'code' => 403,
-      'message' => 'Tu n\'es pas invité, ou tu n\'as pas encore accepté l\'invitation.'
-    ];
+    throw new \Exception('Tu n\'es pas invité, ou tu n\'as pas encore accepté l\'invitation.', 403);
   }
 
 

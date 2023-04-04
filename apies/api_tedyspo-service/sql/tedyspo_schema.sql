@@ -26,6 +26,7 @@ CREATE TABLE `event` (
   `description` longtext DEFAULT NULL,
   `date` timestamp NOT NULL,
   `is_public` tinyint(1) DEFAULT NULL,
+  `code_share` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`id_event`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
@@ -106,4 +107,4 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 
--- 2023-03-30 12:41:53
+-- 2023-04-03 09:54:16

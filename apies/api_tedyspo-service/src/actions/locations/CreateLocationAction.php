@@ -16,12 +16,11 @@ class CreateLocationAction extends AbstractAction
 
     $data = $request->getParsedBody();
     $id_event = $args['id_event'];
-    $location = $locationService->createLocation($data,$id_event);
-    
+    $location = $locationService->createLocation($data, $id_event);
+
     $data = [
       'location' => FormatterObject::Location($location)
     ];
-    return FormatterAPI::formatResponse($request, $response, $data , 201);
-
+    return FormatterAPI::formatResponse($request, $response, $data, 201);
   }
 }
