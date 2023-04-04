@@ -56,42 +56,6 @@ function getLocation() {
 }
 
 getLocation();
-
-// const map = reactive({
-// 	zoom: 12,
-// 	center: [48.692054, 6.184417],
-// });
-
-// var mapLeaflet = undefined;
-
-// function createMap() {
-// 	try {
-// 		mapLeaflet = L.map("map-" + props.event.id, {
-// 			center: map.center,
-// 			zoom: map.zoom,
-// 			zoomControl: false,
-// 			attributionControl: false,
-// 		}).setView(map.center, map.zoom);
-// 		mapLeaflet.dragging.disable();
-// 		mapLeaflet.doubleClickZoom.disable();
-// 		mapLeaflet.touchZoom.disable();
-// 		mapLeaflet.scrollWheelZoom.disable();
-
-// 		// Marker
-// 		const marker = L.marker(map.center).addTo(mapLeaflet);
-// 		marker.bindTooltip("Point de rendez-vous", { direction: "top", offset: [-15, -10] });
-
-// 		L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
-// 			subdomains: ["mt0", "mt1", "mt2", "mt3"],
-// 		}).addTo(mapLeaflet);
-// 	} catch (e) {}
-// }
-
-// onMounted(() => {
-// 	setTimeout(() => {
-// 		createMap();
-// 	}, 100);
-// });
 </script>
 
 <template>

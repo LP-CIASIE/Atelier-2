@@ -35,9 +35,9 @@ class OwnerEventMiddleware extends AbstractMiddleware
    *
    * @return array
    */
-  public function ErrorMiddleware(): array
+  public function ErrorMiddleware(): Exception
   {
-    throw new \Exception('Tu n\'es pas le propriétaire de cet événement.', 403);
+    throw new \Exception('Vous n\'êtes pas le propriétaire de cet événement', 403);
   }
 
 

@@ -11,6 +11,7 @@ const Session = useSessionStore();
 
 const events = ref([]);
 const loading = ref(true);
+const waitingList = ref(0);
 
 function getEvents() {
 	API.getActionRequest("/events", {
@@ -27,8 +28,19 @@ function getEvents() {
 	});
 }
 
+function getEventsInPending() {
+	API.getActionRequest("/events", {
+		page: 1,
+		size: 10000,
+		filter: "pending",
+	}).then((data) => {
+		waitingList.value = data.events.length;
+	});
+}
+
 onMounted(() => {
 	getEvents();
+	getEventsInPending();
 });
 </script>
 
@@ -36,6 +48,15 @@ onMounted(() => {
 	<div class="title">
 		<h1>Listes des événements</h1>
 		<Button label="Créer un événement" icon="pi pi-plus" @click="$router.push('/event/create')" />
+		<div class="button">
+			<template v-if="waitingList == 0">
+				<Button :label="waitingList.toString()" @click="$router.push('/event/waiting-list')" disabled />
+			</template>
+			<template v-else>
+				<Button :label="waitingList.toString()" @click="$router.push('/event/waiting-list')" severity="success" />
+			</template>
+			<Button label="Créer un événement" icon="pi pi-plus" @click="$router.push('/event/create')" />
+		</div>
 	</div>
 	<template v-if="loading">
 		<p>Chargement...</p>
@@ -55,5 +76,10 @@ onMounted(() => {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+
+	.button {
+		display: flex;
+		gap: 1rem;
+	}
 }
 </style>

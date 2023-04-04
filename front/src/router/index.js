@@ -44,6 +44,11 @@ const router = createRouter({
 					name: "editEvent",
 					component: () => import("@/views/event/EditEventView.vue"),
 				},
+				{
+					path: "waiting-list",
+					name: "waitingListEvent",
+					component: () => import("@/views/event/WaitingListView.vue"),
+				},
 			],
 		},
 	],

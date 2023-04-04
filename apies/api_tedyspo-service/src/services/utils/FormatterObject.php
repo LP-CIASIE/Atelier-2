@@ -2,9 +2,10 @@
 
 namespace atelier\tedyspo\services\utils;
 
-use atelier\tedyspo\models\Comment;
-use atelier\tedyspo\models\Event;
+use atelier\tedyspo\models\Link;
 use atelier\tedyspo\models\User;
+use atelier\tedyspo\models\Event;
+use atelier\tedyspo\models\Comment;
 use atelier\tedyspo\models\Location;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -72,6 +73,7 @@ class FormatterObject
       'description' => $event->description,
       'date' => $event->date,
       'is_public' => $event->is_public,
+      'code_share' => $event->code_share,
       'links' => [
         'self' => [
           'href' => '/events/' . $event->id_event
@@ -108,7 +110,6 @@ class FormatterObject
 
   public static function EventUser($eventUser)
   {
-
     return [
       'id_user' => $eventUser->id_user,
       'id_event' => $eventUser->id_event,
@@ -159,6 +160,7 @@ class FormatterObject
       ]
     ];
   }
+
   public static function Locations(Collection $locations)
   {
     $locationsArray = [];
@@ -166,5 +168,28 @@ class FormatterObject
       $locationsArray[] = self::Location($location);
     }
     return $locationsArray;
+  }
+
+  public static function Link(Link $link)
+  {
+    return [
+      'id' => $link->id_link,
+      'title' => $link->title,
+      'url' => $link->link,
+      'links' => [
+        'event' => [
+          'href' => '/events/' . $link->id_event
+        ],
+      ]
+    ];
+  }
+
+  public static function Links(Collection $links)
+  {
+    $linksArray = [];
+    foreach ($links as $link) {
+      $linksArray[] = self::Link($link);
+    }
+    return $linksArray;
   }
 }
