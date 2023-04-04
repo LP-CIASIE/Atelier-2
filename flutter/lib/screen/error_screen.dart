@@ -22,7 +22,6 @@ class ExceptionPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Text(
               error.toString(),
-              textAlign: TextAlign.start,
               style: const TextStyle(fontSize: 19.6),
             ),
           ),

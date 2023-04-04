@@ -56,7 +56,6 @@ class _SignInPageState extends State<SignInPage> {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Text(
-                      textAlign: TextAlign.start,
                       'Connexion',
                       style: TextStyle(fontSize: 19.6),
                     ),
@@ -108,7 +107,6 @@ class _SignInPageState extends State<SignInPage> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         errorMessage,
-                        textAlign: TextAlign.start,
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),

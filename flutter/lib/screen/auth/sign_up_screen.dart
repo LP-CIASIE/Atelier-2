@@ -109,7 +109,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Text(
-                      textAlign: TextAlign.start,
                       'Inscription',
                       style: TextStyle(fontSize: 19.6),
                     ),
@@ -207,7 +206,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         errorMessage,
-                        textAlign: TextAlign.start,
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),

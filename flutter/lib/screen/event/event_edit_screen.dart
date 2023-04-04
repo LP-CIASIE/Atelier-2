@@ -205,7 +205,6 @@ class _EventEditPageState extends State<EventEditPage> {
                               label: Text(
                                 DateFormat('dd/MM/yyyy')
                                     .format(_dateController),
-                                textAlign: TextAlign.start,
                               ),
                             ),
                           ),
@@ -217,7 +216,6 @@ class _EventEditPageState extends State<EventEditPage> {
                             icon: const Icon(Icons.schedule_outlined),
                             label: Text(
                               '${_timeController.hour.toString().padLeft(2, '0')}:${_timeController.minute.toString().padLeft(2, '0')}',
-                              textAlign: TextAlign.start,
                             ),
                           ),
                         ],
@@ -228,7 +226,6 @@ class _EventEditPageState extends State<EventEditPage> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         errorMessage,
-                        textAlign: TextAlign.start,
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
