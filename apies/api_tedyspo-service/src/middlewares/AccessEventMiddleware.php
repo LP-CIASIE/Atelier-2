@@ -4,6 +4,7 @@ namespace atelier\tedyspo\middlewares;
 
 use atelier\tedyspo\models\Event;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Throwable;
 
 class AccessEventMiddleware extends AbstractMiddleware
 {
@@ -38,12 +39,9 @@ class AccessEventMiddleware extends AbstractMiddleware
    *
    * @return array
    */
-  public function ErrorMiddleware(): array
+  public function ErrorMiddleware(): \Throwable
   {
-    return [
-      'code' => 403,
-      'message' => 'Tu n\'es pas invité, ou tu n\'as pas encore accepté l\'invitation.'
-    ];
+    throw new \Exception('Tu n\'es pas invité, ou tu n\'as pas encore accepté l\'invitation.', 403);
   }
 
 

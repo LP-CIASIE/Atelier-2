@@ -2,6 +2,7 @@
 
 namespace atelier\tedyspo\middlewares;
 
+use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -25,18 +26,11 @@ abstract class AbstractMiddleware
       $response = $handler->handle($request);
       return $response;
     } else {
-      $response = new \Slim\Psr7\Response();
-      $response->getBody()->write(json_encode($this->ErrorMiddleware()));
-      return $response->withStatus($this->ErrorMiddleware()['code']);
+      $this->ErrorMiddleware();
     }
   }
 
   abstract public function validateMiddleware(Request $request): bool;
 
-  // Format : 
-  // [
-  //   'code' => 404,
-  //   'message' => 'Message de l\erreur'
-  // ]
-  abstract public function ErrorMiddleware(): array;
+  abstract public function ErrorMiddleware(): \Throwable;
 }

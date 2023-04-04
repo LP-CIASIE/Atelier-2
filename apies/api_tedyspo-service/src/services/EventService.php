@@ -34,22 +34,41 @@ class EventService extends AbstractService
             $params['page'] = 1;
         }
 
+        if (isset($params['filter'])) {
+            try {
+                v::key('filter', v::stringType()->length(1, 10))->assert($params);
+            } catch (\Exception $e) {
+                throw new \Exception('Données pour le filtre invalides', 400);
+            }
+        } else {
+            $params['filter'] = 'none';
+        }
+
         $userService = $this->container->get('service.user');
 
         $user = $userService->getUserById($id_user);
 
-        try {
-            $event = $user->events()
-                ->orderBy('event.date', 'desc')
-                ->skip(($params['page'] - 1) * $params['size'])
-                ->take($params['size'])
-                ->get();
-        } catch (\Exception $e) {
-            echo ($e->getMessage());
-            throw new \Exception('Erreur lors de la récupérations de tout les évenements', 500);
+        $request = $user->events()
+            ->orderBy('event.date', 'desc')
+            ->skip(($params['page'] - 1) * $params['size'])
+            ->take($params['size']);
+
+        if ($params['filter'] === 'accepted') {
+            $request = $request->wherePivot('state', 'accepted');
+        } elseif ($params['filter'] === 'pending') {
+            $request = $request->wherePivot('state', 'pending');
+        } elseif ($params['filter'] === 'refused') {
+            $request = $request->wherePivot('state', 'refused');
         }
 
-        return $event;
+        try {
+            $events = $request->get();
+        } catch (\Exception $e) {
+            throw new \Exception('Erreur lors de la récupération des événements', 500);
+        }
+
+
+        return $events;
     }
     final public function getEventById($id)
     {
@@ -103,6 +122,10 @@ class EventService extends AbstractService
             throw new \Exception("Erreur lors de la création de la visibilité", 400);
         }
         $event->is_public = $data['is_public'];
+
+        $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+
+        $event->code_share = substr(str_shuffle($alphabet), 0, 5);
 
         try {
             $user->events()->save($event, ['is_organisator' => 1, 'state' => 'accepted', 'is_here' => 0, 'comment' => '']);
@@ -166,14 +189,21 @@ class EventService extends AbstractService
         return $event;
     }
 
-    public function getCount($id_user): int
+    public function getCount($id_user, $filter): int
     {
         try {
             $user = User::findOrFail($id_user);
         } catch (\Exception $e) {
             throw new \Exception('Utilisateur introuvable', 404);
         }
-
-        return $user->events()->count();
+        if ($filter === 'accepted') {
+            return $user->events()->wherePivot('state', 'accepted')->count();
+        } elseif ($filter === 'pending') {
+            return $user->events()->wherePivot('state', 'pending')->count();
+        } elseif ($filter === 'refused') {
+            return $user->events()->wherePivot('state', 'refused')->count();
+        } elseif ($filter === '') {
+            return $user->events()->count();
+        }
     }
 }
