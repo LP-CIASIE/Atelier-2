@@ -32,6 +32,12 @@ class _HomePageState extends State<HomePage> {
       User user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
+      if (user.accessToken == "") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SignInPage()),
+        );
+      }
       dynamic responseHttp = await http.get(
         Uri.parse('http://gateway.atelier.local:8000/events?page=1&size=150'),
         headers: <String, String>{
@@ -39,12 +45,6 @@ class _HomePageState extends State<HomePage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      if (user.accessToken == "") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SignInPage()),
-        );
-      }
       if (!responseHttp.body.isEmpty) {
         Map<String, dynamic> response = jsonDecode(responseHttp.body);
 
