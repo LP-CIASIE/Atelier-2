@@ -484,7 +484,10 @@ onMounted(() => {
 			<template #title>
 				<h1>{{ event.title }}</h1>
 				<h2>
-					{{ new Date(event.date).toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }) }}
+					{{ new Date(event.date).toLocaleDateString("fr-FR", {
+						weekday: "long", year: "numeric", month: "long", day:
+							"numeric", hour: "numeric", minute: "numeric"
+					}) }}
 				</h2>
 				<Divider />
 			</template>
@@ -508,17 +511,25 @@ onMounted(() => {
 						</template>
 						<template v-else>
 							<p>Aucun lieu n'a été ajouté pour l'instant.</p>
-							<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation" v-if="event.owner.id == Session.user.id" />
-							<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true" v-if="event.owner.id == Session.user.id">
+							<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation"
+								v-if="event.owner.id == Session.user.id" />
+							<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true"
+								:rtl="false" :showHeader="false" :closeOnEscape="true" v-if="event.owner.id == Session.user.id">
 								<form @submit.prevent="addLocation" id="addLocation">
-									<InlineMessage v-if="formCreateLocation.messageError" severity="error">{{ formCreateLocation.messageError }}</InlineMessage>
+									<InlineMessage v-if="formCreateLocation.messageError" severity="error">{{
+										formCreateLocation.messageError }}</InlineMessage>
 									<div id="mapForm"></div>
 									<div class="p-inputgroup flex-1">
-										<AutoComplete class="w-full" placeholder="Lieu du rendez-vous (ex: 19 Rue Murillo 75008 Paris)" v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress" :completeOnFocus="false" :minLength="3" :delay="100" @complete="getAutoCompleteLocation" />
-										<Button icon="pi pi-plus" class="p-inputgroup-addon" @click="addMarkerFromAddressMap" :disabled="formCreateLocation.address == ''" />
+										<AutoComplete class="w-full" placeholder="Lieu du rendez-vous (ex: 19 Rue Murillo 75008 Paris)"
+											v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress"
+											:completeOnFocus="false" :minLength="3" :delay="100" @complete="getAutoCompleteLocation" />
+										<Button icon="pi pi-plus" class="p-inputgroup-addon" @click="addMarkerFromAddressMap"
+											:disabled="formCreateLocation.address == ''" />
 									</div>
 									<InputText v-model="formCreateLocation.name" placeholder="Nom du lieu (ex: Maison, Travail...)" />
-									<Button type="submit" label="Ajouter ce lieu" :disabled="formCreateLocation.marker.length == 0 || formCreateLocation.pending" @click="postLocations" />
+									<Button type="submit" label="Ajouter ce lieu"
+										:disabled="formCreateLocation.marker.length == 0 || formCreateLocation.pending"
+										@click="postLocations" />
 								</form>
 							</Dialog>
 						</template>
@@ -534,9 +545,11 @@ onMounted(() => {
 		<template #content>
 			<Button label="Voir la listes des participants" text @click="modalActive = !modalActive" />
 			<template v-if="event.participants.length > 0">
-				<Dialog v-model:visible="modalActive" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true">
+				<Dialog v-model:visible="modalActive" :modal="true" :closable="false" :dismissableMask="true" :rtl="false"
+					:showHeader="false" :closeOnEscape="true">
 					<form @submit.prevent="inviteUsers" id="inviteUsers" v-if="event.owner.id == Session.user.id">
-						<MultiSelect v-model="formInviteUsers.selectedUsers" :options="usersFind.list" filter optionLabel="name" placeholder="Invite tes amis !" @filter="searchUsers">
+						<MultiSelect v-model="formInviteUsers.selectedUsers" :options="usersFind.list" filter optionLabel="name"
+							placeholder="Invite tes amis !" @filter="searchUsers">
 							<template #empty>
 								<span class="p-d-block p-py-2 p-px-3">Ecrivez minimum 3 lettres.</span>
 							</template>
@@ -567,6 +580,7 @@ onMounted(() => {
 	width: 100%;
 	height: 20rem;
 }
+
 .p-dialog .p-dialog-content {
 	padding-top: 2rem;
 }
@@ -593,6 +607,7 @@ form#inviteUsers {
 		font-size: 2rem;
 		margin: 0;
 	}
+
 	h2 {
 		font-size: 1rem;
 	}
@@ -606,6 +621,7 @@ form#addLocation {
 	min-width: 500px;
 	width: 100%;
 	max-width: 500px;
+
 	#mapForm {
 		width: 100%;
 		height: 20rem;
@@ -627,8 +643,8 @@ form#addLocation {
 	.p-autocomplete {
 		margin-top: 0.5rem;
 	}
+
 	button {
 		margin-top: 1rem;
 	}
-}
-</style>
+}</style>

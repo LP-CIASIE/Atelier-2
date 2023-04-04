@@ -1,6 +1,7 @@
 <script setup>
 import EventsList from "@/components/EventsList.vue";
 import Button from "primevue/button";
+import ProgressSpinner from 'primevue/progressspinner';
 
 import { ref, inject, onMounted } from "vue";
 import { useSessionStore } from "@/stores/session.js";
@@ -47,19 +48,24 @@ onMounted(() => {
 <template>
 	<div class="title">
 		<h1>Listes des événements</h1>
-		<Button label="Créer un événement" icon="pi pi-plus" @click="$router.push('/event/create')" />
 		<div class="button">
 			<template v-if="waitingList == 0">
-				<Button :label="waitingList.toString()" @click="$router.push('/event/waiting-list')" disabled />
+				<Button :label="'Invitation en attente : ' + waitingList.toString()" @click="$router.push('/event/waiting-list')"
+					disabled />
 			</template>
-			<template v-else>
-				<Button :label="waitingList.toString()" @click="$router.push('/event/waiting-list')" severity="success" />
+			<template v-if="waitingList == 1">
+				<Button icon="pi pi-bell" :label="'Invitation en attente : ' + waitingList.toString()" outlined
+					@click="$router.push('/event/waiting-list')" />
+			</template>
+			<template v-if="waitingList > 1">
+				<Button :label="'Invitations en attentes : ' + waitingList.toString()"
+					@click="$router.push('/event/waiting-list')" severity="warning" />
 			</template>
 			<Button label="Créer un événement" icon="pi pi-plus" @click="$router.push('/event/create')" />
 		</div>
 	</div>
 	<template v-if="loading">
-		<p>Chargement...</p>
+		<ProgressSpinner style="text-align: center; width: 50px; height: 50px;" />
 	</template>
 	<template v-else>
 		<template v-if="events.length === 0">

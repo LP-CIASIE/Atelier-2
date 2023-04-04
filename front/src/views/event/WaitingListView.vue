@@ -2,6 +2,7 @@
 import { ref, inject, onMounted } from "vue";
 import { useSessionStore } from "@/stores/session.js";
 import WaitingEventsList from "../../components/WaitingEventsList.vue";
+import ProgressSpinner from 'primevue/progressspinner';
 import Message from 'primevue/message';
 
 const API = inject("api");
@@ -44,8 +45,12 @@ onMounted(() => {
 </script>
 
 <template>
+  <div class="title">
+    <h1>Listes des événements en attentes</h1>
+
+  </div>
   <template v-if="loading">
-    <p>Chargement...</p>
+    <ProgressSpinner style="text-align: center; width: 50px; height: 50px;" />
   </template>
   <template v-else>
     <Message v-if="message !== ''" severity="success" :life="3000">{{ message }}</Message>
@@ -58,4 +63,10 @@ onMounted(() => {
   </template>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
