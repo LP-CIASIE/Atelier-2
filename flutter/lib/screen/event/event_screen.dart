@@ -5,14 +5,37 @@ import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart
 
 class EventPage extends StatefulWidget {
   final Event event;
-
-  const EventPage({
-    Key? key,
-    required this.event,
-  }) : super(key: key);
+  const EventPage({super.key
+    required this.event,});
 
   @override
   State<EventPage> createState() => _EventPageState();
+}
+
+class _HomePageState extends State<EventPage> {
+
+  @override
+  State<EventPage> createState() => _EventPageState();
+
+  openDialogShareEvent() {
+    AlertDialog(
+      title: const Text('Reset settings?'),
+      content: const Text(
+          'This will reset your device to its default factory settings.'),
+      actions: [
+        TextButton(
+          // textColor: Color(0xFF6200EE),
+          onPressed: () {},
+          child: const Text('CANCEL'),
+        ),
+        TextButton(
+          // textColor: Color(0xFF6200EE),
+          onPressed: () {},
+          child: const Text('ACCEPT'),
+        ),
+      ],
+    );
+  }
 }
 
 class _EventPageState extends State<EventPage> {
@@ -77,7 +100,7 @@ class _EventPageState extends State<EventPage> {
                       style: TextStyle(fontSize: 19.6),
                     ),
                     OutlinedButton.icon(
-                      onPressed: () => {},
+                      onPressed: () => {openDialogShareEvent()},
                       icon: const Icon(Icons.add_outlined),
                       label: const Text('AJOUTER'),
                     )
