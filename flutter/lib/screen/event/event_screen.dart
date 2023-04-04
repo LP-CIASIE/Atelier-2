@@ -1,14 +1,20 @@
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
+import 'package:lp1_ciasie_atelier_2/class/location.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart'; 
 
 class EventPage extends StatefulWidget {
   final Event event;
+  final Location location;
 
   const EventPage({
     Key? key,
     required this.event,
+    required this.location,
   }) : super(key: key);
 
   @override
@@ -83,6 +89,53 @@ class _EventPageState extends State<EventPage> {
                     )
                   ],
                 )),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                child:FlutterMap(
+                options: MapOptions(
+                  center: LatLng(
+                      
+                           widget.location.lat 
+                              ? 90
+                              : widget.location.latitude,
+                          ? 90
+                          : widget.fruit.origin.location.coordinates[1]),
+                  zoom: 9.2,
+                ),
+                nonRotatedChildren: [
+                  AttributionWidget.defaultWidget(
+                    source: 'OpenStreetMap contributors',
+                    onSourceTapped: null,
+                  ),
+                ],
+
+                children: [
+
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.app',
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        width: 80.0,
+                        height: 80.0,
+                        point: LatLng(
+                            widget.fruit.origin.location.coordinates[0] > 90
+                                ? 90
+                                : widget.fruit.origin.location.coordinates[0],
+                            widget.fruit.origin.location.coordinates[1] < -90
+                                ? 90
+                                : widget.fruit.origin.location.coordinates[1]),
+                        builder: (ctx) => const Icon(Icons.location_on),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+                ),
+                
           ],
         ),
       ),
