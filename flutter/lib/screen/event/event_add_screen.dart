@@ -117,7 +117,7 @@ class _EventAddPageState extends State<EventAddPage> {
   Future<void> selectTime() async {
     TimeOfDay? timeSelected = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: _timeController,
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),

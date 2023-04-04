@@ -30,7 +30,7 @@ class _SignInPageState extends State<SignInPage> {
     if (connection['ok']) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage( events: [],)),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } else {
       setState(() {
@@ -90,6 +90,9 @@ class _SignInPageState extends State<SignInPage> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Mot de passe non renseigné';
+                        }
+                        if (value.toString().length < 8) {
+                          return 'Mot de passe trop court';
                         }
                         return null;
                       },
