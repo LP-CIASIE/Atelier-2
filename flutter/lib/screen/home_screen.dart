@@ -96,19 +96,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
-        actions: [
-          IconButton(
-              onPressed: () => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const EventEditBuilderPage(
-                                idEvent: '4eb1ece2-1979-3aaa-8400-8a3c658a3101',
-                              )),
-                    )
-                  },
-              icon: const Icon(Icons.edit_outlined))
-        ],
       ),
       body: FutureBuilder<List<Event>>(
         future: fetchEvents(context),
@@ -146,38 +133,6 @@ class _HomePageState extends State<HomePage> {
             return const Center(child: CircularProgressIndicator());
           }
         },
-      ),
-      bottomNavigationBar: Row(
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SignInPage()),
-              );
-            },
-            child: const Text("Se connecter"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SignUpPage()),
-              );
-            },
-            child: const Text("S'inscrire"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ProfilBuilderPage()),
-              );
-            },
-            child: const Text("Mon Profil"),
-          ),
-        ],
       ),
     );
   }
