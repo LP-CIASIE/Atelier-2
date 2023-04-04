@@ -6,7 +6,7 @@ import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
-import 'package:lp1_ciasie_atelier_2/screen/Event/event_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/error_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/loading_screen.dart';
