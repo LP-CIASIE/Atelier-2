@@ -30,6 +30,32 @@ const router = createRouter({
 			name: "profile",
 			component: () => import("@/views/ProfileView.vue"),
 		},
+		{
+			path: "/event",
+			redirect: "/",
+			children: [
+				{
+					path: ":id",
+					name: "event",
+					component: () => import("@/views/event/EventView.vue"),
+				},
+				{
+					path: "create",
+					name: "createEvent",
+					component: () => import("@/views/event/CreateEventView.vue"),
+				},
+				{
+					path: "edit/:id",
+					name: "editEvent",
+					component: () => import("@/views/event/EditEventView.vue"),
+				},
+				{
+					path: "waiting-list",
+					name: "waitingListEvent",
+					component: () => import("@/views/event/WaitingListView.vue"),
+				},
+			],
+		},
 	],
 });
 

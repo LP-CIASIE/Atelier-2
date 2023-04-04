@@ -2,9 +2,7 @@
 
 namespace atelier\tedyspo\services;
 
-use atelier\tedyspo\models\Event;
 use Respect\Validation\Validator as v;
-use atelier\tedyspo\models\User;
 use Psr\Container\ContainerInterface;
 
 class InvitationService extends AbstractService
