@@ -55,19 +55,23 @@ function getEvent() {
 		event.is_public = data.event.is_public;
 
 		event.links = data.event.links;
-		getOwner(event.links.owner.href);
+
+		let promises = [];
+
+		promises.push(getOwner(event.links.owner.href));
 
 		// Attendre les routes API
-		getParticipants(event.links.participants.href);
-		getLocations(event.links.locations.href).then(() => {
+		promises.push(getParticipants(event.links.participants.href));
+		promises.push(getLocations(event.links.locations.href));
+		// getLinks(event.links.urls.href);
+		promises.push(getComments(event.links.comments.href));
+
+		Promise.all(promises).then(() => {
+			event.pending = false;
 			if (event.locations.length > 0) {
-				createMap();
+				setTimeout(createMap, 400);
 			}
 		});
-		// getLinks(event.links.urls.href);
-		getComments(event.links.comments.href);
-
-		event.pending = false;
 	});
 }
 
@@ -183,8 +187,6 @@ function getLonLatFromAddress(address) {
 var mapLeaflet = null;
 
 function createMap() {
-	console.log("===================");
-	console.log(event.mainLocation.content);
 	mapLeaflet = L.map("map", {
 		zoomControl: true,
 		attributionControl: false,
@@ -383,6 +385,7 @@ function postLocations() {
 			getLocations(event.links.locations.href);
 			formCreateLocation.pending = false;
 			formCreateLocation.modal = false;
+			createMap();
 		})
 		.catch((error) => {
 			formCreateLocation.pending = false;
