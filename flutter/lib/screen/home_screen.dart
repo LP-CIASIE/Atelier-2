@@ -7,6 +7,7 @@ import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_add_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_invitation_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:provider/provider.dart';
@@ -21,10 +22,18 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Future<List<Event>> futureEvents = Future.value([]);
   late List<Event> events;
+  late List<Event> data;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void refresh(context) async {
+    data = await fetchEvents(context);
+    setState(() {
+      events = data;
+    });
   }
 
   Future<List<Event>> fetchEvents(context) async {
@@ -107,6 +116,18 @@ class _HomePageState extends State<HomePage> {
             },
             icon: const Icon(Icons.account_circle_outlined),
           ),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const InvitationPage()),
+                );
+              },
+              icon: const Icon(Icons.pending_actions_rounded)),
+          IconButton(
+              onPressed: () => refresh(context),
+              icon: const Icon(Icons.refresh)),
         ],
       ),
       body: FutureBuilder<List<Event>>(
@@ -114,10 +135,12 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
+              padding: const EdgeInsets.all(10),
               itemCount: snapshot.data?.length,
               itemBuilder: (context, index) {
                 final event = snapshot.data?[index];
                 return Card(
+                  elevation: 5,
                   child: Column(
                     children: [
                       ListTile(
