@@ -32,5 +32,5 @@ abstract class AbstractMiddleware
 
   abstract public function validateMiddleware(Request $request): bool;
 
-  abstract public function ErrorMiddleware(): Exception;
+  abstract public function ErrorMiddleware(): \Throwable;
 }
