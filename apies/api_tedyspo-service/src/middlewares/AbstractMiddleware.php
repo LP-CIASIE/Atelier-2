@@ -25,9 +25,7 @@ abstract class AbstractMiddleware
       $response = $handler->handle($request);
       return $response;
     } else {
-      $response = new \Slim\Psr7\Response();
-      $response->getBody()->write(json_encode($this->ErrorMiddleware()));
-      return $response->withStatus($this->ErrorMiddleware()['code']);
+      $this->ErrorMiddleware();
     }
   }
 

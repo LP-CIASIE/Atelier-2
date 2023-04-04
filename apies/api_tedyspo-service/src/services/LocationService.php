@@ -14,7 +14,6 @@ class LocationService extends AbstractService
         $location->id_location = Uuid::uuid4();
 
         try {
-
             v::stringType()->length(3, 100)->assert($data['name']);
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la création du titre", 400);
