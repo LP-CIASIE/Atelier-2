@@ -33,11 +33,12 @@ use atelier\fakedata\models\UserTedyspo;
 // Create a Faker instance
 $faker = Factory::create('fr_FR');
 
+
 // Generate users
 $users = [];
 
 echo "Generating users...\n";
-for ($i = 0; $i < 200; $i++) {
+for ($i = 0; $i < 400; $i++) {
   $id = $faker->uuid;
   $email = $faker->email;
 
@@ -72,7 +73,7 @@ echo "Generating events...\n";
 // Generate 2 - 3 events per user CONTRIBUTOR
 $events = [];
 foreach ($users as $user) {
-  $nbEvents = rand(5, 10);
+  $nbEvents = rand(3, 5);
   for ($i = 0; $i < $nbEvents; $i++) {
     $id = $faker->uuid;
 
@@ -82,7 +83,10 @@ foreach ($users as $user) {
     $event->title = $faker->sentence(3);
     $event->description = $faker->paragraph(3);
     $event->date = $faker->dateTimeBetween('-1 years', '+1 years');
-    $event->is_public = rand(0, 1);
+    $event->is_public = 0;
+
+    $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $event->code_share = substr(str_shuffle($alphabet), 0, 5);
 
     $event->save();
 
@@ -105,7 +109,7 @@ echo "Generating participants...\n";
 $state = ['accepted', 'refused', 'pending'];
 $commentList = ["Je serais là les amis !", "", ":D", "Vive les événements !", "Faites moi de la place :3", "J'y serais", "J'amènerais aussi des amis"];
 foreach ($events as $event) {
-  $nbParticipants = rand(2, 30);
+  $nbParticipants = rand(2, 15);
   for ($i = 0; $i < $nbParticipants; $i++) {
     $participant = $users[rand(0, count($users) - 1)];
     while ($participant['id_user'] == $event['id_user']) {
@@ -118,12 +122,13 @@ foreach ($events as $event) {
     } elseif ($stateRand == 'pending') {
       $comment = 'En attente de validation par l\'utilisateur';
     } elseif ($stateRand == 'accepted') {
-
       $comment = $commentList[rand(0, count($commentList) - 1)];
     }
 
+    $isHere = ($stateRand == 'accepted') ? rand(0, 1) : 0;
+
     $event = Event::find($event['id_event']);
-    $event->users()->attach($participant['id_user'], ['is_organisator' => 0, 'state' => $stateRand, 'is_here' => rand(0, 1), 'comment' => $comment]);
+    $event->users()->attach($participant['id_user'], ['is_organisator' => 0, 'state' => $stateRand, 'is_here' => $isHere, 'comment' => $comment]);
   }
 }
 echo "Participants generated\n";
@@ -134,7 +139,7 @@ echo "Generating comments...\n";
 // Generate 2 - 5 comments per event 
 $comments = [];
 foreach ($events as $event) {
-  $nbComments = rand(0, 30);
+  $nbComments = rand(0, 100);
   $participants = Event::find($event['id_event'])->users()->get()->toArray();
   for ($i = 0; $i < $nbComments; $i++) {
     $id = $faker->uuid;
@@ -168,13 +173,15 @@ foreach ($events as $event) {
     $location = new Location();
     $location->id_location = $id;
     $location->name = $faker->sentence(3);
-    $location->lat = $faker->latitude;
-    $location->long = $faker->longitude;
+    $location->lat = $faker->latitude(43.0000, 49.0000);
+    $location->long = $faker->longitude(-1.0000, 7.0000);
+
     if ($i == 0) {
       $location->is_related = 0;
     } else {
       $location->is_related = 1;
     }
+
     $location->id_event = $event['id_event'];
     $location->save();
 

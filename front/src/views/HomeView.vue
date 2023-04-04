@@ -47,6 +47,7 @@ onMounted(() => {
 <template>
 	<div class="title">
 		<h1>Listes des événements</h1>
+		<Button label="Créer un événement" icon="pi pi-plus" @click="$router.push('/event/create')" />
 		<div class="button">
 			<template v-if="waitingList == 0">
 				<Button :label="waitingList.toString()" @click="$router.push('/event/waiting-list')" disabled />

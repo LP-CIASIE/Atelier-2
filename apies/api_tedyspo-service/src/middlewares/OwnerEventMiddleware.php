@@ -11,7 +11,7 @@ class OwnerEventMiddleware extends AbstractMiddleware
   /**
    * Récupère l'id de l'utilisateur dans le token JWT reçu par la requête
    * Récupère l'événement par l'id de route
-   * 
+   *
    * Vérifie si l'utilisateur est le propriétaire de l'événement
    *
    * @param Request $request
@@ -26,11 +26,7 @@ class OwnerEventMiddleware extends AbstractMiddleware
 
     $owner = $event->getOwner();
 
-    if ($owner->id_user == $user['uid']) {
-      return true;
-    } else {
-      return false;
-    }
+    return ($owner->id_user == $user['uid']);
   }
 
 

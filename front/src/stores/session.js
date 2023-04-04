@@ -119,8 +119,8 @@ export const useSessionStore = defineStore("session", {
 			user.email = "";
 			user.firstname = "";
 			user.lastname = "";
-			user["access-token"] = "";
-			user["refresh-token"] = "";
+			user.access_token = "";
+			user.refresh_token = "";
 
 			router.push({ name: "signIn" });
 		}
