@@ -21,7 +21,12 @@ const BUS = inject("bus");
 
 const visible = ref(false);
 const comment = ref("");
-const state = ref('');
+const state = ref("");
+if (state = 'accepted') {
+  comment.value = ref("Bonjour, je suis disponible pour participer à cet événement.");
+} else {
+  comment.value = ref("Bonjour, je ne suis malheureusement pas disponible pour participer à cet événement.");
+}
 const eventTitle = computed(() => props.event.title);
 const eventDescription = computed(() => {
   return props.event.description.length > 400 ? props.event.description.substring(0, 400) + "..." : props.event.description;
@@ -59,10 +64,8 @@ function sendResponse() {
           </div>
         </div>
         <div class="button">
-          <Button icon="pi pi-check" aria-label="Filter"
-            @click="visible = true, comment = 'Je serais bien présent à l\'événement !', state = 'accepted'" />
-          <Button icon="pi pi-times" severity="danger" aria-label="Cancel"
-            @click="visible = true, comment = 'Je ne serais pas présent pour l\'événement.', state = 'refused'" />
+          <Button icon="pi pi-check" aria-label="Filter" @click="visible = true, state = 'accepted'" />
+          <Button icon=" pi pi-times" severity="danger" aria-label="Cancel" @click="visible = true, state = 'refused'" />
         </div>
       </div>
     </template>
