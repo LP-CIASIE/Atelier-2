@@ -141,7 +141,7 @@ class _EventEditPageState extends State<EventEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mon Profil'),
+        title: const Text('Modifiez l\'évènement'),
       ),
       body: Column(
         children: [

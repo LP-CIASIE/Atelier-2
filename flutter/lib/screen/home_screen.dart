@@ -5,11 +5,9 @@ import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
-import 'package:lp1_ciasie_atelier_2/screen/Event/event_screen.dart';
-import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
-import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,7 +28,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Event>> fetchEvents(context) async {
     try {
-      User user = Provider.of<SessionProvider>(context, listen: false).userDataSession;
+      User user =
+          Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
       dynamic responseHttp = await http.get(
         Uri.parse('http://gateway.atelier.local:8000/events?page=1&size=150'),
@@ -93,18 +92,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home'), actions: [
-        IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ProfilBuilderPage()),
-            );
-          },
-          icon: const Icon(Icons.account_circle_outlined),
-        ),
-      ]),
+      appBar: AppBar(
+        title: const Text('Home'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ProfilBuilderPage()),
+              );
+            },
+            icon: const Icon(Icons.account_circle_outlined),
+          ),
+        ],
+      ),
       body: FutureBuilder<List<Event>>(
         future: fetchEvents(context),
         builder: (context, snapshot) {
@@ -123,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                           onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => EventPage(
+                                  builder: (context) => EventBuilderPage(
                                     idEvent: event?.idEvent ?? '',
                                   ),
                                 ),
