@@ -104,7 +104,6 @@ class _EventAddPageState extends State<EventAddPage> {
       initialDate: _dateController,
       firstDate: DateTime.now().subtract(const Duration(days: 365250)),
       lastDate: DateTime.now().add(const Duration(days: 365250)),
-      helpText: 'Select a date',
     );
 
     if (dateSelected != null) {
