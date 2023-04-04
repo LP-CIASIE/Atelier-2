@@ -17,11 +17,11 @@ class GetEventsAction extends AbstractAction
 
     $page = $params['page'] ?? 1;
     $size = $params['size'] ?? 10;
-    $filter = $params['filter'] ?? 'none';
+    $filter = $params['filter'] ?? '';
 
     $eventService = $this->container->get('service.event');
     $events = $eventService->getEvents($user['uid'], $params);
-    $count = $eventService->getCount($user['uid']);
+    $count = $eventService->getCount($user['uid'], $filter);
 
     $data = FormatterAPI::formatPagination($request, 'get_events', $page, $params, $count, $size);
     $data['events'] = FormatterObject::Events($events);

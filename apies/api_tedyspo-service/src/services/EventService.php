@@ -189,14 +189,21 @@ class EventService extends AbstractService
         return $event;
     }
 
-    public function getCount($id_user): int
+    public function getCount($id_user, $filter): int
     {
         try {
             $user = User::findOrFail($id_user);
         } catch (\Exception $e) {
             throw new \Exception('Utilisateur introuvable', 404);
         }
-
-        return $user->events()->count();
+        if ($filter === 'accepted') {
+            return $user->events()->wherePivot('state', 'accepted')->count();
+        } elseif ($filter === 'pending') {
+            return $user->events()->wherePivot('state', 'pending')->count();
+        } elseif ($filter === 'refused') {
+            return $user->events()->wherePivot('state', 'refused')->count();
+        } elseif ($filter === '') {
+            return $user->events()->count();
+        }
     }
 }

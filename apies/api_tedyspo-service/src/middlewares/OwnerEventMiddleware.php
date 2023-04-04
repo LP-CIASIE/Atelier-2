@@ -3,6 +3,7 @@
 namespace atelier\tedyspo\middlewares;
 
 use atelier\tedyspo\models\Event;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class OwnerEventMiddleware extends AbstractMiddleware
@@ -38,12 +39,9 @@ class OwnerEventMiddleware extends AbstractMiddleware
    *
    * @return array
    */
-  public function ErrorMiddleware(): array
+  public function ErrorMiddleware(): Exception
   {
-    return [
-      'code' => 403,
-      'message' => 'Tu n\'es pas le propriétaire de cet événement.'
-    ];
+    throw new \Exception('Vous n\'êtes pas le propriétaire de cet événement', 403);
   }
 
 

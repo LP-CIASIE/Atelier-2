@@ -94,7 +94,7 @@ getLocation();
 </template>
 
 <style lang="scss">
-.eventCard > .p-card {
+.eventCard>.p-card {
 	height: 120px;
 	width: 100%;
 	display: flex;
@@ -127,7 +127,7 @@ getLocation();
 				align-items: center;
 			}
 
-			& > * {
+			&>* {
 				margin: 0;
 			}
 
