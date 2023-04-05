@@ -185,6 +185,77 @@ class _EventShareWidgetState extends State<EventShareWidget> {
     }
   }
 
+  void addGuest(int index, bool stringSearch) async {
+    setState(() {});
+    try {
+      Session user =
+          Provider.of<SessionProvider>(context, listen: false).userDataSession;
+
+      dynamic responseHttp = await http.get(
+        Uri.parse('${dotenv.env['API_URL']}/users?email=$stringSearch'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${user.accessToken}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (!responseHttp.body.isEmpty) {
+        Map<String, dynamic> response = jsonDecode(responseHttp.body);
+
+        if (response.containsKey('code')) {
+          if (response['code'] == 404) {
+            throw CustomException(
+                message: 'Aucun utilisateur trouvé à cette adresse email.');
+          }
+          if (response['code'] == 401) {
+            throw CustomException(
+                message:
+                    "Vous n'êtes pas autorisé à accéder à cette ressource.");
+          }
+          if (response.containsKey('message')) {
+            throw CustomException(message: response['message']);
+          }
+          throw CustomException(
+              message: "Une erreur est survenue : ${response['code']}.");
+        }
+        if (response.containsKey('users')) {
+          List listMap = response['users'];
+
+          List<User> listUser = [];
+          for (var user in listMap) {
+            listUser.add(User.fromMap(user!));
+          }
+
+          List<String> guests = await getGuest();
+
+          for (var guest in guests) {
+            for (int i = 0; i < listUser.length; i++) {
+              if (listUser[i].id == guest) {
+                listUser[i].isCheck = true;
+              }
+            }
+          }
+        } else {
+          throw CustomException(
+              message:
+                  'Aucun utilisateur ne correspond à l\'adresse email renseignée.');
+        }
+      } else {
+        throw CustomException(
+            message:
+                'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.');
+      }
+    } catch (error) {
+      if (error is! CustomException) {
+        setState(() {
+// RETIRER COCHE CASE A COCHER + SNACKBAR
+        });
+      }
+      setState(() {
+// RETIRER COCHE CASE A COCHER + SNACKBAR
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -220,9 +291,12 @@ class _EventShareWidgetState extends State<EventShareWidget> {
                       return CheckboxListTile(
                         value: users[index].isCheck,
                         onChanged: (bool? value) => {
-                          setState(() {
-                            users[index].isCheck = value!;
-                          })
+                          if (value!)
+                            {
+                              addGuest(index, false),
+                            }
+                          else
+                            {addGuest(index, value)}
                         },
                         title: Text(users[index].email),
                       );
