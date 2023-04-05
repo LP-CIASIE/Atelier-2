@@ -16,14 +16,15 @@ class GetCommentsAction extends AbstractAction
 
     $page = $params['page'] ?? 1;
     $size = $params['size'] ?? 10;
+    $embed = $params['embed'] ?? '';
 
     $commentService = $this->container->get('service.comment');
 
-    $comments = $commentService->getComments($args['id_event'], $params);
+    $comments = $commentService->getComments($args['id_event'], $params, $embed);
     $count = $commentService->getCount($args['id_event']);
 
     $data = FormatterAPI::formatPagination($request, 'get_comments', $page, $params, $count, $size);
-    $data['comments'] = FormatterObject::Comments($comments);
+    $data['comments'] = FormatterObject::Comments($comments, $embed);
 
     return FormatterAPI::formatResponse($request, $response, $data, 200);
   }

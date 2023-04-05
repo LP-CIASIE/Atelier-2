@@ -9,15 +9,17 @@ import AutoComplete from "primevue/autocomplete";
 import InputText from "primevue/inputtext";
 import InlineMessage from "primevue/inlinemessage";
 import Toast from "primevue/toast";
+import Textarea from "primevue/textarea";
 
 import ParticipantsListElement from "@/components/assets/ParticipantsListElement.vue";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import ConversationListElement from "@/components/assets/ConversationListElement.vue";
 
 import { ref, reactive, inject, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useSessionStore } from "@/stores/session.js";
 import { useToast } from "primevue/usetoast";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
 const Session = useSessionStore();
 const router = useRouter();
@@ -150,8 +152,11 @@ function getLinks(url) {
 }
 
 function getComments(url) {
-	API.getActionRequest(url).then((data) => {
+	API.getActionRequest(url, { embed: "user", size: 1000 }).then((data) => {
 		event.comments = data.comments;
+		setTimeout(() => {
+			listMessageUI.value.scroll(0, listMessageUI.value.scrollHeight);
+		}, 100);
 	});
 }
 
@@ -443,7 +448,6 @@ function inviteUsers() {
 	});
 
 	Promise.all(promises).then((data) => {
-		// Check if data contain AxiosError
 		let errors = data.reduce((element) => {
 			if (element instanceof Error) {
 				return element;
@@ -465,6 +469,30 @@ function inviteUsers() {
 		formInviteUsers.selectedUsers = [];
 		usersFind.list = [];
 		getParticipants(event.links.participants.href);
+	});
+}
+
+// =========================================
+// Création du form pour l'invitation d'utilisation
+// =========================================
+const listMessageUI = ref();
+
+const formChat = reactive({
+	message: "",
+	pending: false,
+	messageError: "",
+});
+
+function sendMessage() {
+	formChat.pending = true;
+	formChat.messageError = "";
+
+	API.postActionRequest(`/events/${event.id}/comments`, {}, { comment: formChat.message }).then((data) => {
+		formChat.pending = false;
+		formChat.message = "";
+
+		getComments(event.links.comments.href);
+		// listMessageUI.value.scroll(0, listMessageUI.value.scrollHeight);
 	});
 }
 
@@ -571,6 +599,31 @@ onMounted(() => {
 			</template>
 		</template>
 	</Card>
+	<Card class="mt-5" id="Chat">
+		<template #title>
+			<h3>Conversations</h3>
+		</template>
+		<template #content>
+			<Card class="mt-5">
+				<template #content>
+					<div class="list-message" ref="listMessageUI">
+						<template v-if="event.comments.length > 0">
+							<template v-for="message in event.comments">
+								<ConversationListElement :message="message" />
+							</template>
+						</template>
+						<template v-else>
+							<p>Aucune message.</p>
+						</template>
+					</div>
+				</template>
+			</Card>
+			<form>
+				<Textarea v-model="formChat.message" placeholder="Ecrivez votre message" />
+				<Button label="Envoyer" @click="sendMessage" :disabled="formChat.pending || formChat.message == ''" />
+			</form>
+		</template>
+	</Card>
 </template>
 
 <style lang="scss">
@@ -640,6 +693,25 @@ form#addLocation {
 	}
 	button {
 		margin-top: 1rem;
+	}
+}
+
+#Chat {
+	.p-card-content {
+		.list-message {
+			height: 20rem;
+			overflow-y: scroll;
+		}
+		form {
+			margin-top: 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+			textarea {
+				display: block;
+				width: 100%;
+			}
+		}
 	}
 }
 </style>
