@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EventBuilderPage(
-                                    idEvent: event?.idEvent ?? '',
+                                    idEvent: event.idEvent,
                                   
                                   ),
                                 ),
