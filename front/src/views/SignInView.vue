@@ -1,6 +1,7 @@
 <script setup>
 import { useSessionStore } from "@/stores/session.js";
 import { reactive } from "vue";
+import { reactive, inject } from "vue";
 import { useRouter } from "vue-router";
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
@@ -8,6 +9,8 @@ import ProgressSpinner from "primevue/progressspinner";
 
 const router = useRouter();
 const Session = useSessionStore();
+const BUS = inject("bus");
+
 var form = reactive({
 	email: {
 		content: "",
@@ -42,6 +45,7 @@ function on_submit() {
 		form.pending = true;
 		Session.signIn(form).then((connection) => {
 			if (connection.ok) {
+				BUS.emit("connection");
 				router.push({ name: "home" });
 			} else {
 				form.pending = false;

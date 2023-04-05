@@ -9,7 +9,7 @@ import mitt from "mitt";
 
 // Variable Globale pour Axios nommé "api"
 const API = axios.create({
-	baseURL: "${dotenv.env['API_URL']}",
+	baseURL: "http://gateway.atelier.local:8000",
 	headers: {
 		"Content-Type": "application/json",
 	},
@@ -103,11 +103,9 @@ provide("bus", mitt());
 </script>
 
 <template>
-	<template v-if="!['/sign-in', '/sign-up'].includes($route.path)">
-		<header>
-			<Navbar />
-		</header>
-	</template>
+	<header>
+		<Navbar />
+	</header>
 
 	<article class="container">
 		<router-view v-slot="{ Component }">
