@@ -86,6 +86,7 @@ class EventBuilderPage extends StatelessWidget {
 
       dynamic responseHttp = await http.get(
         Uri.parse('${dotenv.env['API_URL']}/events/$idEvent'),
+        Uri.parse('${dotenv.env['API_URL']}/events/$idEvent'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',

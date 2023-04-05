@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
@@ -23,6 +24,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final controller = PageController(initialPage: 0);
+  int _selectedIndex = 0;
+  final controller = PageController(initialPage: 0);
   Future<List<Event>> futureEvents = Future.value([]);
   late List<Event> events;
   late List<Location> location;
@@ -35,8 +38,10 @@ class _HomePageState extends State<HomePage> {
   Future<List<Event>> fetchEvents(context) async {
     try {
       Session user =
+      Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(
+        Uri.parse('${dotenv.env['API_URL']}/events?page=1&size=150'),
         Uri.parse('${dotenv.env['API_URL']}/events?page=1&size=150'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
@@ -98,6 +103,39 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        body: PageView(
+          controller: controller,
+          physics: const NeverScrollableScrollPhysics(),
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          children: const [
+            EventsPage(),
+            EventPendingPage(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month_outlined),
+              label: 'Évènements',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.pending_actions_rounded),
+              label: 'Invitations',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.blue,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+              controller.jumpToPage(index);
+            });
+          },
+        ));
         body: PageView(
           controller: controller,
           physics: const NeverScrollableScrollPhysics(),
