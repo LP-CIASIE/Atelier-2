@@ -423,7 +423,7 @@ function searchUsers(e) {
 		usersFind.list = [...usersFind.list, ...formInviteUsers.selectedUsers.filter((obj2) => !usersFind.list.some((obj1) => obj1.id === obj2.id))];
 		usersFind.list = usersFind.list.filter((obj1) => Session.user.id !== obj1.id);
 		// Delete users already invited in the list of event.participants (only id is stored)
-		usersFind.list = usersFind.list.filter((obj1) => !event.participants.some((obj2) => obj2.id_user === obj1.id));
+		usersFind.list = usersFind.list.filter((obj1) => !event.participants.some((obj2) => obj2.id === obj1.id));
 		usersFind.pending = false;
 	});
 }
