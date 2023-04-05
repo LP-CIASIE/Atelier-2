@@ -80,7 +80,6 @@ function getEvent() {
 function getParticipants(url) {
 	API.getActionRequest(url, { embed: "user" }).then((data) => {
 		event.participants = data.usersEvent;
-		console.log(event.participants);
 
 		// Trier les participants par ordre de la propriété state (accepted, pending, refused) avec is_here en premier
 		event.participants.sort((a, b) => {
@@ -175,8 +174,6 @@ function getAddressFromLonLat(lonLat) {
 function getLonLatFromAddress(address) {
 	return API.get(`https://api-adresse.data.gouv.fr/search/?q=${address}`).then((response) => {
 		if (response.data.features.length > 0) {
-			console.log("==================================");
-			console.log(response.data.features[0].geometry.coordinates);
 			return response.data.features[0].geometry.coordinates;
 		} else {
 			return null;
@@ -290,7 +287,6 @@ function createMapForm() {
 
 		formCreateLocation.marker.push(marker);
 
-		console.log(formCreateLocation.marker);
 		marker.on("click", function (e) {
 			if (formCreateLocation.marker.indexOf(marker) == 0 && formCreateLocation.marker.length > 1) {
 				let newMainLocation = formCreateLocation.marker[1];
@@ -336,7 +332,6 @@ function addMarkerFromAddressMap() {
 
 		formCreateLocation.marker.push(marker);
 
-		console.log(formCreateLocation.marker);
 		marker.on("click", function (e) {
 			if (formCreateLocation.marker.indexOf(marker) == 0 && formCreateLocation.marker.length > 1) {
 				let newMainLocation = formCreateLocation.marker[1];
@@ -375,9 +370,6 @@ function postLocations() {
 		};
 	});
 
-	console.log("=============================");
-	console.log(locations);
-
 	let promises = [];
 	locations.map((location) => {
 		promises.push(API.postActionRequest(`/events/${event.id}/locations`, {}, location));
@@ -393,7 +385,6 @@ function postLocations() {
 		.catch((error) => {
 			formCreateLocation.pending = false;
 			formCreateLocation.messageError = "Une erreur est survenue";
-			console.log(error);
 		});
 }
 
@@ -432,15 +423,12 @@ function searchUsers(e) {
 		usersFind.list = [...usersFind.list, ...formInviteUsers.selectedUsers.filter((obj2) => !usersFind.list.some((obj1) => obj1.id === obj2.id))];
 		usersFind.list = usersFind.list.filter((obj1) => Session.user.id !== obj1.id);
 		// Delete users already invited in the list of event.participants (only id is stored)
-		console.log(event.participants);
 		usersFind.list = usersFind.list.filter((obj1) => !event.participants.some((obj2) => obj2.id_user === obj1.id));
 		usersFind.pending = false;
 	});
 }
 
 function inviteUser(id_event, id_user) {
-	console.log("inviteUser", id_event, id_user);
-
 	return API.postActionRequest("/events/" + id_event + "/users/" + id_user, {}, {});
 }
 
