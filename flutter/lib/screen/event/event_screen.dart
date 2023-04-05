@@ -8,7 +8,6 @@ import 'package:lp1_ciasie_atelier_2/class/location.dart';
 import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
-import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -65,11 +64,13 @@ class _EventPageState extends State<EventPage> {
           throw CustomException(
               message: "Une erreur est survenue : ${response['code']}.");
         } else if (response.containsKey('locations')) {
-          Map map = response['locations'][0];
-
-          Location location = Location.fromMap(map);
-
-          return location;
+          try {
+            Map map = response['locations'][0];
+            Location location = Location.fromMap(map);
+            return location;
+          } catch (e) {
+            throw CustomException(message: "Aucun lieu de rendez-vous ajouté.");
+          }
         } else {
           throw CustomException(message: "Vous n'avez pas encore de location.");
         }
@@ -101,13 +102,6 @@ class _EventPageState extends State<EventPage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      print(responseHttp.body);
-      if (user.accessToken == "") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SignInPage()),
-        );
-      }
 
       if (!responseHttp.body.isEmpty) {
         Map<String, dynamic> response = jsonDecode(responseHttp.body);
@@ -126,12 +120,12 @@ class _EventPageState extends State<EventPage> {
           }
           throw CustomException(
               message: "Une erreur est survenue : ${response['code']}.");
-        } else if (response.containsKey('usersss')) {
-          List list = response['users'];
-
+        } else if (response.containsKey('usersEvent')) {
+          List list = response['usersEvent'];
           List<User> participants = [];
 
           for (var participant in list) {
+            print(participant);
             participants.add(User.fromMap(participant));
           }
 
@@ -189,111 +183,129 @@ class _EventPageState extends State<EventPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child:
-            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Text(widget.event.title,
-                style: const TextStyle(fontSize: 24.6)),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Text(
-                '${DateFormat('dd/MM/yyyy').format(widget.event.date)} à ${widget.event.hour.hour.toString().padLeft(2, '0')}:${widget.event.hour.minute.toString().padLeft(2, '0')}',
-                style: const TextStyle(fontSize: 19.6)),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Text(
-              widget.event.description,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(widget.event.title,
+                  style: const TextStyle(fontSize: 24.6)),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: FutureBuilder(
-              future: fetchEventParticipent(context),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                } else if (snapshot.hasData) {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                          child: Column(children: [
-                        ListTile(
-                          leading: const Icon(Icons.person),
-                          title: Text(snapshot.data![index].lastname +
-                              " " +
-                              snapshot.data![index].firstname),
-                          subtitle: Text(snapshot.data![index].email),
-                        )
-                      ]));
-                    },
-                  );
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                  '${DateFormat('dd/MM/yyyy').format(widget.event.date)} à ${widget.event.hour.hour.toString().padLeft(2, '0')}:${widget.event.hour.minute.toString().padLeft(2, '0')}',
+                  style: const TextStyle(fontSize: 19.6)),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Participants',
-                  style: TextStyle(fontSize: 19.6),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () => {},
-                  icon: const Icon(Icons.add_outlined),
-                  label: const Text('AJOUTER'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: FutureBuilder(
-                    future: fetchEventLocation(context),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
-                      } else if (snapshot.hasData) {
-                        return FlutterMap(
-                          options: MapOptions(
-                            center: LatLng(
-                              snapshot.data!.lat,
-                              snapshot.data!.long,
-                            ),
-                            zoom: 13.0,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                widget.event.description,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: FutureBuilder(
+                future: fetchEventLocation(context),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text(snapshot.error.toString());
+                  } else if (snapshot.hasData) {
+                    return SizedBox(
+                      height: 200,
+                      width: 200,
+                      child: FlutterMap(
+                        options: MapOptions(
+                          center: LatLng(
+                            snapshot.data!.lat,
+                            snapshot.data!.long,
                           ),
-                          nonRotatedChildren: [
-                            AttributionWidget.defaultWidget(
-                              source: 'OpenStreetMap contributors',
-                              onSourceTapped: null,
-                            ),
-                          ],
-                          children: [
-                            TileLayer(
-                              urlTemplate:
-                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              userAgentPackageName: 'com.example.app',
-                            ),
-                          ],
-                        );
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
-                  ),
-                ),
-              ],
+                          zoom: 13.0,
+                        ),
+                        nonRotatedChildren: [
+                          AttributionWidget.defaultWidget(
+                            source: 'OpenStreetMap contributors',
+                            onSourceTapped: null,
+                          ),
+                        ],
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.example.app',
+                          ),
+                          MarkerLayer(
+                            markers: [
+                              Marker(
+                                width: 80.0,
+                                height: 80.0,
+                                point: LatLng(
+                                    snapshot.data!.lat, snapshot.data!.long),
+                                builder: (ctx) => Container(
+                                  child: Icon(Icons.location_on),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
             ),
-          ),
-        ]),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Participants',
+                    style: TextStyle(fontSize: 19.6),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => {},
+                    icon: const Icon(Icons.add_outlined),
+                    label: const Text('AJOUTER'),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: FutureBuilder(
+                future: fetchEventParticipent(context),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text(snapshot.error.toString());
+                  } else if (snapshot.hasData) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                            child: Column(children: [
+                          ListTile(
+                            leading: const Icon(Icons.person),
+                            title: Text(
+                                '${snapshot.data![index].firstname} ${snapshot.data![index].lastname}'),
+                            subtitle: Text(snapshot.data![index].email),
+                          )
+                        ]));
+                      },
+                    );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+            ),
+          ]),
+        ),
       ),
     );
   }

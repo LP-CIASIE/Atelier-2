@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
   late List<Event> events;
   late List<Location> location;
 
-
   @override
   void initState() {
     super.initState();
@@ -37,7 +36,7 @@ class _HomePageState extends State<HomePage> {
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(
         Uri.parse(
-            'https://api.tedyspo.cyprien-cotinaut.com/events?page=1&size=150'),
+            'https://api.tedyspo.cyprien-cotinaut.com/events?page=1&size=1500&filter=accepted'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -135,7 +134,6 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                   builder: (context) => EventBuilderPage(
                                     idEvent: event.idEvent,
-                                  
                                   ),
                                 ),
                               )),
