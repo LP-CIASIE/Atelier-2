@@ -38,11 +38,12 @@ class FormatterObject
     return $usersArray;
   }
 
-  public static function Comment(Comment $comment)
+  public static function Comment(Comment $comment, $embed = 'none')
   {
-    return [
+    $data = [
       'id' => $comment->id_comment,
       'comment' => $comment->comment,
+      'created_at' => $comment->created_at,
       'links' => [
         'user' => [
           'href' => '/users/' . $comment->id_user
@@ -52,13 +53,19 @@ class FormatterObject
         ],
       ]
     ];
+
+    if ($embed == 'user') {
+      $data['user'] = self::User($comment->user);
+    }
+
+    return $data;
   }
 
-  public static function Comments(Collection $comments)
+  public static function Comments(Collection $comments, $embed = 'none')
   {
     $commentsArray = [];
     foreach ($comments as $comment) {
-      $commentsArray[] = self::Comment($comment);
+      $commentsArray[] = self::Comment($comment, $embed);
     }
     return $commentsArray;
   }
