@@ -9,7 +9,7 @@ import mitt from "mitt";
 
 // Variable Globale pour Axios nommé "api"
 const API = axios.create({
-	baseURL: "${dotenv.env['API_URL']}",
+	baseURL: "https://api.tedyspo.cyprien-cotinaut.com",
 	headers: {
 		"Content-Type": "application/json",
 	},
@@ -28,12 +28,10 @@ API.getActionRequest = (url, params) => {
 		},
 	})
 		.then((response) => {
-			let data = response.data;
-			console.log(data);
-			return data;
+			return response.data;
 		})
 		.catch((error) => {
-			console.log(error);
+			return error;
 		});
 };
 
@@ -51,12 +49,10 @@ API.postActionRequest = (url, params, data) => {
 		},
 	})
 		.then((response) => {
-			let data = response.data;
-			console.log(data);
-			return data;
+			return response.data;
 		})
 		.catch((error) => {
-			console.log(error);
+			return error;
 		});
 };
 
@@ -74,12 +70,10 @@ API.putActionRequest = (url, params, data) => {
 		},
 	})
 		.then((response) => {
-			let data = response.data;
-			console.log(data);
-			return data;
+			return response.data;
 		})
 		.catch((error) => {
-			console.log(error);
+			return error;
 		});
 };
 
@@ -97,12 +91,10 @@ API.deleteActionRequest = (url, params) => {
 		},
 	})
 		.then((response) => {
-			let data = response.data;
-			console.log(data);
-			return data;
+			return response.data;
 		})
 		.catch((error) => {
-			console.log(error);
+			return error;
 		});
 };
 
@@ -111,11 +103,9 @@ provide("bus", mitt());
 </script>
 
 <template>
-	<template v-if="!['/sign-in', '/sign-up'].includes($route.path)">
-		<header>
-			<Navbar />
-		</header>
-	</template>
+	<header>
+		<Navbar />
+	</header>
 
 	<article class="container">
 		<router-view v-slot="{ Component }">

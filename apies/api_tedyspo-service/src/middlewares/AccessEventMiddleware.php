@@ -19,15 +19,23 @@ class AccessEventMiddleware extends AbstractMiddleware
    */
   public function validateMiddleware(Request $request): bool
   {
+    $params = $request->getQueryParams();
+    $event = $this->getEvent($request);
+    if (isset($params['code'])) {
+      if ($event->code_share == $params['code']) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     $JWTService = $this->container->get('service.jwt');
     $user = $JWTService->decodeDataOfJWT($request->getHeader('Authorization'));
-
-    $event = $this->getEvent($request);
 
     $participant = $event->users()->where('event_user.id_user', $user['uid'])->withPivot('state')->first();
 
     if ($participant) {
-      return $participant->pivot->state == "accepted";
+      return $participant->pivot->state == "accepted" || $participant->pivot->state == "pending";
     } else {
       return false;
     }
@@ -37,11 +45,11 @@ class AccessEventMiddleware extends AbstractMiddleware
   /**
    * Message d'erreur en cas de refus du middleware
    *
-   * @return array
+   * @return Trhrowable
    */
   public function ErrorMiddleware(): \Throwable
   {
-    throw new \Exception('Tu n\'es pas invité, ou tu n\'as pas encore accepté l\'invitation.', 403);
+    throw new \Exception('Tu n\'es pas invité, tu n\'as pas encore accepté l\'invitation ou le code n\'est pas bon.', 403);
   }
 
 
@@ -55,6 +63,7 @@ class AccessEventMiddleware extends AbstractMiddleware
   {
     // Get id of the event
     $routeArguments = \Slim\Routing\RouteContext::fromRequest($request)->getRoute()->getArguments();
+
     $id_event = $routeArguments['id_event'];
 
     // Get event

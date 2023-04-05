@@ -12,10 +12,6 @@ class User {
       required this.lastname,
       this.isCheck = false});
 
-  void check(value) {
-    isCheck = value;
-  }
-
   factory User.fromMap(Map map) {
     return User(
       id: map['id'],
@@ -25,4 +21,3 @@ class User {
     );
   }
 }
- 

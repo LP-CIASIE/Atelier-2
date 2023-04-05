@@ -9,4 +9,3 @@ class Session {
     required this.refreshToken,
   });
 }
-

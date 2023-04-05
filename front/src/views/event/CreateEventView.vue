@@ -60,13 +60,10 @@ function searchUsers(event) {
 }
 
 function inviteUser(id_event, id_user) {
-	console.log("inviteUser", id_event, id_user);
-
 	return API.postActionRequest("/events/" + id_event + "/users/" + id_user, {}, {});
 }
 
 function createEvent() {
-	console.log("createEvent");
 	form.pending = true;
 
 	let promiseAll = [];
@@ -107,7 +104,7 @@ function createEvent() {
 			</span>
 		</div>
 		<div class="group">
-			<MultiSelect v-model="form.selectedUsers.content" :options="usersFind" filter optionLabel="name" placeholder="Invite tes amis !" class="w-full" @filter="searchUsers">
+			<MultiSelect v-model="form.selectedUsers.content" :options="usersFind" filter optionLabel="name" placeholder="Invite tes amis !" @filter="searchUsers">
 				<template #empty>
 					<span class="p-d-block p-py-2 p-px-3">Pour commencer la recherche, il faut avoir écrit au moins 3 lettres</span>
 				</template>
@@ -145,13 +142,23 @@ form {
 		}
 
 		& > * {
-			grid-row: 1 span;
+			grid-column: 1 span;
 			margin: 0;
 
 			& > input {
 				width: 100%;
 			}
 		}
+
+		.p-multiselect {
+			width: 100%;
+			max-width: 100%;
+			overflow: hidden;
+		}
+	}
+
+	#calendar-24h {
+		width: 100%; /* Ajout de cette ligne */
 	}
 }
 </style>
