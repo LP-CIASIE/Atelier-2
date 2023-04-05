@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
-import 'package:intl/intl.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_pending_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'event/events_screen.dart';
@@ -35,7 +34,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Event>> fetchEvents(context) async {
     try {
-      Session user =
       Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(

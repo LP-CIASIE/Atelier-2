@@ -15,7 +15,6 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 import 'package:lp1_ciasie_atelier_2/widget/event_share_widget.dart';
-import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -136,7 +135,6 @@ class _EventPageState extends State<EventPage> {
           List<User> participants = [];
 
           for (var participant in list) {
-            print(participant);
             participants.add(User.fromMap(participant));
           }
 
@@ -203,99 +201,128 @@ class _EventPageState extends State<EventPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(widget.event.title,
-                  style: const TextStyle(fontSize: 24.6)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                  '${DateFormat('dd/MM/yyyy').format(widget.event.date)} à ${widget.event.hour.hour.toString().padLeft(2, '0')}:${widget.event.hour.minute.toString().padLeft(2, '0')}',
-                  style: const TextStyle(fontSize: 19.6)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                widget.event.description,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(widget.event.title,
+                    style: const TextStyle(fontSize: 24.6)),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: FutureBuilder(
-                future: fetchEventLocation(context),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text(snapshot.error.toString());
-                  } else if (snapshot.hasData) {
-                    return SizedBox(
-                      height: 200,
-                      width: 200,
-                      child: FlutterMap(
-                        options: MapOptions(
-                          center: LatLng(
-                            snapshot.data!.lat,
-                            snapshot.data!.long,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                    '${DateFormat('dd/MM/yyyy').format(widget.event.date)} à ${widget.event.hour.hour.toString().padLeft(2, '0')}:${widget.event.hour.minute.toString().padLeft(2, '0')}',
+                    style: const TextStyle(fontSize: 19.6)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  widget.event.description,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: FutureBuilder(
+                  future: fetchEventLocation(context),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    } else if (snapshot.hasData) {
+                      return SizedBox(
+                        height: 200,
+                        width: 200,
+                        child: FlutterMap(
+                          options: MapOptions(
+                            center: LatLng(
+                              snapshot.data!.lat,
+                              snapshot.data!.long,
+                            ),
+                            zoom: 13.0,
                           ),
-                          zoom: 13.0,
-                        ),
-                        nonRotatedChildren: [
-                          AttributionWidget.defaultWidget(
-                            source: 'OpenStreetMap contributors',
-                            onSourceTapped: null,
-                          ),
-                        ],
-                        children: [
-                          TileLayer(
-                            urlTemplate:
-                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            userAgentPackageName: 'com.example.app',
-                          ),
-                          MarkerLayer(
-                            markers: [
-                              Marker(
-                                width: 80.0,
-                                height: 80.0,
-                                point: LatLng(
-                                    snapshot.data!.lat, snapshot.data!.long),
-                                builder: (ctx) => Container(
-                                  child: Icon(Icons.location_on),
+                          nonRotatedChildren: [
+                            AttributionWidget.defaultWidget(
+                              source: 'OpenStreetMap contributors',
+                              onSourceTapped: null,
+                            ),
+                          ],
+                          children: [
+                            TileLayer(
+                              urlTemplate:
+                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              userAgentPackageName: 'com.example.app',
+                            ),
+                            MarkerLayer(
+                              markers: [
+                                Marker(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  point: LatLng(
+                                      snapshot.data!.lat, snapshot.data!.long),
+                                  builder: (ctx) => Container(
+                                    child: const Icon(Icons.location_on),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    );
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                },
+                              ],
+                            )
+                          ],
+                        ),
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Participants',
-                    style: TextStyle(fontSize: 19.6),
-                  ),
-                  Visibility(
-                    visible: widget.event.iAmOwner,
-                    child: OutlinedButton.icon(
-                      onPressed: () => {_openDialogShareEvent()},
-                      icon: const Icon(Icons.person_add_outlined),
-                      label: const Text('AJOUTER'),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Participants',
+                      style: TextStyle(fontSize: 19.6),
                     ),
-                  ),
-                ],
+                    Visibility(
+                      visible: widget.event.iAmOwner,
+                      child: OutlinedButton.icon(
+                        onPressed: () => {_openDialogShareEvent()},
+                        icon: const Icon(Icons.person_add_outlined),
+                        label: const Text('AJOUTER'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: FutureBuilder(
+                  future: fetchEventParticipent(context),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    } else if (snapshot.hasData) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            child: ListTile(
+                              title: Text(
+                                  '${snapshot.data![index].firstname} ${snapshot.data![index].lastname}'),
+                              subtitle: Text(snapshot.data![index].email),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
