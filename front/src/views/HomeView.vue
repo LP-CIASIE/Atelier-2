@@ -7,7 +7,6 @@ import { useSessionStore } from "@/stores/session.js";
 
 const API = inject("api");
 const BUS = inject("bus");
-const Session = useSessionStore();
 
 const events = ref([]);
 const loading = ref(true);
@@ -18,6 +17,7 @@ function getEvents() {
 		page: 1,
 		size: 10000,
 		filter: "accepted",
+		embed: "location",
 	}).then((data) => {
 		events.value = data.events;
 		loading.value = false;
@@ -58,7 +58,7 @@ onMounted(() => {
 		</div>
 	</div>
 	<template v-if="loading">
-		<p>Chargement...</p>
+		<EventsList :loading="true" />
 	</template>
 	<template v-else>
 		<template v-if="events.length === 0">
