@@ -6,6 +6,7 @@ import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -39,7 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
     };
     try {
       dynamic responseHttp = await http.post(
-        Uri.parse('http://gateway.atelier.local:8000/signup'),
+        Uri.parse('${dotenv.env['API_URL']}/signup'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

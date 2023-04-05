@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
@@ -14,7 +15,7 @@ class SessionProvider extends ChangeNotifier {
   Future<Map<String, dynamic>> get user async {
     try {
       dynamic responseHttp = await http.get(
-        Uri.parse('http://gateway.atelier.local:8000/users/${_user.id}'),
+        Uri.parse('${dotenv.env['API_URL']}/users/${_user.id}'),
         headers: <String, String>{
           'Authorization': 'Bearer ${_user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -63,7 +64,7 @@ class SessionProvider extends ChangeNotifier {
     };
     try {
       dynamic responseHttp = await http.post(
-        Uri.parse('http://gateway.atelier.local:8000/signin'),
+        Uri.parse('${dotenv.env['API_URL']}/signin'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

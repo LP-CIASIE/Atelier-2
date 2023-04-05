@@ -26,65 +26,136 @@ State<EventPage> createState() => _EventPageState();
 }
 
 class _EventPageState extends State<EventPage> {
-@override
-void initState() {
-super.initState();
-}
+  final TextEditingController _filterController = TextEditingController();
 
-Future<Location> fetchEventLocation(context) async {
-try {
-User user =
-Provider.of<SessionProvider>(context, listen: false).userDataSession;
+  @override
+  void initState() {
+    super.initState();
+  }
 
-dynamic responseHttp = await http.get(
-Uri.parse('http://gateway.atelier.local:8000/events/${widget.event.idEvent}/locations/'),
-headers: <String, String>{
-'Authorization': 'Bearer ${user.accessToken}',
-'Content-Type': 'application/json; charset=UTF-8',
-},
-);
-if (user.accessToken == "") {
-Navigator.push(
-context,
-MaterialPageRoute(builder: (context) => const SignInPage()),
-);
-}
-if (!responseHttp.body.isEmpty) {
-Map<String, dynamic> response = jsonDecode(responseHttp.body);
+  _openDialogShareEvent() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: TextField(
+            controller: _filterController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Rechercher un ami',
+            ),
+          ),
+          content: Container(
+            child: ListView(
+              children: [
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              // textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: const Text('CANCEL'),
+            ),
+            TextButton(
+              // textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: const Text('ACCEPT'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-if (response.containsKey('error')) {
-if (response['error'] == 404) {
-throw CustomException(message: "La location est introuvables");
-}
-if (response['error'] == 401) {
-throw CustomException(
-message:
-"Vous n'êtes pas autorisé à accéder à la ressource location.");
-}
-if (response.containsKey('message')) {
-throw CustomException(message: response['message']);
-}
-throw CustomException(
-message: "Une erreur est survenue : ${response['code']}.");
-} else if (response.containsKey('event')) {
-Map map = response['location'];
-
-Location location = Location.fromMap(map);
-
-return location;
-} else {
-throw CustomException(message: "Vous n'avez pas encore d'évènement.");
-}
-} else {
-throw CustomException(
-message:
-"Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.");
-}
-} catch (error) {
-if (error is! CustomException) {
-throw CustomException(
-message:
-'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.');
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventEditBuilderPage(
+                    idEvent: widget.event.idEvent,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.edit_outlined),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.delete_outlined),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(widget.event.title,
+                  style: const TextStyle(fontSize: 24.6)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                  '${DateFormat('dd/MM/yyyy').format(widget.event.date)} à ${widget.event.hour.hour.toString().padLeft(2, '0')}:${widget.event.hour.minute.toString().padLeft(2, '0')}',
+                  style: const TextStyle(fontSize: 19.6)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                widget.event.description,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Participants',
+                    style: TextStyle(fontSize: 19.6),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => {_openDialogShareEvent()},
+                    icon: const Icon(Icons.person_add_outlined),
+                    label: const Text('AJOUTER'),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 rethrow;
 }
