@@ -22,7 +22,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Future<List<Event>> futureEvents = Future.value([]);
   late List<Event> events;
-  late List<Event> data;
 
   @override
   void initState() {
@@ -30,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void refresh(context) async {
-    data = await fetchEvents(context);
+    List<Event> data = await fetchEvents(context);
     setState(() {
       events = data;
     });
