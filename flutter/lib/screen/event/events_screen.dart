@@ -153,6 +153,7 @@ class _EventsPageState extends State<EventsPage> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
+          tooltip: "Créer un évènement",
           onPressed: () {
             Navigator.push(
               context,
