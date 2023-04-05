@@ -6,6 +6,7 @@ use atelier\auth\models\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Respect\Validation\Validator as v;
+
 final class TokenService
 {
   static public function generateToken(User $user): array

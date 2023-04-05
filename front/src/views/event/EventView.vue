@@ -1,5 +1,6 @@
 <script setup>
 import Card from "primevue/card";
+import "primeicons/primeicons.css";
 import Divider from "primevue/divider";
 import Skeleton from "primevue/skeleton";
 import Button from "primevue/button";
@@ -13,6 +14,8 @@ import Textarea from "primevue/textarea";
 
 import ParticipantsListElement from "@/components/assets/ParticipantsListElement.vue";
 import ConversationListElement from "@/components/assets/ConversationListElement.vue";
+
+import { isObject } from "@vue/shared";
 
 import { ref, reactive, inject, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -32,7 +35,8 @@ const event = reactive({
 	description: "",
 	date: "",
 	is_public: "",
-	owner: {},
+	code_share: "",
+	owner: null,
 	participants: [],
 	locations: [],
 	mainLocation: {
@@ -45,30 +49,37 @@ const event = reactive({
 	comments: [],
 	pending: true,
 });
-
+const message = ref("");
 const modalActive = ref(false);
 
 // =========================================
 // 	  Importation donnée pour l'affichage
 // =========================================
+const query = route.query.code ? { code: route.query.code } : null;
 function getEvent() {
-	return API.getActionRequest(`/events/${route.params.id}`).then((data) => {
+	return API.getActionRequest(`/events/${route.params.id}`, query).then((data) => {
+		if (data instanceof Error) {
+			message.value = data.response.data.message;
+			return;
+		}
 		event.id = data.event.id;
 		event.title = data.event.title;
 		event.description = data.event.description;
 		event.date = data.event.date;
 		event.is_public = data.event.is_public;
-
+		event.code_share = data.event.code_share;
 		event.links = data.event.links;
 
 		let promises = [];
-
-		promises.push(getOwner(event.links.owner.href));
-
-		promises.push(getParticipants(event.links.participants.href));
+		// Attendre les routes API
+		if (!query) {
+			promises.push(getParticipants(event.links.participants.href));
+			promises.push(getComments(event.links.comments.href));
+			promises.push(getOwner(event.links.owner.href));
+		}
 		promises.push(getLocations(event.links.locations.href));
-		promises.push(getComments(event.links.comments.href));
-		// getLinks(event.links.urls.href); // Affichage non fait
+
+		event.links = data.event.links;
 
 		Promise.all(promises).then(() => {
 			event.pending = false;
@@ -117,7 +128,7 @@ function getParticipants(url) {
 }
 
 function getLocations(url) {
-	return API.getActionRequest(url).then((data) => {
+	return API.getActionRequest(url, query).then((data) => {
 		let mainLocation = null;
 
 		data.locations.forEach((location) => {
@@ -492,8 +503,23 @@ function sendMessage() {
 		formChat.message = "";
 
 		getComments(event.links.comments.href);
-		// listMessageUI.value.scroll(0, listMessageUI.value.scrollHeight);
 	});
+}
+
+// =========================================
+// 	  Récupération du code de partage
+// =========================================
+
+function copyShareCody() {
+	// Get the text field
+	var copyText = document.getElementById("shareCode");
+
+	// Select the text field
+	copyText.select();
+	copyText.setSelectionRange(0, 99999); // For mobile devices
+
+	// Copy the text inside the text field
+	navigator.clipboard.writeText(copyText.value);
 }
 
 // =========================================
@@ -506,127 +532,155 @@ onMounted(() => {
 
 <template>
 	<Toast />
-	<template v-if="event.pending">
-		<Card>
+	<template v-if="message == ''">
+		<template v-if="event.pending">
+			<Card>
+				<template #title>
+					<Skeleton type="text" width="40%" height="1.8rem" class="mt-2" />
+					<Skeleton type="text" width="20%" height="1.3rem" class="mt-1" />
+				</template>
+				<template #content>
+					<Skeleton type="text" width="100%" height="3rem" />
+					<Skeleton type="text" width="100%" height="34rem" class="mt-3" />
+				</template>
+			</Card>
+		</template>
+		<template v-else>
+			<Card class="event-view">
+				<template #title>
+					<div class="title">
+						<div>
+							<h1>{{ event.title }}</h1>
+							<h2>
+								{{
+									new Date(event.date).toLocaleDateString("fr-FR", {
+										weekday: "long",
+										year: "numeric",
+										month: "long",
+										day: "numeric",
+										hour: "numeric",
+										minute: "numeric",
+									})
+								}}
+							</h2>
+						</div>
+						<div class="shareCode" v-if="event.owner && event.owner.id == Session.user.id">
+							<span class="p-input-icon-right">
+								<i class="pi pi-link" @click="copyShareCody" />
+								<InputText id="shareCode" type="text" aria-describedby="text-error" :value="'https://tedyspo.cyprien-cotinaut.com/event/' + event.id + '?code=' + event.code_share" readonly="readonly" />
+							</span>
+						</div>
+					</div>
+					<Divider />
+				</template>
+				<template #content>
+					<p>{{ event.description }}</p>
+					<Card>
+						<template #title>
+							<h3>Lieu de rendez-vous</h3>
+							<p>{{ event.mainLocation.content.name }}</p>
+						</template>
+						<template #content>
+							<template v-if="event.locations.length > 0">
+								<div id="map"></div>
+								<p>{{ event.mainLocation.address }}</p>
+								<template v-if="listMarker.length > 0">
+									<Button label="Cacher les autres lieux" icon="pi pi-map-marker" text @click="hideAllMarker" />
+								</template>
+								<template v-else>
+									<Button label="Voir les autres lieux" icon="pi pi-map-marker" text @click="showAllLocations" />
+								</template>
+							</template>
+							<template v-else>
+								<p>Aucun lieu n'a été ajouté pour l'instant.</p>
+								<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation" v-if="event.owner && event.owner.id == Session.user.id" />
+								<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true" v-if="event.owner && event.owner.id == Session.user.id">
+									<form @submit.prevent="addLocation" id="addLocation">
+										<InlineMessage v-if="formCreateLocation.messageError" severity="error">{{ formCreateLocation.messageError }}</InlineMessage>
+										<div id="mapForm"></div>
+										<div class="p-inputgroup flex-1">
+											<AutoComplete class="w-full" placeholder="Lieu du rendez-vous (ex: 19 Rue Murillo 75008 Paris)" v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress" :completeOnFocus="false" :minLength="3" :delay="100" @complete="getAutoCompleteLocation" />
+											<Button icon="pi pi-plus" class="p-inputgroup-addon" @click="addMarkerFromAddressMap" :disabled="formCreateLocation.address == ''" />
+										</div>
+										<InputText v-model="formCreateLocation.name" placeholder="Nom du lieu (ex: Maison, Travail...)" />
+										<Button type="submit" label="Ajouter ce lieu" :disabled="formCreateLocation.marker.length == 0 || formCreateLocation.pending" @click="postLocations" />
+									</form>
+								</Dialog>
+							</template>
+						</template>
+					</Card>
+				</template>
+			</Card>
+		</template>
+		<Card class="mt-5" v-if="!query">
 			<template #title>
-				<Skeleton type="text" width="40%" height="1.8rem" class="mt-2" />
-				<Skeleton type="text" width="20%" height="1.3rem" class="mt-1" />
+				<h3>Participants</h3>
 			</template>
 			<template #content>
-				<Skeleton type="text" width="100%" height="3rem" />
-				<Skeleton type="text" width="100%" height="34rem" class="mt-3" />
+				<Button label="Voir la listes des participants" text @click="modalActive = !modalActive" />
+				<template v-if="event.participants.length > 0">
+					<Dialog v-model:visible="modalActive" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true">
+						<form @submit.prevent="inviteUsers" id="inviteUsers" v-if="event.owner && event.owner.id == Session.user.id">
+							<MultiSelect v-model="formInviteUsers.selectedUsers" :options="usersFind.list" filter optionLabel="name" placeholder="Invite tes amis !" @filter="searchUsers">
+								<template #empty>
+									<span class="p-d-block p-py-2 p-px-3">Ecrivez minimum 3 lettres.</span>
+								</template>
+								<template #emptyfilter>
+									<template v-if="usersFind.pending">
+										<span class="p-d-block p-py-2 p-px-3">Recherche en cours...</span>
+									</template>
+									<template v-else>
+										<span class="p-d-block p-py-2 p-px-3">Aucun résultat.</span>
+									</template>
+								</template>
+							</MultiSelect>
+							<Button type="submit" label="Inviter" :disabled="formInviteUsers.selectedUsers.length === 0" />
+						</form>
+						<div class="listParticipants">
+							<template v-for="participant in event.participants">
+								<ParticipantsListElement :participant="participant" />
+							</template>
+						</div>
+					</Dialog>
+				</template>
+			</template>
+		</Card>
+		<Card class="mt-5" id="Chat" v-if="!query">
+			<template #title>
+				<h3>Conversation</h3>
+			</template>
+			<template #content>
+				<Card class="mt-5">
+					<template #content>
+						<div class="list-message" ref="listMessageUI">
+							<template v-if="event.comments.length > 0">
+								<template v-for="message in event.comments">
+									<ConversationListElement :message="message" />
+								</template>
+							</template>
+							<template v-else>
+								<p>Aucune message.</p>
+							</template>
+						</div>
+					</template>
+				</Card>
+				<form>
+					<Textarea v-model="formChat.message" placeholder="Ecrivez votre message" />
+					<Button label="Envoyer" @click="sendMessage" :disabled="formChat.pending || formChat.message == ''" />
+				</form>
 			</template>
 		</Card>
 	</template>
 	<template v-else>
-		<Card class="event-view">
-			<template #title>
-				<h1>{{ event.title }}</h1>
-				<h2>
-					{{ new Date(event.date).toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }) }}
-				</h2>
-				<Divider />
-			</template>
-			<template #content>
-				<p>{{ event.description }}</p>
-				<Card>
-					<template #title>
-						<h3>Lieu de rendez-vous</h3>
-						<p>{{ event.mainLocation.content.name }}</p>
-					</template>
-					<template #content>
-						<template v-if="event.locations.length > 0">
-							<div id="map"></div>
-							<p>{{ event.mainLocation.address }}</p>
-							<template v-if="listMarker.length > 0">
-								<Button label="Cacher les autres lieux" icon="pi pi-map-marker" text @click="hideAllMarker" />
-							</template>
-							<template v-else>
-								<Button label="Voir les autres lieux" icon="pi pi-map-marker" text @click="showAllLocations" />
-							</template>
-						</template>
-						<template v-else>
-							<p>Aucun lieu n'a été ajouté pour l'instant.</p>
-							<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation" v-if="event.owner.id == Session.user.id" />
-							<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true" v-if="event.owner.id == Session.user.id">
-								<form @submit.prevent="addLocation" id="addLocation">
-									<InlineMessage v-if="formCreateLocation.messageError" severity="error">{{ formCreateLocation.messageError }}</InlineMessage>
-									<div id="mapForm"></div>
-									<div class="p-inputgroup flex-1">
-										<AutoComplete class="w-full" placeholder="Lieu du rendez-vous (ex: 19 Rue Murillo 75008 Paris)" v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress" :completeOnFocus="false" :minLength="3" :delay="100" @complete="getAutoCompleteLocation" />
-										<Button icon="pi pi-plus" class="p-inputgroup-addon" @click="addMarkerFromAddressMap" :disabled="formCreateLocation.address == ''" />
-									</div>
-									<InputText v-model="formCreateLocation.name" placeholder="Nom du lieu (ex: Maison, Travail...)" />
-									<Button type="submit" label="Ajouter ce lieu" :disabled="formCreateLocation.marker.length == 0 || formCreateLocation.pending" @click="postLocations" />
-								</form>
-							</Dialog>
-						</template>
-					</template>
-				</Card>
-			</template>
-		</Card>
+		<p class="error">{{ message }}</p>
 	</template>
-	<Card class="mt-5">
-		<template #title>
-			<h3>Participants</h3>
-		</template>
-		<template #content>
-			<Button label="Voir la listes des participants" text @click="modalActive = !modalActive" />
-			<template v-if="event.participants.length > 0">
-				<Dialog v-model:visible="modalActive" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true">
-					<form @submit.prevent="inviteUsers" id="inviteUsers" v-if="event.owner.id == Session.user.id">
-						<MultiSelect v-model="formInviteUsers.selectedUsers" :options="usersFind.list" filter optionLabel="name" placeholder="Invite tes amis !" @filter="searchUsers">
-							<template #empty>
-								<span class="p-d-block p-py-2 p-px-3">Ecrivez minimum 3 lettres.</span>
-							</template>
-							<template #emptyfilter>
-								<template v-if="usersFind.pending">
-									<span class="p-d-block p-py-2 p-px-3">Recherche en cours...</span>
-								</template>
-								<template v-else>
-									<span class="p-d-block p-py-2 p-px-3">Aucun résultat.</span>
-								</template>
-							</template>
-						</MultiSelect>
-						<Button type="submit" label="Inviter" :disabled="formInviteUsers.selectedUsers.length === 0" />
-					</form>
-					<div class="listParticipants">
-						<template v-for="participant in event.participants">
-							<ParticipantsListElement :participant="participant" />
-						</template>
-					</div>
-				</Dialog>
-			</template>
-		</template>
-	</Card>
-	<Card class="mt-5" id="Chat">
-		<template #title>
-			<h3>Conversations</h3>
-		</template>
-		<template #content>
-			<Card class="mt-5">
-				<template #content>
-					<div class="list-message" ref="listMessageUI">
-						<template v-if="event.comments.length > 0">
-							<template v-for="message in event.comments">
-								<ConversationListElement :message="message" />
-							</template>
-						</template>
-						<template v-else>
-							<p>Aucune message.</p>
-						</template>
-					</div>
-				</template>
-			</Card>
-			<form>
-				<Textarea v-model="formChat.message" placeholder="Ecrivez votre message" />
-				<Button label="Envoyer" @click="sendMessage" :disabled="formChat.pending || formChat.message == ''" />
-			</form>
-		</template>
-	</Card>
 </template>
 
 <style lang="scss">
+.error {
+	text-align: center;
+}
+
 #map {
 	width: 100%;
 	height: 20rem;
@@ -696,6 +750,28 @@ form#addLocation {
 	}
 }
 
+.title {
+	display: flex;
+	justify-content: space-between;
+	gap: 0.5rem;
+
+	.shareCode {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+
+		.p-input-icon-right {
+			margin-left: 5px;
+		}
+
+		.pi-link {
+			right: 8px;
+			font-size: 32px;
+			cursor: pointer;
+			margin-top: -15px;
+		}
+	}
+}
 #Chat {
 	.p-card-content {
 		.list-message {

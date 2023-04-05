@@ -60,13 +60,10 @@ function searchUsers(event) {
 }
 
 function inviteUser(id_event, id_user) {
-	console.log("inviteUser", id_event, id_user);
-
 	return API.postActionRequest("/events/" + id_event + "/users/" + id_user, {}, {});
 }
 
 function createEvent() {
-	console.log("createEvent");
 	form.pending = true;
 
 	let promiseAll = [];
