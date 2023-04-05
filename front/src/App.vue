@@ -33,7 +33,9 @@ API.getActionRequest = (url, params) => {
 			return data;
 		})
 		.catch((error) => {
-			console.log(error);
+			let message = error.response.data.message;
+			console.log(error.response.data.message);
+			return message;
 		});
 };
 
