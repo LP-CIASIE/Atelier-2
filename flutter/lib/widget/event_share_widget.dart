@@ -185,14 +185,17 @@ class _EventShareWidgetState extends State<EventShareWidget> {
     }
   }
 
-  void addGuest(int index, bool stringSearch) async {
-    setState(() {});
+  void addGuest(int index) async {
+    setState(() {
+      users[index].isCheck = true;
+    });
     try {
       Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
-      dynamic responseHttp = await http.get(
-        Uri.parse('${dotenv.env['API_URL']}/users?email=$stringSearch'),
+      dynamic responseHttp = await http.post(
+        Uri.parse(
+            '${dotenv.env['API_URL']}/events/${widget.idEvent}/users/${users[index].id}'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -204,12 +207,69 @@ class _EventShareWidgetState extends State<EventShareWidget> {
         if (response.containsKey('code')) {
           if (response['code'] == 404) {
             throw CustomException(
-                message: 'Aucun utilisateur trouvé à cette adresse email.');
+                message: "L'utilisateur ou l'évènement n'existe plus");
           }
           if (response['code'] == 401) {
             throw CustomException(
                 message:
-                    "Vous n'êtes pas autorisé à accéder à cette ressource.");
+                    "Vous n'êtes pas autorisé à partager à cet évènement.");
+          }
+          if (response.containsKey('message')) {
+            throw CustomException(message: utf8.decode(response['message']));
+          }
+          throw CustomException(
+              message: "Une erreur est survenue : ${response['code']}.");
+        }
+      }
+    } catch (error) {
+      if (error is! CustomException) {
+        setState(() {
+          users[index].isCheck = false;
+        });
+        SnackBar snackBar = const SnackBar(
+          content: Text(
+              "Un problème est survenu, veuillez vérifier votre connexion internet et réessayer."),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      setState(() {
+        users[index].isCheck = false;
+      });
+      SnackBar snackBar = SnackBar(
+        content: Text(error.toString()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  void deleteGuest(int index) async {
+    setState(() {
+      users[index].isCheck = false;
+    });
+    try {
+      Session user =
+          Provider.of<SessionProvider>(context, listen: false).userDataSession;
+
+      dynamic responseHttp = await http.delete(
+        Uri.parse(
+            '${dotenv.env['API_URL']}/events/${widget.idEvent}/users/${users[index].id}'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${user.accessToken}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (!responseHttp.body.isEmpty) {
+        Map<String, dynamic> response = jsonDecode(responseHttp.body);
+
+        if (response.containsKey('code')) {
+          if (response['code'] == 404) {
+            throw CustomException(
+                message: "L'utilisateur ou l'évènement n'existe plus");
+          }
+          if (response['code'] == 401) {
+            throw CustomException(
+                message:
+                    "Vous n'êtes pas autorisé à partager à cet évènement.");
           }
           if (response.containsKey('message')) {
             throw CustomException(message: response['message']);
@@ -217,42 +277,25 @@ class _EventShareWidgetState extends State<EventShareWidget> {
           throw CustomException(
               message: "Une erreur est survenue : ${response['code']}.");
         }
-        if (response.containsKey('users')) {
-          List listMap = response['users'];
-
-          List<User> listUser = [];
-          for (var user in listMap) {
-            listUser.add(User.fromMap(user!));
-          }
-
-          List<String> guests = await getGuest();
-
-          for (var guest in guests) {
-            for (int i = 0; i < listUser.length; i++) {
-              if (listUser[i].id == guest) {
-                listUser[i].isCheck = true;
-              }
-            }
-          }
-        } else {
-          throw CustomException(
-              message:
-                  'Aucun utilisateur ne correspond à l\'adresse email renseignée.');
-        }
-      } else {
-        throw CustomException(
-            message:
-                'Un problème est survenu, veuillez vérifier votre connexion internet et réessayer.');
       }
     } catch (error) {
       if (error is! CustomException) {
         setState(() {
-// RETIRER COCHE CASE A COCHER + SNACKBAR
+          users[index].isCheck = true;
         });
       }
       setState(() {
-// RETIRER COCHE CASE A COCHER + SNACKBAR
+        users[index].isCheck = true;
       });
+    }
+  }
+
+  void updateGuest(int index, bool? value) {
+    print(value);
+    if (value!) {
+      addGuest(index);
+    } else {
+      deleteGuest(index);
     }
   }
 
@@ -290,14 +333,7 @@ class _EventShareWidgetState extends State<EventShareWidget> {
                     itemBuilder: (BuildContext context, int index) {
                       return CheckboxListTile(
                         value: users[index].isCheck,
-                        onChanged: (bool? value) => {
-                          if (value!)
-                            {
-                              addGuest(index, false),
-                            }
-                          else
-                            {addGuest(index, value)}
-                        },
+                        onChanged: (bool? value) => {updateGuest(index, value)},
                         title: Text(users[index].email),
                       );
                     },
