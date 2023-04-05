@@ -74,8 +74,8 @@ DROP TABLE IF EXISTS `location`;
 CREATE TABLE `location` (
   `id_location` varchar(36) NOT NULL,
   `name` varchar(80) DEFAULT NULL,
-  `lat` decimal(65,0) DEFAULT NULL,
-  `long` decimal(65,0) DEFAULT NULL,
+  `lat` float DEFAULT NULL,
+  `long` float DEFAULT NULL,
   `is_related` tinyint(1) DEFAULT NULL,
   `id_event` varchar(36) DEFAULT NULL,
   PRIMARY KEY (`id_location`),
@@ -107,4 +107,4 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 
--- 2023-04-03 09:54:16
+-- 2023-04-04 13:56:05

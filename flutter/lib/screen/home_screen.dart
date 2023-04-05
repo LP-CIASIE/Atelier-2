@@ -5,6 +5,7 @@ import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_add_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
@@ -30,7 +31,6 @@ class _HomePageState extends State<HomePage> {
     try {
       User user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
-
       dynamic responseHttp = await http.get(
         Uri.parse('http://gateway.atelier.local:8000/events?page=1&size=150'),
         headers: <String, String>{
@@ -38,6 +38,7 @@ class _HomePageState extends State<HomePage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
+
       if (user.accessToken == "") {
         Navigator.push(
           context,
@@ -144,6 +145,15 @@ class _HomePageState extends State<HomePage> {
             return const Center(child: CircularProgressIndicator());
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const EventAddPage()),
+          );
+        },
+        child: const Icon(Icons.add_outlined),
       ),
     );
   }
