@@ -7,6 +7,7 @@ import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EventAddPage extends StatefulWidget {
   const EventAddPage({super.key});
@@ -52,7 +53,7 @@ class _EventAddPageState extends State<EventAddPage> {
       User user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.post(
-        Uri.parse('http://gateway.atelier.local:8000/events'),
+        Uri.parse('${dotenv.env['API_URL']}/events'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',

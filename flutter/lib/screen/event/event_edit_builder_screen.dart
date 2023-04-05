@@ -10,6 +10,7 @@ import 'package:lp1_ciasie_atelier_2/screen/error_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/loading_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EventEditBuilderPage extends StatelessWidget {
   final String? idEvent;
@@ -20,7 +21,7 @@ class EventEditBuilderPage extends StatelessWidget {
       User user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(
-        Uri.parse('http://gateway.atelier.local:8000/events/$idEvent'),
+        Uri.parse('${dotenv.env['API_URL']}/events/$idEvent'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',

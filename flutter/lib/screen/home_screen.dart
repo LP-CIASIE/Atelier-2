@@ -34,7 +34,8 @@ class _HomePageState extends State<HomePage> {
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
       dynamic responseHttp = await http.get(
-        Uri.parse('http://gateway.atelier.local:8000/events?page=1&size=150'),
+        Uri.parse(
+            'https://api.tedyspo.cyprien-cotinaut.com/events?page=1&size=150'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',
