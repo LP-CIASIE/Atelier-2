@@ -2,29 +2,97 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
-
   const EventPage({
-    Key? key,
+    super.key,
     required this.event,
-  }) : super(key: key);
+  });
 
   @override
   State<EventPage> createState() => _EventPageState();
 }
 
 class _EventPageState extends State<EventPage> {
+  final TextEditingController _filterController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+  }
+
+  _openDialogShareEvent() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: TextField(
+            controller: _filterController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Rechercher un ami',
+            ),
+          ),
+          content: Container(
+            child: ListView(
+              children: [
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              // textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: const Text('CANCEL'),
+            ),
+            TextButton(
+              // textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: const Text('ACCEPT'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_outlined),
+          onPressed: () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            )
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -68,21 +136,22 @@ class _EventPageState extends State<EventPage> {
               ),
             ),
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Participants',
-                      style: TextStyle(fontSize: 19.6),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () => {},
-                      icon: const Icon(Icons.add_outlined),
-                      label: const Text('AJOUTER'),
-                    )
-                  ],
-                )),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Participants',
+                    style: TextStyle(fontSize: 19.6),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => {_openDialogShareEvent()},
+                    icon: const Icon(Icons.person_add_outlined),
+                    label: const Text('AJOUTER'),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
