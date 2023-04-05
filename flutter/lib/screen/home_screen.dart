@@ -7,6 +7,7 @@ import 'package:lp1_ciasie_atelier_2/screen/event/event_pending_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'event/events_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:lp1_ciasie_atelier_2/class/location.dart';
 import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
@@ -22,6 +23,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final controller = PageController(initialPage: 0);
+  Future<List<Event>> futureEvents = Future.value([]);
+  late List<Event> events;
+  late List<Location> location;
 
   @override
   void initState() {
