@@ -19,7 +19,7 @@ class GetUsersEventAction extends AbstractAction
 
     $id_event = $args['id_event'];
 
-    $usersEvent = $invitationService->getUsersEvent($id_event, $embed);
+    $usersEvent = $invitationService->getUsersEvent($id_event);
 
     $usersEvent = FormatterObject::EventUsers($usersEvent, $embed);
 

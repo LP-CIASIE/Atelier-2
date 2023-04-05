@@ -33,7 +33,7 @@ class InvitationService extends AbstractService
     }
   }
 
-  final public function getUsersEvent($id_event, $embed)
+  final public function getUsersEvent($id_event)
   {
     $event = $this->eventService->getEventById($id_event);
     try {

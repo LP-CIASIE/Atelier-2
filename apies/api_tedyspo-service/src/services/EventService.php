@@ -11,9 +11,8 @@ use atelier\tedyspo\models\User;
 class EventService extends AbstractService
 {
 
-    final public function getEvents($id_user, $params)
+    final public function getEvents($id_user, $params, $embed)
     {
-
         if (isset($params['size'])) {
             try {
                 v::key('size', v::intVal()->positive())->assert($params);
@@ -61,6 +60,10 @@ class EventService extends AbstractService
             $request = $request->wherePivot('state', 'refused');
         }
 
+        if ($embed == 'location') {
+            $request = $request->with('locations');
+        }
+
         try {
             $events = $request->get();
         } catch (\Exception $e) {
@@ -70,6 +73,7 @@ class EventService extends AbstractService
 
         return $events;
     }
+
     final public function getEventById($id)
     {
         try {
