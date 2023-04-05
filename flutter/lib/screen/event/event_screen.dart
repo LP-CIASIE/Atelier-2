@@ -34,7 +34,9 @@ class EventPage extends StatefulWidget {
   final Event event;
   const EventPage({
     super.key,
+    super.key,
     required this.event,
+  });
   });
 
   @override
@@ -42,6 +44,8 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
+  final TextEditingController _filterController = TextEditingController();
+
   @override
   void initState() {
     super.initState();

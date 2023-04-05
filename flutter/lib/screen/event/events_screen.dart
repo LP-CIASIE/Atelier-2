@@ -1,41 +1,47 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
-import 'package:intl/intl.dart';
-import 'package:lp1_ciasie_atelier_2/screen/event/event_pending_screen.dart';
-import 'event/events_screen.dart';
 import 'package:http/http.dart' as http;
-import 'package:lp1_ciasie_atelier_2/class/session.dart';
+import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_add_screen.dart';
-import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:provider/provider.dart';
+import '../../widget/event_card_widget.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class EventsPage extends StatefulWidget {
+  const EventsPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<EventsPage> createState() => _EventsPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-  final controller = PageController(initialPage: 0);
+class _EventsPageState extends State<EventsPage> {
+  Future<List<Event>> futureEvents = Future.value([]);
+  late List<Event> events;
+  bool _pending = false;
 
-  @override
-  void initState() {
-    super.initState();
+  void refresh(context) async {
+    setState(() {
+      _pending = true;
+    });
+    List<Event> data = await fetchEvents(context);
+    setState(() {
+      events = data;
+      _pending = false;
+    });
   }
 
   Future<List<Event>> fetchEvents(context) async {
     try {
-      Session user =
+      User user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(
         Uri.parse(
-            'https://api.tedyspo.cyprien-cotinaut.com/events?page=1&size=150'),
+            '${dotenv.env['API_URL']}/events?page=1&size=1500&filter=accepted'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -96,38 +102,64 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: PageView(
-          controller: controller,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          children: const [
-            EventsPage(),
-            EventPendingPage(),
+        appBar: AppBar(
+          title: const Text('Evènements'),
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+                onPressed: () => refresh(context),
+                icon: const Icon(Icons.refresh)),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProfilBuilderPage()),
+                );
+              },
+              icon: const Icon(Icons.account_circle_outlined),
+            ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month_outlined),
-              label: 'Évènements',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.pending_actions_rounded),
-              label: 'Invitations',
+        body: Column(
+          children: [
+            Visibility(
+                visible: _pending, child: const LinearProgressIndicator()),
+            FutureBuilder<List<Event>>(
+              future: fetchEvents(context),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return EventCard(
+                          event: snapshot.data![index],
+                        );
+                      },
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text("${snapshot.error}"),
+                  );
+                }
+                return Container(
+                  alignment: Alignment.center,
+                  child: const CircularProgressIndicator(),
+                );
+              },
             ),
           ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.blue,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-              controller.jumpToPage(index);
-            });
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EventAddPage()),
+            );
           },
+          child: const Icon(Icons.add_outlined),
         ));
   }
 }
