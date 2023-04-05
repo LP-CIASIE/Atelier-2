@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -81,6 +82,17 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_outlined),
+          onPressed: () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            )
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {

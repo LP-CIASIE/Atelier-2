@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -72,7 +73,10 @@ class _EventAddPageState extends State<EventAddPage> {
         } else if (response.containsKey('event')) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(
+                builder: (context) => EventBuilderPage(
+                      idEvent: response['event']['id'],
+                    )),
             // À CHANGER pour EventPage
           );
         } else {
