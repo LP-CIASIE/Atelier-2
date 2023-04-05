@@ -7,7 +7,6 @@ import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:lp1_ciasie_atelier_2/class/location.dart';
 import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -16,18 +15,12 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 import 'package:lp1_ciasie_atelier_2/widget/event_share_widget.dart';
-import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
-import 'package:lp1_ciasie_atelier_2/widget/event_share_widget.dart';
-import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
-import 'package:lp1_ciasie_atelier_2/widget/event_share_widget.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
   const EventPage({
     super.key,
-    super.key,
     required this.event,
-  });
   });
   @override
   State<EventPage> createState() => _EventPageState();
@@ -50,20 +43,8 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  _openDialogShareEvent() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return EventShareWidget(
-          idEvent: widget.event.idEvent,
-        );
-      },
-    );
-  }
-
   Future<Location> fetchEventLocation(context) async {
     try {
-      Session user =
       Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
@@ -100,13 +81,6 @@ class _EventPageState extends State<EventPage> {
           } catch (e) {
             throw CustomException(message: "Aucun lieu de rendez-vous ajouté.");
           }
-          try {
-            Map map = response['locations'][0];
-            Location location = Location.fromMap(map);
-            return location;
-          } catch (e) {
-            throw CustomException(message: "Aucun lieu de rendez-vous ajouté.");
-          }
         } else {
           throw CustomException(message: "Vous n'avez pas encore de location.");
         }
@@ -126,15 +100,12 @@ class _EventPageState extends State<EventPage> {
   }
 
   Future<List<User>> fetchEventParticipent(context) async {
-
-  Future<List<User>> fetchEventParticipent(context) async {
     try {
       Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
       dynamic responseHttp = await http.get(
         Uri.parse(
-            'https://api.tedyspo.cyprien-cotinaut.com/events/${widget.event.idEvent}/users?embed=user'),
             'https://api.tedyspo.cyprien-cotinaut.com/events/${widget.event.idEvent}/users?embed=user'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
@@ -192,7 +163,6 @@ class _EventPageState extends State<EventPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_outlined),
-          icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () => {
             Navigator.push(
               context,
@@ -215,18 +185,6 @@ class _EventPageState extends State<EventPage> {
                     ),
                   ),
                 );
-          Visibility(
-            visible: widget.event.iAmOwner,
-            child: IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EventEditBuilderPage(
-                      idEvent: widget.event.idEvent,
-                    ),
-                  ),
-                );
               },
               icon: const Icon(Icons.edit_outlined),
             ),
@@ -234,18 +192,9 @@ class _EventPageState extends State<EventPage> {
           Visibility(
             visible: widget.event.iAmOwner,
             child: IconButton(
-          ),
-          Visibility(
-            visible: widget.event.iAmOwner,
-            child: IconButton(
               onPressed: () {},
               icon: const Icon(Icons.delete_outlined),
             ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
           ),
         ],
       ),
