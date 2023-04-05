@@ -4,7 +4,6 @@ import Tag from "primevue/tag";
 import Skeleton from "primevue/skeleton";
 import Divider from "primevue/divider";
 
-import { ref, reactive, inject, onMounted } from "vue";
 import { useSessionStore } from "@/stores/session.js";
 
 const props = defineProps({
@@ -15,10 +14,6 @@ const props = defineProps({
 });
 
 const Session = useSessionStore();
-
-onMounted(() => {
-	console.log(props.participant);
-});
 </script>
 
 <template>
