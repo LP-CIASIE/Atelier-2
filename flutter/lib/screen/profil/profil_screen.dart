@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_up_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ProfilPage extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -50,7 +51,7 @@ class _ProfilPageState extends State<ProfilPage> {
 
     try {
       dynamic responseHttp = await http.put(
-        Uri.parse('http://gateway.atelier.local:8000/users'),
+        Uri.parse('${dotenv.env['API_URL']}/users'),
         headers: <String, String>{
           'Authorization': 'Bearer ${widget.user!['accessToken']}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -100,8 +101,7 @@ class _ProfilPageState extends State<ProfilPage> {
 
     try {
       dynamic responseHttp = await http.delete(
-        Uri.parse(
-            'http://gateway.atelier.local:8000/users/${widget.user!['id']}'),
+        Uri.parse('${dotenv.env['API_URL']}/users/${widget.user!['id']}'),
         headers: <String, String>{
           'Authorization': 'Bearer ${widget.user!['accessToken']}',
           'Content-Type': 'application/json; charset=UTF-8',

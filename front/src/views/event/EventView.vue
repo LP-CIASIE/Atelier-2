@@ -9,19 +9,25 @@ import MultiSelect from "primevue/multiselect";
 import AutoComplete from "primevue/autocomplete";
 import InputText from "primevue/inputtext";
 import InlineMessage from "primevue/inlinemessage";
+import Toast from "primevue/toast";
+import Textarea from "primevue/textarea";
 
 import ParticipantsListElement from "@/components/assets/ParticipantsListElement.vue";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import ConversationListElement from "@/components/assets/ConversationListElement.vue";
+
+import { isObject } from "@vue/shared";
 
 import { ref, reactive, inject, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useSessionStore } from "@/stores/session.js";
-import { isObject } from "@vue/shared";
+import { useToast } from "primevue/usetoast";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
 const Session = useSessionStore();
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 const API = inject("api");
 const event = reactive({
 	id: "",
@@ -63,41 +69,49 @@ function getEvent() {
 			event.code_share = data.event.code_share;
 			event.links = data.event.links;
 
+		let promises = [];
 			// Attendre les routes API
 			if (!isObject(query)) {
-				getParticipants(event.links.participants.href);
-				// getLinks(event.links.urls.href);
-				getComments(event.links.comments.href);
-				getOwner(event.links.owner.href);
+		promises.push(getParticipants(event.links.participants.href));
+		promises.push(getComments(event.links.comments.href));
+		promises.push(getOwner(event.links.owner.href));
 			}
-			getLocations(event.links.locations.href).then(() => {
+		promises.push(getLocations(event.links.locations.href));
 				if (event.locations.length > 0) {
 					createMap();
 				}
 			});
 			event.pending = false;
 		}
+		event.links = data.event.links;
+
+		Promise.all(promises).then(() => {
+			event.pending = false;
+			if (event.locations.length > 0) {
+				setTimeout(createMap, 400);
+			}
+		});
 	});
 }
 
 function getParticipants(url) {
-	API.getActionRequest(url).then((data) => {
+	API.getActionRequest(url, { embed: "user" }).then((data) => {
 		event.participants = data.usersEvent;
 
 		// Trier les participants par ordre de la propriété state (accepted, pending, refused) avec is_here en premier
 		event.participants.sort((a, b) => {
-			if (a.state == "accepted" && b.state == "accepted") {
-				if (a.is_here == true && b.is_here == false) {
+			if (a.status_event.state == "accepted" && b.status_event.state == "accepted") {
+				if (a.status_event.is_here == true && b.status_event.is_here == false) {
 					return -1;
 				}
-				if (a.is_here == false && b.is_here == true) {
+				if (a.status_event.is_here == false && b.status_event.is_here == true) {
 					return 1;
 				}
 			} else {
-				if (a.state < b.state) {
+				if (a.status_event.state < b.status_event.state) {
 					return -1;
 				}
-				if (a.state > b.state) {
+				if (a.status_event.state > b.status_event.state) {
 					return 1;
 				}
 			}
@@ -106,10 +120,10 @@ function getParticipants(url) {
 
 		// l'organisateur en premier (is_organisator)
 		event.participants.sort((a, b) => {
-			if (a.is_organisator == true && b.is_organisator == false) {
+			if (a.status_event.is_organisator == true && b.status_event.is_organisator == false) {
 				return -1;
 			}
-			if (a.is_organisator == false && b.is_organisator == true) {
+			if (a.status_event.is_organisator == false && b.status_event.is_organisator == true) {
 				return 1;
 			}
 			return 0;
@@ -153,8 +167,11 @@ function getLinks(url) {
 }
 
 function getComments(url) {
-	API.getActionRequest(url).then((data) => {
+	API.getActionRequest(url, { embed: "user", size: 1000 }).then((data) => {
 		event.comments = data.comments;
+		setTimeout(() => {
+			listMessageUI.value.scroll(0, listMessageUI.value.scrollHeight);
+		}, 100);
 	});
 }
 
@@ -177,8 +194,6 @@ function getAddressFromLonLat(lonLat) {
 function getLonLatFromAddress(address) {
 	return API.get(`https://api-adresse.data.gouv.fr/search/?q=${address}`).then((response) => {
 		if (response.data.features.length > 0) {
-			console.log("==================================");
-			console.log(response.data.features[0].geometry.coordinates);
 			return response.data.features[0].geometry.coordinates;
 		} else {
 			return null;
@@ -192,8 +207,6 @@ function getLonLatFromAddress(address) {
 var mapLeaflet = null;
 
 function createMap() {
-	console.log("===================");
-	console.log(event.mainLocation.content);
 	mapLeaflet = L.map("map", {
 		zoomControl: true,
 		attributionControl: false,
@@ -294,7 +307,6 @@ function createMapForm() {
 
 		formCreateLocation.marker.push(marker);
 
-		console.log(formCreateLocation.marker);
 		marker.on("click", function (e) {
 			if (formCreateLocation.marker.indexOf(marker) == 0 && formCreateLocation.marker.length > 1) {
 				let newMainLocation = formCreateLocation.marker[1];
@@ -340,7 +352,6 @@ function addMarkerFromAddressMap() {
 
 		formCreateLocation.marker.push(marker);
 
-		console.log(formCreateLocation.marker);
 		marker.on("click", function (e) {
 			if (formCreateLocation.marker.indexOf(marker) == 0 && formCreateLocation.marker.length > 1) {
 				let newMainLocation = formCreateLocation.marker[1];
@@ -379,9 +390,6 @@ function postLocations() {
 		};
 	});
 
-	console.log("=============================");
-	console.log(locations);
-
 	let promises = [];
 	locations.map((location) => {
 		promises.push(API.postActionRequest(`/events/${event.id}/locations`, {}, location));
@@ -392,11 +400,11 @@ function postLocations() {
 			getLocations(event.links.locations.href);
 			formCreateLocation.pending = false;
 			formCreateLocation.modal = false;
+			createMap();
 		})
 		.catch((error) => {
 			formCreateLocation.pending = false;
 			formCreateLocation.messageError = "Une erreur est survenue";
-			console.log(error);
 		});
 }
 
@@ -414,8 +422,8 @@ const usersFind = reactive({
 	pending: false,
 });
 
-function searchUsers(event) {
-	let value = event.value;
+function searchUsers(e) {
+	let value = e.value;
 	if (value.length < 3) {
 		usersFind.list = formInviteUsers.selectedUsers;
 		usersFind.pending = false;
@@ -434,13 +442,13 @@ function searchUsers(event) {
 		usersFind.list = Array.from(new Set([...usersFind.list, ...formInviteUsers.selectedUsers]));
 		usersFind.list = [...usersFind.list, ...formInviteUsers.selectedUsers.filter((obj2) => !usersFind.list.some((obj1) => obj1.id === obj2.id))];
 		usersFind.list = usersFind.list.filter((obj1) => Session.user.id !== obj1.id);
+		// Delete users already invited in the list of event.participants (only id is stored)
+		usersFind.list = usersFind.list.filter((obj1) => !event.participants.some((obj2) => obj2.id === obj1.id));
 		usersFind.pending = false;
 	});
 }
 
 function inviteUser(id_event, id_user) {
-	console.log("inviteUser", id_event, id_user);
-
 	return API.postActionRequest("/events/" + id_event + "/users/" + id_user, {}, {});
 }
 
@@ -454,20 +462,57 @@ function inviteUsers() {
 		promises.push(inviteUser(event.id, user.id));
 	});
 
-	Promise.all(promises)
-		.then((data) => {
-			formInviteUsers.pending = false;
-			formInviteUsers.selectedUsers = [];
-			usersFind.list = [];
-			getParticipants(event.links.participants.href);
-		})
-		.catch((error) => {
-			formInviteUsers.pending = false;
-			formInviteUsers.messageError = error.response.data.message;
+	Promise.all(promises).then((data) => {
+		let errors = data.reduce((element) => {
+			if (element instanceof Error) {
+				return element;
+			}
 		});
+
+		if (errors.length > 0) {
+			// Send Toast with error
+			toast.add({
+				severity: "error",
+				summary: `Erreur pendant l'invitation (x${errors.length})`,
+				detail: errors[0].response.data.message,
+				closable: false,
+				life: 4000,
+			});
+		}
+
+		formInviteUsers.pending = false;
+		formInviteUsers.selectedUsers = [];
+		usersFind.list = [];
+		getParticipants(event.links.participants.href);
+	});
 }
 
-// Récupération du code de partage
+// =========================================
+// Création du form pour l'invitation d'utilisation
+// =========================================
+const listMessageUI = ref();
+
+const formChat = reactive({
+	message: "",
+	pending: false,
+	messageError: "",
+});
+
+function sendMessage() {
+	formChat.pending = true;
+	formChat.messageError = "";
+
+	API.postActionRequest(`/events/${event.id}/comments`, {}, { comment: formChat.message }).then((data) => {
+		formChat.pending = false;
+		formChat.message = "";
+
+		getComments(event.links.comments.href);
+	});
+}
+
+// =========================================
+// 	  Récupération du code de partage
+// =========================================
 
 function copyShareCody() {
 	// Get the text field
@@ -487,20 +532,20 @@ function copyShareCody() {
 onMounted(() => {
 	getEvent();
 });
-
 </script>
 
 <template>
-	<template v-if="message === ''">
+	<Toast />
+	<template v-if="message == ''">
 		<template v-if="event.pending">
 			<Card>
 				<template #title>
-					<Skeleton type="text" width="20%" height="2rem" class="mt-2" />
-					<Skeleton type="text" width="30%" height="1.5rem" class="mt-3" />
+					<Skeleton type="text" width="40%" height="1.8rem" class="mt-2" />
+					<Skeleton type="text" width="20%" height="1.3rem" class="mt-1" />
 				</template>
 				<template #content>
-					<Skeleton type="text" width="100%" height="4rem" />
-					<Skeleton type="text" width="100%" height="30rem" class="mt-3" />
+					<Skeleton type="text" width="100%" height="3rem" />
+					<Skeleton type="text" width="100%" height="34rem" class="mt-3" />
 				</template>
 			</Card>
 		</template>
@@ -511,17 +556,22 @@ onMounted(() => {
 						<div>
 							<h1>{{ event.title }}</h1>
 							<h2>
-								{{ new Date(event.date).toLocaleDateString("fr-FR", {
-									weekday: "long", year: "numeric", month: "long", day:
-										"numeric", hour: "numeric", minute: "numeric"
-								}) }}
+								{{
+									new Date(event.date).toLocaleDateString("fr-FR", {
+										weekday: "long",
+										year: "numeric",
+										month: "long",
+										day: "numeric",
+										hour: "numeric",
+										minute: "numeric",
+									})
+								}}
 							</h2>
 						</div>
 						<div class="shareCode" v-if="event.owner && event.owner.id == Session.user.id">
 							<span class="p-input-icon-right">
-								<i class="pi pi-link" @click="copyShareCody()" />
-								<InputText id="shareCode" type="text" aria-describedby="text-error"
-									:value="'http://127.0.0.1:5173/event/' + event.id + '?code=' + event.code_share" readonly="readonly" />
+								<i class="pi pi-link" @click="copyShareCody" />
+								<InputText id="shareCode" type="text" aria-describedby="text-error" :value="'https://tedyspo.cyprien-cotinaut.com/event/' + event.id + '?code=' + event.code_share" readonly="readonly" />
 							</span>
 						</div>
 					</div>
@@ -547,26 +597,17 @@ onMounted(() => {
 							</template>
 							<template v-else>
 								<p>Aucun lieu n'a été ajouté pour l'instant.</p>
-								<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation"
-									v-if="event.owner && event.owner.id == Session.user.id" />
-								<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true"
-									:rtl="false" :showHeader="false" :closeOnEscape="true"
-									v-if="event.owner && event.owner.id == Session.user.id">
+								<Button label="Ajouter un lieu de rendez-vous" text @click="toggleModalCreateLocation" v-if="event.owner && event.owner.id == Session.user.id" />
+								<Dialog v-model:visible="formCreateLocation.modal" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true" v-if="event.owner && event.owner.id == Session.user.id">
 									<form @submit.prevent="addLocation" id="addLocation">
-										<InlineMessage v-if="formCreateLocation.messageError" severity="error">{{
-											formCreateLocation.messageError }}</InlineMessage>
+										<InlineMessage v-if="formCreateLocation.messageError" severity="error">{{ formCreateLocation.messageError }}</InlineMessage>
 										<div id="mapForm"></div>
 										<div class="p-inputgroup flex-1">
-											<AutoComplete class="w-full" placeholder="Lieu du rendez-vous (ex: 19 Rue Murillo 75008 Paris)"
-												v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress"
-												:completeOnFocus="false" :minLength="3" :delay="100" @complete="getAutoCompleteLocation" />
-											<Button icon="pi pi-plus" class="p-inputgroup-addon" @click="addMarkerFromAddressMap"
-												:disabled="formCreateLocation.address == ''" />
+											<AutoComplete class="w-full" placeholder="Lieu du rendez-vous (ex: 19 Rue Murillo 75008 Paris)" v-model="formCreateLocation.address" :suggestions="formCreateLocation.autocompleteAddress" :completeOnFocus="false" :minLength="3" :delay="100" @complete="getAutoCompleteLocation" />
+											<Button icon="pi pi-plus" class="p-inputgroup-addon" @click="addMarkerFromAddressMap" :disabled="formCreateLocation.address == ''" />
 										</div>
 										<InputText v-model="formCreateLocation.name" placeholder="Nom du lieu (ex: Maison, Travail...)" />
-										<Button type="submit" label="Ajouter ce lieu"
-											:disabled="formCreateLocation.marker.length == 0 || formCreateLocation.pending"
-											@click="postLocations" />
+										<Button type="submit" label="Ajouter ce lieu" :disabled="formCreateLocation.marker.length == 0 || formCreateLocation.pending" @click="postLocations" />
 									</form>
 								</Dialog>
 							</template>
@@ -582,11 +623,9 @@ onMounted(() => {
 			<template #content>
 				<Button label="Voir la listes des participants" text @click="modalActive = !modalActive" />
 				<template v-if="event.participants.length > 0">
-					<Dialog v-model:visible="modalActive" :modal="true" :closable="false" :dismissableMask="true" :rtl="false"
-						:showHeader="false" :closeOnEscape="true">
-						<form @submit.prevent="inviteUsers" id="inviteUsers" v-if="event.owner.id == Session.user.id">
-							<MultiSelect v-model="formInviteUsers.selectedUsers" :options="usersFind.list" filter optionLabel="name"
-								placeholder="Invite tes amis !" @filter="searchUsers">
+					<Dialog v-model:visible="modalActive" :modal="true" :closable="false" :dismissableMask="true" :rtl="false" :showHeader="false" :closeOnEscape="true">
+						<form @submit.prevent="inviteUsers" id="inviteUsers" v-if="event.owner && event.owner.id == Session.user.id">
+							<MultiSelect v-model="formInviteUsers.selectedUsers" :options="usersFind.list" filter optionLabel="name" placeholder="Invite tes amis !" @filter="searchUsers">
 								<template #empty>
 									<span class="p-d-block p-py-2 p-px-3">Ecrivez minimum 3 lettres.</span>
 								</template>
@@ -610,24 +649,46 @@ onMounted(() => {
 				</template>
 			</template>
 		</Card>
+		<Card class="mt-5" id="Chat" v-if="!query">
+			<template #title>
+				<h3>Conversations</h3>
+			</template>
+			<template #content>
+				<Card class="mt-5">
+					<template #content>
+						<div class="list-message" ref="listMessageUI">
+							<template v-if="event.comments.length > 0">
+								<template v-for="message in event.comments">
+									<ConversationListElement :message="message" />
+								</template>
+							</template>
+							<template v-else>
+								<p>Aucune message.</p>
+							</template>
+						</div>
+					</template>
+				</Card>
+				<form>
+					<Textarea v-model="formChat.message" placeholder="Ecrivez votre message" />
+					<Button label="Envoyer" @click="sendMessage" :disabled="formChat.pending || formChat.message == ''" />
+				</form>
+			</template>
+		</Card>
 	</template>
-	<template v-if="message !== ''">
+	<template v-else>
 		<p class="error">{{ message }}</p>
 	</template>
 </template>
 
-
 <style lang="scss">
 .error {
 	text-align: center;
-
 }
 
 #map {
 	width: 100%;
 	height: 20rem;
 }
-
 .p-dialog .p-dialog-content {
 	padding-top: 2rem;
 }
@@ -654,7 +715,6 @@ form#inviteUsers {
 		font-size: 2rem;
 		margin: 0;
 	}
-
 	h2 {
 		font-size: 1rem;
 	}
@@ -668,7 +728,6 @@ form#addLocation {
 	min-width: 500px;
 	width: 100%;
 	max-width: 500px;
-
 	#mapForm {
 		width: 100%;
 		height: 20rem;
@@ -690,7 +749,6 @@ form#addLocation {
 	.p-autocomplete {
 		margin-top: 0.5rem;
 	}
-
 	button {
 		margin-top: 1rem;
 	}
@@ -715,6 +773,24 @@ form#addLocation {
 			font-size: 32px;
 			cursor: pointer;
 			margin-top: -15px;
+		}
+	}
+}
+#Chat {
+	.p-card-content {
+		.list-message {
+			height: 20rem;
+			overflow-y: scroll;
+		}
+		form {
+			margin-top: 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+			textarea {
+				display: block;
+				width: 100%;
+			}
 		}
 	}
 }

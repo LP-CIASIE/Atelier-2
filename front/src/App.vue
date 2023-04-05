@@ -9,7 +9,7 @@ import mitt from "mitt";
 
 // Variable Globale pour Axios nommé "api"
 const API = axios.create({
-	baseURL: "http://gateway.atelier.local:8000",
+	baseURL: "${dotenv.env['API_URL']}",
 	headers: {
 		"Content-Type": "application/json",
 	},
@@ -28,14 +28,10 @@ API.getActionRequest = (url, params) => {
 		},
 	})
 		.then((response) => {
-			let data = response.data;
-			console.log(data);
-			return data;
+			return response.data;
 		})
 		.catch((error) => {
-			let message = error.response.data.message;
-			console.log(error.response.data.message);
-			return message;
+			return error;
 		});
 };
 
@@ -53,12 +49,10 @@ API.postActionRequest = (url, params, data) => {
 		},
 	})
 		.then((response) => {
-			let data = response.data;
-			console.log(data);
-			return data;
+			return response.data;
 		})
 		.catch((error) => {
-			console.log(error);
+			return error;
 		});
 };
 
@@ -76,12 +70,10 @@ API.putActionRequest = (url, params, data) => {
 		},
 	})
 		.then((response) => {
-			let data = response.data;
-			console.log(data);
-			return data;
+			return response.data;
 		})
 		.catch((error) => {
-			console.log(error);
+			return error;
 		});
 };
 
@@ -99,12 +91,10 @@ API.deleteActionRequest = (url, params) => {
 		},
 	})
 		.then((response) => {
-			let data = response.data;
-			console.log(data);
-			return data;
+			return response.data;
 		})
 		.catch((error) => {
-			console.log(error);
+			return error;
 		});
 };
 

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart';
+import 'package:lp1_ciasie_atelier_2/widget/event_share_widget.dart';
+import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
-
   const EventPage({
-    Key? key,
+    super.key,
     required this.event,
-  }) : super(key: key);
-
+  });
   @override
   State<EventPage> createState() => _EventPageState();
 }
@@ -21,27 +21,55 @@ class _EventPageState extends State<EventPage> {
     super.initState();
   }
 
+  _openDialogShareEvent() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EventShareWidget(
+          idEvent: widget.event.idEvent,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_outlined),
+          onPressed: () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            )
+          },
+        ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EventEditBuilderPage(
-                    idEvent: widget.event.idEvent,
+          Visibility(
+            visible: widget.event.iAmOwner,
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EventEditBuilderPage(
+                      idEvent: widget.event.idEvent,
+                    ),
                   ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.edit_outlined),
+                );
+              },
+              icon: const Icon(Icons.edit_outlined),
+            ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.delete_outlined),
+          Visibility(
+            visible: widget.event.iAmOwner,
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.delete_outlined),
+            ),
           ),
         ],
       ),
@@ -68,21 +96,25 @@ class _EventPageState extends State<EventPage> {
               ),
             ),
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Participants',
-                      style: TextStyle(fontSize: 19.6),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () => {},
-                      icon: const Icon(Icons.add_outlined),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Participants',
+                    style: TextStyle(fontSize: 19.6),
+                  ),
+                  Visibility(
+                    visible: widget.event.iAmOwner,
+                    child: OutlinedButton.icon(
+                      onPressed: () => {_openDialogShareEvent()},
+                      icon: const Icon(Icons.person_add_outlined),
                       label: const Text('AJOUTER'),
-                    )
-                  ],
-                )),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

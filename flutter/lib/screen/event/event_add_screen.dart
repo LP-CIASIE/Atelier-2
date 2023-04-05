@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
+import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
-import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
+import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EventAddPage extends StatefulWidget {
   const EventAddPage({super.key});
@@ -49,10 +50,10 @@ class _EventAddPageState extends State<EventAddPage> {
     };
 
     try {
-      User user =
+      Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.post(
-        Uri.parse('http://gateway.atelier.local:8000/events'),
+        Uri.parse('${dotenv.env['API_URL']}/events'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -71,7 +72,10 @@ class _EventAddPageState extends State<EventAddPage> {
         } else if (response.containsKey('event')) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(
+                builder: (context) => EventBuilderPage(
+                      idEvent: response['event']['id'],
+                    )),
             // À CHANGER pour EventPage
           );
         } else {
@@ -104,7 +108,6 @@ class _EventAddPageState extends State<EventAddPage> {
       initialDate: _dateController,
       firstDate: DateTime.now().subtract(const Duration(days: 365250)),
       lastDate: DateTime.now().add(const Duration(days: 365250)),
-      helpText: 'Select a date',
     );
 
     if (dateSelected != null) {
