@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_pending_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'event/events_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/session.dart';
@@ -32,8 +33,7 @@ class _HomePageState extends State<HomePage> {
       Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(
-        Uri.parse(
-            'https://api.tedyspo.cyprien-cotinaut.com/events?page=1&size=150'),
+        Uri.parse('${dotenv.env['API_URL']}/events?page=1&size=150'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',

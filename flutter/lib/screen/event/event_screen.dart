@@ -48,22 +48,28 @@ class _EventPageState extends State<EventPage> {
           },
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EventEditBuilderPage(
-                    idEvent: widget.event.idEvent,
+          Visibility(
+            visible: widget.event.iAmOwner,
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EventEditBuilderPage(
+                      idEvent: widget.event.idEvent,
+                    ),
                   ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.edit_outlined),
+                );
+              },
+              icon: const Icon(Icons.edit_outlined),
+            ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.delete_outlined),
+          Visibility(
+            visible: widget.event.iAmOwner,
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.delete_outlined),
+            ),
           ),
         ],
       ),
@@ -98,19 +104,14 @@ class _EventPageState extends State<EventPage> {
                     'Participants',
                     style: TextStyle(fontSize: 19.6),
                   ),
-                  OutlinedButton.icon(
-                    onPressed: () => {_openDialogShareEvent()},
-                    // onPressed: () => {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => const EventSharePage(),
-                    //     ),
-                    //   )
-                    // },
-                    icon: const Icon(Icons.person_add_outlined),
-                    label: const Text('AJOUTER'),
-                  )
+                  Visibility(
+                    visible: widget.event.iAmOwner,
+                    child: OutlinedButton.icon(
+                      onPressed: () => {_openDialogShareEvent()},
+                      icon: const Icon(Icons.person_add_outlined),
+                      label: const Text('AJOUTER'),
+                    ),
+                  ),
                 ],
               ),
             ),
