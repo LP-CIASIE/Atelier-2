@@ -15,59 +15,41 @@ const props = defineProps({
 });
 
 const Session = useSessionStore();
-const API = inject("api");
-const showComment = ref(false);
-
-const user = reactive({
-	id: "",
-	firstname: "",
-	lastname: "",
-	email: "",
-});
-
-function getUser() {
-	return API.getActionRequest(props.participant.links.user.href).then((data) => {
-		user.id = data.user.id;
-		user.firstname = data.user.firstname;
-		user.lastname = data.user.lastname;
-		user.email = data.user.email;
-	});
-}
 
 onMounted(() => {
-	getUser();
+	console.log(props.participant);
 });
 </script>
 
 <template>
-	<Card class="mt-3 participant" :class="{ organisator: participant.is_organisator, you: participant.id_user == Session.user.id }">
+	<Card class="mt-3 participant" :class="{ organisator: participant.status_event.is_organisator, you: participant.id == Session.user.id }">
 		<template #content>
 			<div class="content">
-				<template v-if="user.id !== ''">
+				<template v-if="participant.id !== ''">
 					<div class="info">
-						<p>{{ user.firstname }} {{ user.lastname }} <i v-if="participant.is_organisator" class="pi pi-shield color" title="Organisateur de l'événement"></i></p>
-						<p class="mail" v-if="participant.is_organisator">{{ user.email }}</p>
+						<p>{{ participant.firstname }} {{ participant.lastname }} <i v-if="participant.status_event.is_organisator" class="pi pi-shield color" title="Organisateur de l'événement"></i></p>
+						<p class="mail" v-if="participant.status_event.is_organisator">{{ participant.email }}</p>
 					</div>
 					<div class="tag">
-						<Tag v-if="participant.is_here" value="Sur place" class="p-tag-rounded" />
-						<Tag v-if="participant.state == 'accepted' && !participant.is_here" value="Accepté" class="p-tag-rounded p-tag-success" />
-						<Tag v-if="participant.state == 'pending'" value="En attente" class="p-tag-rounded p-tag-warning" />
-						<Tag v-if="participant.state == 'refused'" value="Refusé" class="p-tag-rounded p-tag-danger" />
+						<Tag v-if="participant.status_event.is_here" value="Sur place" class="p-tag-rounded" />
+						<Tag v-if="participant.status_event.state == 'accepted' && !participant.status_event.is_here" value="Accepté" class="p-tag-rounded p-tag-success" />
+						<Tag v-if="participant.status_event.state == 'pending'" value="En attente" class="p-tag-rounded p-tag-warning" />
+						<Tag v-if="participant.status_event.state == 'refused'" value="Refusé" class="p-tag-rounded p-tag-danger" />
 					</div>
 				</template>
 				<template v-else>
 					<div class="info">
 						<Skeleton width="5rem" height="1.2rem" />
-						<Skeleton width="10rem" height="1.2rem" v-if="participant.is_organisator" />
+						<Skeleton width="10rem" height="1.2rem" v-if="participant.status_event.is_organisator" />
 					</div>
 					<div class="tag">
 						<Skeleton width="3.5rem" height="1.5rem" />
 					</div>
 				</template>
-				<Card class="comment" v-if="!participant.is_organisator && participant.state != 'pending'">
+				<Card class="comment" v-if="!participant.status_event.is_organisator && participant.status_event.state != 'pending'">
 					<template #content>
 						<div>
-							<p>{{ participant.comment }}</p>
+							<p>{{ participant.status_event.comment }}</p>
 						</div>
 					</template>
 				</Card>
@@ -75,7 +57,7 @@ onMounted(() => {
 		</template>
 	</Card>
 
-	<Divider v-if="participant.is_organisator" />
+	<Divider v-if="participant.status_event.is_organisator" />
 </template>
 
 <style lang="scss">

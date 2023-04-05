@@ -78,24 +78,24 @@ function getEvent() {
 }
 
 function getParticipants(url) {
-	API.getActionRequest(url).then((data) => {
+	API.getActionRequest(url, { embed: "user" }).then((data) => {
 		event.participants = data.usersEvent;
 		console.log(event.participants);
 
 		// Trier les participants par ordre de la propriété state (accepted, pending, refused) avec is_here en premier
 		event.participants.sort((a, b) => {
-			if (a.state == "accepted" && b.state == "accepted") {
-				if (a.is_here == true && b.is_here == false) {
+			if (a.status_event.state == "accepted" && b.status_event.state == "accepted") {
+				if (a.status_event.is_here == true && b.status_event.is_here == false) {
 					return -1;
 				}
-				if (a.is_here == false && b.is_here == true) {
+				if (a.status_event.is_here == false && b.status_event.is_here == true) {
 					return 1;
 				}
 			} else {
-				if (a.state < b.state) {
+				if (a.status_event.state < b.status_event.state) {
 					return -1;
 				}
-				if (a.state > b.state) {
+				if (a.status_event.state > b.status_event.state) {
 					return 1;
 				}
 			}
@@ -104,10 +104,10 @@ function getParticipants(url) {
 
 		// l'organisateur en premier (is_organisator)
 		event.participants.sort((a, b) => {
-			if (a.is_organisator == true && b.is_organisator == false) {
+			if (a.status_event.is_organisator == true && b.status_event.is_organisator == false) {
 				return -1;
 			}
-			if (a.is_organisator == false && b.is_organisator == true) {
+			if (a.status_event.is_organisator == false && b.status_event.is_organisator == true) {
 				return 1;
 			}
 			return 0;
@@ -153,7 +153,6 @@ function getLinks(url) {
 function getComments(url) {
 	API.getActionRequest(url).then((data) => {
 		event.comments = data.comments;
-		console.log(event.comments);
 	});
 }
 

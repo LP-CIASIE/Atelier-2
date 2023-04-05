@@ -108,35 +108,61 @@ class FormatterObject
     return $eventsArray;
   }
 
-  public static function EventUser($eventUser)
+  public static function EventUser($eventUser, $embed = 'none')
   {
-    return [
-      'id_user' => $eventUser->id_user,
-      'id_event' => $eventUser->id_event,
-      'state' => $eventUser->state,
-      'comment' => $eventUser->comment,
-      'is_here' => $eventUser->is_here,
-      'is_organisator' => $eventUser->is_organisator,
-      'links' => [
-        'self' => [
-          'href' => '/events/' . $eventUser->id_event . '/users/' . $eventUser->id_user
-        ],
-        'user' => [
-          'href' => '/users/' . $eventUser->id_user
-        ],
-        'event' => [
-          'href' => '/events/' . $eventUser->id_event
-        ],
-      ]
-    ];
+
+    if ($embed == 'user') {
+      $data = self::User($eventUser);
+      $data['status_event'] = [
+        'state' => $eventUser->pivot->state,
+        'comment' => $eventUser->pivot->comment,
+        'is_here' => $eventUser->pivot->is_here,
+        'is_organisator' => $eventUser->pivot->is_organisator,
+        'links' => [
+          'self' => [
+            'href' => '/events/' . $eventUser->pivot->id_event . '/users/' . $eventUser->id_user
+          ],
+          'user' => [
+            'href' => '/users/' . $eventUser->id_user
+          ],
+          'event' => [
+            'href' => '/events/' . $eventUser->pivot->id_event
+          ],
+        ]
+      ];
+    } else {
+      $data = [
+        'id_user' => $eventUser->id_user,
+        'id_event' => $eventUser->pivot->id_event,
+        'state' => $eventUser->pivot->state,
+        'comment' => $eventUser->pivot->comment,
+        'is_here' => $eventUser->pivot->is_here,
+        'is_organisator' => $eventUser->pivot->is_organisator,
+        'links' => [
+          'self' => [
+            'href' => '/events/' . $eventUser->pivot->id_event . '/users/' . $eventUser->id_user
+          ],
+          'user' => [
+            'href' => '/users/' . $eventUser->id_user
+          ],
+          'event' => [
+            'href' => '/events/' . $eventUser->pivot->id_event
+          ],
+        ]
+      ];
+    }
+
+    if ($embed == 'user') {
+    }
+
+    return $data;
   }
 
-  public static function EventUsers($eventUsers)
+  public static function EventUsers($eventUsers, $embed = 'none')
   {
     $eventUsersArray = [];
     foreach ($eventUsers as $eventUser) {
-
-      $eventUsersArray[] = self::EventUser($eventUser->pivot);
+      $eventUsersArray[] = self::EventUser($eventUser, $embed);
     }
     return $eventUsersArray;
   }
