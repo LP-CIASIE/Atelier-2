@@ -51,4 +51,9 @@ class Event extends Model
   {
     return $this->hasMany(Link::class, 'id_event');
   }
+
+  public function locations()
+  {
+    return $this->hasMany(Location::class, 'id_event');
+  }
 }
