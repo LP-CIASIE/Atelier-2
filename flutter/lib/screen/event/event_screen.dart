@@ -5,43 +5,76 @@ import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart
 
 class EventPage extends StatefulWidget {
   final Event event;
-  const EventPage({super.key
-    required this.event,});
+  const EventPage({
+    super.key,
+    required this.event,
+  });
 
   @override
   State<EventPage> createState() => _EventPageState();
-}
-
-class _HomePageState extends State<EventPage> {
-
-  @override
-  State<EventPage> createState() => _EventPageState();
-
-  openDialogShareEvent() {
-    AlertDialog(
-      title: const Text('Reset settings?'),
-      content: const Text(
-          'This will reset your device to its default factory settings.'),
-      actions: [
-        TextButton(
-          // textColor: Color(0xFF6200EE),
-          onPressed: () {},
-          child: const Text('CANCEL'),
-        ),
-        TextButton(
-          // textColor: Color(0xFF6200EE),
-          onPressed: () {},
-          child: const Text('ACCEPT'),
-        ),
-      ],
-    );
-  }
 }
 
 class _EventPageState extends State<EventPage> {
+  final TextEditingController _filterController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+  }
+
+  _openDialogShareEvent() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: TextField(
+            controller: _filterController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Rechercher un ami',
+            ),
+          ),
+          content: Container(
+            child: ListView(
+              children: [
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+                CheckboxListTile(
+                  value: false,
+                  onChanged: (o) => {},
+                  title: Text('temp'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              // textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: const Text('CANCEL'),
+            ),
+            TextButton(
+              // textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: const Text('ACCEPT'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -91,21 +124,22 @@ class _EventPageState extends State<EventPage> {
               ),
             ),
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Participants',
-                      style: TextStyle(fontSize: 19.6),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () => {openDialogShareEvent()},
-                      icon: const Icon(Icons.add_outlined),
-                      label: const Text('AJOUTER'),
-                    )
-                  ],
-                )),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Participants',
+                    style: TextStyle(fontSize: 19.6),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => {_openDialogShareEvent()},
+                    icon: const Icon(Icons.person_add_outlined),
+                    label: const Text('AJOUTER'),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
