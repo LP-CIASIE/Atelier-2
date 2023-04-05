@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
-import '../class/user.dart';
+import '../class/session.dart';
 
 class SessionProvider extends ChangeNotifier {
-  User _user = User(id: '', accessToken: '', refreshToken: '');
+  Session _user = Session(id: '', accessToken: '', refreshToken: '');
 
-  User get userDataSession => _user;
+  Session get userDataSession => _user;
 
   Future<Map<String, dynamic>> get user async {
     try {
@@ -52,7 +52,7 @@ class SessionProvider extends ChangeNotifier {
     }
   }
 
-  set(User user) {
+  set(Session user) {
     _user = user;
   }
 
@@ -76,7 +76,7 @@ class SessionProvider extends ChangeNotifier {
           "message": utf8.decode(response['message'].codeUnits),
         };
       } else {
-        _user = User(
+        _user = Session(
             id: response['id_user'],
             accessToken: response['access-token'],
             refreshToken: response['refresh-token']);
@@ -94,7 +94,7 @@ class SessionProvider extends ChangeNotifier {
   }
 
   void signOut(context) {
-    _user = User(id: '', accessToken: '', refreshToken: '');
+    _user = Session(id: '', accessToken: '', refreshToken: '');
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const SignInPage()),

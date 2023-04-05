@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
+import 'package:lp1_ciasie_atelier_2/class/session.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
@@ -23,7 +23,7 @@ class EventBuilderPage extends StatelessWidget {
 
   Future<Event> fetchEvent(context) async {
     try {
-      User user =
+      Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
       dynamic responseHttp = await http.get(

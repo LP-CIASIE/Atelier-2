@@ -1,15 +1,28 @@
 class User {
   final String id;
-  // final String email;
-  // final String role;
-  String accessToken;
-  final String refreshToken;
+  final String email;
+  final String firstname;
+  final String lastname;
+  bool isCheck;
 
-  User({
-    required this.id,
-    // required this.email,
-    // required this.role,
-    required this.accessToken,
-    required this.refreshToken,
-  });
+  User(
+      {required this.id,
+      required this.email,
+      required this.firstname,
+      required this.lastname,
+      this.isCheck = false});
+
+  void check(value) {
+    isCheck = value;
+  }
+
+  factory User.fromMap(Map map) {
+    return User(
+      id: map['id'],
+      email: map['email'],
+      firstname: map['firstname'],
+      lastname: map['lastname'],
+    );
+  }
 }
+ 

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
+import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +55,7 @@ class _EventEditPageState extends State<EventEditPage> {
           1000,
     };
     try {
-      User user =
+      Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
       dynamic responseHttp = await http.put(
