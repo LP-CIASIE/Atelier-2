@@ -13,6 +13,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -160,18 +161,28 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EventEditBuilderPage(
-                      idEvent: widget.event.idEvent,
-                    ),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_outlined),
+          onPressed: () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            )
+          },
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventEditBuilderPage(
+                    idEvent: widget.event.idEvent,
                   ),
-                );
+                );),
               },
               icon: const Icon(Icons.edit_outlined),
             ),
