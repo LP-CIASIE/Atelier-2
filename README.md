@@ -2,7 +2,9 @@
 
 Créateurs : Bradley Barbier, Christopher Jue, Teddy Clement Dels, Cyprien Cotinaut, Ugo Zanzi
 
-# But du projet : 
+---
+
+# But du projet :
 
 Reunionou.app est une application qui permet à des groupes de personnes (famille, amis,
 groupe de collègues) de se fixer un rendez-vous en un lieu déterminé et d'organiser ce rendez-
@@ -17,26 +19,53 @@ L'application permet principalement de :
 • recenser les participants,
 • offrir des services complémentaires : météo, trajet vers le point de RV, points
 d’intérêts aux alentours de ce RV.
-Le scénario de base d'utilisation de l'application est le suivant :
-1. un utilisateur inscrit sur la plateforme organise une soirée à l'occasion de son
-anniversaire et souhaite donner RV à un groupe d'amis dans un restaurant,
-2. il crée l’événement sur la plateforme Reunionou.app : titre, description, heure de RV,
-lieu géolocalisé sur une carte,
-3. une fois l'événement enregistré, il le partage selon 2 modalités :
-1. en invitant des participants inscrits sur la plateforme à partir de leur identifiant ou
-adresse mail : ces participants auront accès à l'événement au travers de
-l'application web ou via l'application mobile,
-2. en générant une url de partage qu'il diffuse à des participants non inscrits, par le
-moyen qu'il préfère (mail, réseau social, ...) ; Ces participants auront accès à
-l'événement uniquement via l'application web,
-4. toutes les personnes disposant de cette url peuvent accéder à la description
-géolocalisée de l'événement, sans nécessité de disposer ou de créer un compte sur la
-plateforme reunionou.app,
-5. tous les participants ayant accès à l’événement peuvent confirmer leur participation ou
-décliner, visualiser la liste des participants confirmés, ajouter des commentaires
-6. l'application peut proposer des informations complémentaires à celles directement
-liées à la soirée : prévisions météo, itinéraire et temps de trajet pour se rendre sur le
-lieu, points d’intérêts aux alentours (monuments, bars ...), notifications de présence
-des participants ...
-7. l'application permet ensuite, après le RV, de partager des commentaires, liens,
-éventuellement photos ou vidéos liés à cet événement.
+
+---
+
+# Déploiement
+
+## Prérequis :
+
+- Docker
+- NodeJS
+- Flutter
+
+## Installation :
+
+### Backend :
+
+##### Dépendance :
+
+Pour chacun des dossiers présents dans le dossier `apies` (hormis `fake_data`) :
+
+- `cd <nom_du_dossier>`
+- `composer install`
+
+##### Base de données :
+
+Pour les API Auth et Tedyspo vous avez besoin d'importer les données de la base de données qui se trouve dans le dossier sql :
+
+- `<bdd>_fake` => Donnée généré par faker pour les tests
+- `<bdd>_schema` => Structure de la base de données vide
+
+Assurez-vous d'avoir aussi bien configuré les variables d'environnement dans le fichier `<bdd>.db.ini.dist` de chaque dossier.
+
+##### Lancement :
+
+Dans le dossier racine du répertoire git :
+
+- `docker-compose up -d`
+
+Cela lancera toutes les API avec Adminer pour la gestion de la base de données.
+
+### Frontend :
+
+- `cd frontend`
+- `npm install`
+- `npm run dev` ou `npm run build` pour la version de production
+
+### Flutter :
+
+- `cd flutter`
+- `flutter pub get`
+- `flutter run`

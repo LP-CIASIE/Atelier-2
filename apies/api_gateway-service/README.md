@@ -1,22 +1,23 @@
-# LeBonSandwich - Partie CMS (Catalog Service)
+# Déploiement API Gateway
 
-## Membres de l'équipe
+## Prérequis :
 
-- [Cyprien COTINAUT](https://github.com/lecyp12)
-- [Teddy CLÉMENT DELS](https://github.com/cdteddyk1)
-- [Christopher JUE](https://github.com/JUEChristopher)
-- [Ugo ZANZI](https://github.com/uzanzi)
-- [Bradley BARBIER](https://github.com/Catif)
+- Docker
 
-## Lien des services du projet :
+## Installation :
 
-- [Order Service (API Slim)](https://github.com/cdteddyk1/LP-CIASIE_LBS_Order-Service)
-- [Gateway FrontOffice (API Slim)](https://github.com/uzanzi/LP-CIASIE_LBS_Gateway_FrontOffice)
-- [Auth Service (API MongoDB)](https://github.com/cdteddyk1/LP-CIASIE_LBS_Auth-Service)
-- [Catalog Service](https://github.com/Catif/LP-CIASIE_LBS_Catalog-Service)
+### Dépendance :
 
-![Architecture du projet](https://i.imgur.com/FQuIoZy.png)
+- `composer install`
 
-## Sujet du Projet
+### Base de données :
 
-(...)
+L'API Gateway ne nécessite pas de base de données, mais dépend des deux autres API (Auth et Tedyspo).
+
+### Lancement :
+
+Dans le dossier racine du répertoire git :
+
+- `docker-compose up -d`
+
+Cela lancera toutes les API avec Adminer pour la gestion de la base de données.
