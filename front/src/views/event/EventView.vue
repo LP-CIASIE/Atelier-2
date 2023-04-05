@@ -8,6 +8,7 @@ import MultiSelect from "primevue/multiselect";
 import AutoComplete from "primevue/autocomplete";
 import InputText from "primevue/inputtext";
 import InlineMessage from "primevue/inlinemessage";
+import Toast from "primevue/toast";
 
 import ParticipantsListElement from "@/components/assets/ParticipantsListElement.vue";
 import "leaflet/dist/leaflet.css";
@@ -16,10 +17,12 @@ import L from "leaflet";
 import { ref, reactive, inject, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useSessionStore } from "@/stores/session.js";
+import { useToast } from "primevue/usetoast";
 
 const Session = useSessionStore();
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 const API = inject("api");
 const event = reactive({
 	id: "",
@@ -60,11 +63,10 @@ function getEvent() {
 
 		promises.push(getOwner(event.links.owner.href));
 
-		// Attendre les routes API
 		promises.push(getParticipants(event.links.participants.href));
 		promises.push(getLocations(event.links.locations.href));
-		// getLinks(event.links.urls.href);
 		promises.push(getComments(event.links.comments.href));
+		// getLinks(event.links.urls.href); // Affichage non fait
 
 		Promise.all(promises).then(() => {
 			event.pending = false;
@@ -78,6 +80,7 @@ function getEvent() {
 function getParticipants(url) {
 	API.getActionRequest(url).then((data) => {
 		event.participants = data.usersEvent;
+		console.log(event.participants);
 
 		// Trier les participants par ordre de la propriété state (accepted, pending, refused) avec is_here en premier
 		event.participants.sort((a, b) => {
@@ -150,6 +153,7 @@ function getLinks(url) {
 function getComments(url) {
 	API.getActionRequest(url).then((data) => {
 		event.comments = data.comments;
+		console.log(event.comments);
 	});
 }
 
@@ -408,8 +412,8 @@ const usersFind = reactive({
 	pending: false,
 });
 
-function searchUsers(event) {
-	let value = event.value;
+function searchUsers(e) {
+	let value = e.value;
 	if (value.length < 3) {
 		usersFind.list = formInviteUsers.selectedUsers;
 		usersFind.pending = false;
@@ -428,6 +432,9 @@ function searchUsers(event) {
 		usersFind.list = Array.from(new Set([...usersFind.list, ...formInviteUsers.selectedUsers]));
 		usersFind.list = [...usersFind.list, ...formInviteUsers.selectedUsers.filter((obj2) => !usersFind.list.some((obj1) => obj1.id === obj2.id))];
 		usersFind.list = usersFind.list.filter((obj1) => Session.user.id !== obj1.id);
+		// Delete users already invited in the list of event.participants (only id is stored)
+		console.log(event.participants);
+		usersFind.list = usersFind.list.filter((obj1) => !event.participants.some((obj2) => obj2.id_user === obj1.id));
 		usersFind.pending = false;
 	});
 }
@@ -448,17 +455,30 @@ function inviteUsers() {
 		promises.push(inviteUser(event.id, user.id));
 	});
 
-	Promise.all(promises)
-		.then((data) => {
-			formInviteUsers.pending = false;
-			formInviteUsers.selectedUsers = [];
-			usersFind.list = [];
-			getParticipants(event.links.participants.href);
-		})
-		.catch((error) => {
-			formInviteUsers.pending = false;
-			formInviteUsers.messageError = error.response.data.message;
+	Promise.all(promises).then((data) => {
+		// Check if data contain AxiosError
+		let errors = data.reduce((element) => {
+			if (element instanceof Error) {
+				return element;
+			}
 		});
+
+		if (errors.length > 0) {
+			// Send Toast with error
+			toast.add({
+				severity: "error",
+				summary: `Erreur pendant l'invitation (x${errors.length})`,
+				detail: errors[0].response.data.message,
+				closable: false,
+				life: 4000,
+			});
+		}
+
+		formInviteUsers.pending = false;
+		formInviteUsers.selectedUsers = [];
+		usersFind.list = [];
+		getParticipants(event.links.participants.href);
+	});
 }
 
 // =========================================
@@ -470,15 +490,16 @@ onMounted(() => {
 </script>
 
 <template>
+	<Toast />
 	<template v-if="event.pending">
 		<Card>
 			<template #title>
-				<Skeleton type="text" width="20%" height="2rem" class="mt-2" />
-				<Skeleton type="text" width="30%" height="1.5rem" class="mt-3" />
+				<Skeleton type="text" width="40%" height="1.8rem" class="mt-2" />
+				<Skeleton type="text" width="20%" height="1.3rem" class="mt-1" />
 			</template>
 			<template #content>
-				<Skeleton type="text" width="100%" height="4rem" />
-				<Skeleton type="text" width="100%" height="30rem" class="mt-3" />
+				<Skeleton type="text" width="100%" height="3rem" />
+				<Skeleton type="text" width="100%" height="34rem" class="mt-3" />
 			</template>
 		</Card>
 	</template>
