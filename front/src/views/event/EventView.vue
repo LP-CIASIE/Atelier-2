@@ -1,6 +1,6 @@
 <script setup>
 import Card from "primevue/card";
-import 'primeicons/primeicons.css';
+import "primeicons/primeicons.css";
 import Divider from "primevue/divider";
 import Skeleton from "primevue/skeleton";
 import Button from "primevue/button";
@@ -55,34 +55,30 @@ const modalActive = ref(false);
 // =========================================
 // 	  Importation donnée pour l'affichage
 // =========================================
-const query = route.query.code !== '' ? { code: route.query.code } : null;
+const query = route.query.code ? { code: route.query.code } : null;
 function getEvent() {
 	return API.getActionRequest(`/events/${route.params.id}`, query).then((data) => {
-		if (!isObject(data)) {
-			message.value = data;
-		} else {
-			event.id = data.event.id;
-			event.title = data.event.title;
-			event.description = data.event.description;
-			event.date = data.event.date;
-			event.is_public = data.event.is_public;
-			event.code_share = data.event.code_share;
-			event.links = data.event.links;
+		if (data instanceof Error) {
+			message.value = data.response.data.message;
+			return;
+		}
+		event.id = data.event.id;
+		event.title = data.event.title;
+		event.description = data.event.description;
+		event.date = data.event.date;
+		event.is_public = data.event.is_public;
+		event.code_share = data.event.code_share;
+		event.links = data.event.links;
 
 		let promises = [];
-			// Attendre les routes API
-			if (!isObject(query)) {
-		promises.push(getParticipants(event.links.participants.href));
-		promises.push(getComments(event.links.comments.href));
-		promises.push(getOwner(event.links.owner.href));
-			}
-		promises.push(getLocations(event.links.locations.href));
-				if (event.locations.length > 0) {
-					createMap();
-				}
-			});
-			event.pending = false;
+		// Attendre les routes API
+		if (!query) {
+			promises.push(getParticipants(event.links.participants.href));
+			promises.push(getComments(event.links.comments.href));
+			promises.push(getOwner(event.links.owner.href));
 		}
+		promises.push(getLocations(event.links.locations.href));
+
 		event.links = data.event.links;
 
 		Promise.all(promises).then(() => {
@@ -651,7 +647,7 @@ onMounted(() => {
 		</Card>
 		<Card class="mt-5" id="Chat" v-if="!query">
 			<template #title>
-				<h3>Conversations</h3>
+				<h3>Conversation</h3>
 			</template>
 			<template #content>
 				<Card class="mt-5">

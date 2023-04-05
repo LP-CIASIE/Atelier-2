@@ -1,6 +1,5 @@
 <script setup>
 import { useSessionStore } from "@/stores/session.js";
-import { reactive } from "vue";
 import { reactive, inject } from "vue";
 import { useRouter } from "vue-router";
 import InputText from "primevue/inputtext";
@@ -62,26 +61,21 @@ function on_submit() {
 
 		<div>
 			<span class="p-float-label">
-				<InputText id="mail" v-model="form.email.content" type="text"
-					:class="{ 'p-invalid': form.email.error_message || form.error_message }" aria-describedby="text-error" />
+				<InputText id="mail" v-model="form.email.content" type="text" :class="{ 'p-invalid': form.email.error_message || form.error_message }" aria-describedby="text-error" />
 				<label for="mail">Email</label>
 			</span>
-			<small v-if="form.email.error_message.length > 0" class="p-error" id="text-error">{{ form.email.error_message ||
-				"&nbsp;" }}</small>
+			<small v-if="form.email.error_message.length > 0" class="p-error" id="text-error">{{ form.email.error_message || "&nbsp;" }}</small>
 		</div>
 
 		<div>
 			<span class="p-float-label">
-				<InputText id="password" v-model="form.password.content" type="password"
-					:class="{ 'p-invalid': form.password.error_message || form.error_message }" aria-describedby="text-error" />
+				<InputText id="password" v-model="form.password.content" type="password" :class="{ 'p-invalid': form.password.error_message || form.error_message }" aria-describedby="text-error" />
 				<label for="password">Mot de passe</label>
 			</span>
-			<small v-if="form.password.error_message.length > 0" class="p-error" id="text-error">{{ form.password.error_message
-				|| "&nbsp;" }}</small>
+			<small v-if="form.password.error_message.length > 0" class="p-error" id="text-error">{{ form.password.error_message || "&nbsp;" }}</small>
 		</div>
 
-		<small v-if="form.error_message.length > 0" class="p-error" id="text-error">{{ form.error_message || "&nbsp;"
-		}}</small>
+		<small v-if="form.error_message.length > 0" class="p-error" id="text-error">{{ form.error_message || "&nbsp;" }}</small>
 
 		<div class="list-button">
 			<Button type="button" label="Créer un compte" @click="router.push({ name: 'signUp' })" outlined />
@@ -117,4 +111,5 @@ input {
 	button {
 		flex-grow: 1;
 	}
-}</style>
+}
+</style>
