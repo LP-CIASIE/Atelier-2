@@ -11,6 +11,7 @@ CREATE TABLE `comment` (
   `comment` longtext DEFAULT NULL,
   `id_event` varchar(36) DEFAULT NULL,
   `id_user` varchar(36) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   PRIMARY KEY (`id_comment`),
   KEY `id_evenement_idx` (`id_event`),
   KEY `id_utilisateur_idx` (`id_user`),
@@ -107,4 +108,4 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 
--- 2023-04-04 13:56:05
+-- 2023-04-05 18:05:51
