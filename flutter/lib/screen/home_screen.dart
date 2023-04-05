@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:http/http.dart' as http;
+import 'package:lp1_ciasie_atelier_2/class/location.dart';
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_add_screen.dart';
@@ -21,6 +22,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Future<List<Event>> futureEvents = Future.value([]);
   late List<Event> events;
+  late List<Location> location;
+
 
   @override
   void initState() {
@@ -129,6 +132,7 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                   builder: (context) => EventBuilderPage(
                                     idEvent: event?.idEvent ?? '',
+                                  
                                   ),
                                 ),
                               )),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:lp1_ciasie_atelier_2/class/user.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_screen.dart';
