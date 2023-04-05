@@ -4,7 +4,7 @@ import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
+import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_add_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Event>> fetchEvents(context) async {
     try {
-      User user =
+      Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
 
       dynamic responseHttp = await http.get(
