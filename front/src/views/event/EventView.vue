@@ -213,7 +213,7 @@ function createMap() {
 	}).addTo(mapLeaflet);
 
 	// Marker
-	const marker = L.marker([event.mainLocation.content.lat, event.mainLocation.content.long]).addTo(mapLeaflet);
+	const marker = L.marker([event.mainLocation.content.lat, event.mainLocation.content.long], { icon: blueIcon }).addTo(mapLeaflet);
 	marker.bindTooltip(`<p class='m-0'>${event.mainLocation.content.name}</p><p class='m-0'>${event.mainLocation.address}</p>`, { direction: "top", offset: [-15, -10] });
 }
 
@@ -221,6 +221,15 @@ var listMarker = ref([]);
 
 var greenIcon = new L.Icon({
 	iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+	shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41],
+});
+
+var blueIcon = new L.Icon({
+	iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
 	shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
 	iconSize: [25, 41],
 	iconAnchor: [12, 41],
@@ -292,7 +301,7 @@ function createMapForm() {
 		if (formCreateLocation.marker.length > 0) {
 			marker = L.marker([e.latlng.lat, e.latlng.lng], { icon: greenIcon }).addTo(mapForm);
 		} else {
-			marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mapForm);
+			marker = L.marker([e.latlng.lat, e.latlng.lng], { icon: blueIcon }).addTo(mapForm);
 		}
 		marker.bindTooltip("Chargement...", { direction: "top", offset: [-15, -10] });
 		getAddressFromLonLat([e.latlng.lng, e.latlng.lat]).then((address) => {
@@ -330,7 +339,7 @@ function addMarkerFromAddressMap() {
 		if (formCreateLocation.marker.length > 0) {
 			marker = L.marker([lonlat[1], lonlat[0]], { icon: greenIcon }).addTo(mapForm);
 		} else {
-			marker = L.marker([lonlat[1], lonlat[0]]).addTo(mapForm);
+			marker = L.marker([lonlat[1], lonlat[0]], { icon: blueIcon }).addTo(mapForm);
 		}
 		marker.bindTooltip("Chargement...", { direction: "top", offset: [-15, -10] });
 		getAddressFromLonLat([lonlat[0], lonlat[1]]).then((address) => {
