@@ -1,15 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
-import 'package:intl/intl.dart';
 import 'package:lp1_ciasie_atelier_2/screen/event/event_pending_screen.dart';
 import 'event/events_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
-import 'package:lp1_ciasie_atelier_2/screen/event/event_add_screen.dart';
-import 'package:lp1_ciasie_atelier_2/screen/event/event_builder_screen.dart';
-import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 

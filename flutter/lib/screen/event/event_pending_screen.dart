@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:http/http.dart' as http;
-import 'package:lp1_ciasie_atelier_2/class/user.dart';
+import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
@@ -37,7 +37,7 @@ class _EventPendingPageState extends State<EventPendingPage> {
 
   Future<List<Event>> fetchPendingEvents(context) async {
     try {
-      User user =
+      Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(
         Uri.parse('${dotenv.env['API_URL']}/events?filter=pending'),

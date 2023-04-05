@@ -5,47 +5,17 @@ import 'package:lp1_ciasie_atelier_2/screen/event/event_edit_builder_screen.dart
 import 'package:lp1_ciasie_atelier_2/widget/event_share_widget.dart';
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 
-class UserTemp {
-  final String id;
-  final String email;
-  final String role;
-  final String firstname;
-  final String lastname;
-  bool isCheck;
-
-  UserTemp(
-      {required this.id,
-      required this.email,
-      required this.role,
-      required this.firstname,
-      required this.lastname,
-      this.isCheck = false});
-
-  void check(value) {
-    isCheck = value;
-  }
-
-  // factory userFromMap(){
-  //   return UserTemp(id: id, email: email, role: role, firstname: firstname, lastname: lastname)
-  // }
-}
-
 class EventPage extends StatefulWidget {
   final Event event;
   const EventPage({
     super.key,
-    super.key,
     required this.event,
   });
-  });
-
   @override
   State<EventPage> createState() => _EventPageState();
 }
 
 class _EventPageState extends State<EventPage> {
-  final TextEditingController _filterController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
