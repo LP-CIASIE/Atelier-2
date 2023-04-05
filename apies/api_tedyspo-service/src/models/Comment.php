@@ -23,7 +23,7 @@ class Comment extends Model
 
   public function user()
   {
-    return $this->belongsTo(UserTedyspo::class, 'id_user');
+    return $this->belongsTo(User::class, 'id_user');
   }
 
   public function event()

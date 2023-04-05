@@ -10,7 +10,7 @@ use atelier\tedyspo\middlewares\OwnerEventMiddleware;
 
 // GET
 $app->get('/events[/]', events\GetEventsAction::class)->setName('get_events');
-$app->get('/events/{id_event}[/]', events\GetEventAction::class)->setName('get_event');
+$app->get('/events/{id_event}[/]', events\GetEventAction::class)->setName('get_event')->add(new AccessEventMiddleware($container));
 
 // POST
 $app->post('/events[/]', events\CreateEventAction::class)->setName('create_event');

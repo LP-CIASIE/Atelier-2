@@ -18,15 +18,30 @@ class InvitationService extends AbstractService
     $this->userService = $this->container->get('service.user');
   }
 
+  public function isAlreadyInvited($id_event, $id_user)
+  {
+    $event = $this->eventService->getEventById($id_event);
+    try {
+      $eventUser = $event->users()->where('event_user.id_user', $id_user)->first();
+    } catch (\Exception $e) {
+      throw new \Exception("Un problème est survenu lors de la recherche de l'événement", 500);
+    }
+    if ($eventUser === null) {
+      return false;
+    } else {
+      throw new \Exception("L'utilisateur est déjà invité à cet événement.", 400);
+    }
+  }
+
   final public function getUsersEvent($id_event)
   {
-
     $event = $this->eventService->getEventById($id_event);
     try {
       $usersEvent = $event->users()->withPivot('state', 'comment', 'is_here', 'is_organisator')->get();
     } catch (\Exception $e) {
-      throw new \Exception("Un problème est survenu lors de la recherche des utilisateurs", 404);
+      throw new \Exception("Un problème est survenu lors de la recherche des utilisateurs", 500);
     }
+
     return $usersEvent;
   }
 
@@ -36,7 +51,7 @@ class InvitationService extends AbstractService
     try {
       $events = $user->events()->get();
     } catch (\Exception $e) {
-      throw new \Exception("Un problème est survenu lors de la recherche des événements", 404);
+      throw new \Exception("Un problème est survenu lors de la recherche des événements", 500);
     }
     return $events;
   }
@@ -51,7 +66,7 @@ class InvitationService extends AbstractService
         throw new \Exception("L'utilisateur n'est pas invité à cet événement.", 400);
       }
     } catch (\Exception $e) {
-      throw new \Exception("Un problème est survenu lors de la recherche de l'événement", 404);
+      throw new \Exception("Un problème est survenu lors de la recherche de l'événement", 500);
     }
     return $eventUser;
   }
@@ -60,10 +75,13 @@ class InvitationService extends AbstractService
   {
     $this->userService->getUserById($id_user);
     $event = $this->eventService->getEventById($id_event);
+
+    $this->isAlreadyInvited($id_event, $id_user);
+
     try {
       $event->users()->attach($id_user, ['is_organisator' => false, 'state' => 'pending', 'is_here' => false, 'comment' => 'En attente de validation par l\'utilisateur']);
     } catch (\Exception $e) {
-      throw new \Exception("Erreur lors de l'invitation à l'événement.'", 400);
+      throw new \Exception("Erreur lors de l'invitation à l'événement.'", 500);
     }
     return $event;
   }
@@ -75,7 +93,7 @@ class InvitationService extends AbstractService
     try {
       $event->users()->detach($id_user);
     } catch (\Exception $e) {
-      throw new \Exception("Erreur lors de la suppression de l'invitation à l'événement.", 400);
+      throw new \Exception("Erreur lors de la suppression de l'invitation à l'événement.", 500);
     }
     return $event;
   }
@@ -105,7 +123,7 @@ class InvitationService extends AbstractService
         $eventUser->comment = $data['comment'];
         $eventUser->save();
       } catch (\Exception $e) {
-        throw new \Exception("Erreur lors de la mise à jour de l'état de l'utilisateur.", 400);
+        throw new \Exception("Erreur lors de la mise à jour de l'état de l'utilisateur.", 500);
       }
     }
     return $eventUser;

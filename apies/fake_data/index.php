@@ -38,7 +38,7 @@ $faker = Factory::create('fr_FR');
 $users = [];
 
 echo "Generating users...\n";
-for ($i = 0; $i < 400; $i++) {
+for ($i = 0; $i < 200; $i++) {
   $id = $faker->uuid;
   $email = $faker->email;
 
@@ -73,7 +73,7 @@ echo "Generating events...\n";
 // Generate 2 - 3 events per user CONTRIBUTOR
 $events = [];
 foreach ($users as $user) {
-  $nbEvents = rand(3, 5);
+  $nbEvents = rand(3, 4);
   for ($i = 0; $i < $nbEvents; $i++) {
     $id = $faker->uuid;
 
@@ -82,7 +82,7 @@ foreach ($users as $user) {
     $event->id_event = $id;
     $event->title = $faker->sentence(3);
     $event->description = $faker->paragraph(3);
-    $event->date = $faker->dateTimeBetween('-1 years', '+1 years');
+    $event->date = $faker->dateTimeBetween('-1 years', '4 months');
     $event->is_public = 0;
 
     $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -149,6 +149,7 @@ foreach ($events as $event) {
     $comment->comment = $faker->paragraph(3);
     $comment->id_user = $participants[rand(0, count($participants) - 1)]['id_user'];
     $comment->id_event = $event['id_event'];
+    $comment->created_at = $faker->dateTimeBetween('-3 months', 'now');
     $comment->save();
 
     $comments[] = [
@@ -193,55 +194,31 @@ foreach ($events as $event) {
 }
 echo "Locations generated\n";
 
-echo "-------------------------\n";
+// echo "-------------------------\n";
 
-echo "Generating medias...\n";
-// Generate 1 media every 4 comments
-$medias = [];
-foreach ($comments as $comment) {
-  $nbMedias = rand(1, 4);
-  if ($nbMedias == 4) {
-    $id = $faker->uuid;
 
-    $media = new Media();
-    $media->id_media = $id;
-    $media->type = 'image';
-    $media->path = $faker->imageUrl();
-    $media->id_comment = $comment['id_comment'];
-    $media->save();
+// echo "Generating links...\n";
+// // Generate 2 - 5 links per event
+// $links = [];
+// foreach ($events as $event) {
+//   $nbLinks = rand(0, 5);
+//   for ($i = 0; $i < $nbLinks; $i++) {
+//     $id = $faker->uuid;
 
-    $medias[] = [
-      'id_media' => $id,
-      'id_comment' => $comment['id_comment'],
-    ];
-  }
-}
-echo "Medias generated\n";
+//     $link = new Link();
+//     $link->id_link = $id;
+//     $link->title = $faker->sentence(3);
+//     $link->link = $faker->url;
+//     $link->id_event = $event['id_event'];
+//     $link->save();
 
-echo "-------------------------\n";
-
-echo "Generating links...\n";
-// Generate 2 - 5 links per event
-$links = [];
-foreach ($events as $event) {
-  $nbLinks = rand(0, 5);
-  for ($i = 0; $i < $nbLinks; $i++) {
-    $id = $faker->uuid;
-
-    $link = new Link();
-    $link->id_link = $id;
-    $link->title = $faker->sentence(3);
-    $link->link = $faker->url;
-    $link->id_event = $event['id_event'];
-    $link->save();
-
-    $links[] = [
-      'id_link' => $id,
-      'id_event' => $event['id_event'],
-    ];
-  }
-}
-echo "Links generated\n";
+//     $links[] = [
+//       'id_link' => $id,
+//       'id_event' => $event['id_event'],
+//     ];
+//   }
+// }
+// echo "Links generated\n";
 
 echo "===============\n";
 echo "Script finished\n";

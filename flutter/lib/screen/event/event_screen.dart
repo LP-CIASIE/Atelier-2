@@ -14,15 +14,15 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
+import 'package:lp1_ciasie_atelier_2/widget/event_share_widget.dart';
+import 'package:lp1_ciasie_atelier_2/screen/home_screen.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
-
   const EventPage({
-    Key? key,
+    super.key,
     required this.event,
-  }) : super(key: key);
-
+  });
   @override
   State<EventPage> createState() => _EventPageState();
 }
@@ -31,6 +31,17 @@ class _EventPageState extends State<EventPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  _openDialogShareEvent() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EventShareWidget(
+          idEvent: widget.event.idEvent,
+        );
+      },
+    );
   }
 
   Future<Location> fetchEventLocation(context) async {
@@ -164,22 +175,28 @@ class _EventPageState extends State<EventPage> {
           },
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EventEditBuilderPage(
-                    idEvent: widget.event.idEvent,
+          Visibility(
+            visible: widget.event.iAmOwner,
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EventEditBuilderPage(
+                      idEvent: widget.event.idEvent,
+                    ),
                   ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.edit_outlined),
+                );
+              },
+              icon: const Icon(Icons.edit_outlined),
+            ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.delete_outlined),
+          Visibility(
+            visible: widget.event.iAmOwner,
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.delete_outlined),
+            ),
           ),
         ],
       ),
@@ -267,44 +284,18 @@ class _EventPageState extends State<EventPage> {
                     'Participants',
                     style: TextStyle(fontSize: 19.6),
                   ),
-                  OutlinedButton.icon(
-                    onPressed: () => {},
-                    icon: const Icon(Icons.add_outlined),
-                    label: const Text('AJOUTER'),
+                  Visibility(
+                    visible: widget.event.iAmOwner,
+                    child: OutlinedButton.icon(
+                      onPressed: () => {_openDialogShareEvent()},
+                      icon: const Icon(Icons.person_add_outlined),
+                      label: const Text('AJOUTER'),
+                    ),
                   ),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: FutureBuilder(
-                future: fetchEventParticipent(context),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text(snapshot.error.toString());
-                  } else if (snapshot.hasData) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                            child: Column(children: [
-                          ListTile(
-                            leading: const Icon(Icons.person),
-                            title: Text(
-                                '${snapshot.data![index].firstname} ${snapshot.data![index].lastname}'),
-                            subtitle: Text(snapshot.data![index].email),
-                          )
-                        ]));
-                      },
-                    );
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                },
-              ),
-            ),
-          ]),
+          ],
         ),
       ),
     );
