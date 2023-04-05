@@ -291,7 +291,6 @@ class _EventShareWidgetState extends State<EventShareWidget> {
   }
 
   void updateGuest(int index, bool? value) {
-    print(value);
     if (value!) {
       addGuest(index);
     } else {
