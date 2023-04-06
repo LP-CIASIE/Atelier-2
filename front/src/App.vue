@@ -9,7 +9,7 @@ import mitt from "mitt";
 
 // Variable Globale pour Axios nommé "api"
 const API = axios.create({
-	baseURL: "https://api.tedyspo.cyprien-cotinaut.com",
+	baseURL: "${dotenv.env['API_URL']}",
 	headers: {
 		"Content-Type": "application/json",
 	},

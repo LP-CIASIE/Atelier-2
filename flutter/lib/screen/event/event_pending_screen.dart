@@ -5,12 +5,11 @@ import 'package:lp1_ciasie_atelier_2/class/custom_exception.dart';
 import 'package:lp1_ciasie_atelier_2/class/event.dart';
 import 'package:http/http.dart' as http;
 import 'package:lp1_ciasie_atelier_2/class/session.dart';
+import 'package:provider/provider.dart';
 import 'package:lp1_ciasie_atelier_2/provider/session_provider.dart';
 import 'package:lp1_ciasie_atelier_2/screen/profil/profil_builder_screen.dart';
 import 'package:lp1_ciasie_atelier_2/screen/auth/sign_in_screen.dart';
-import 'package:provider/provider.dart';
-
-import '../../widget/event_card_widget.dart';
+import 'package:lp1_ciasie_atelier_2/widget/invitation_card_widget.dart';
 
 class EventPendingPage extends StatefulWidget {
   const EventPendingPage({super.key});
@@ -40,7 +39,8 @@ class _EventPendingPageState extends State<EventPendingPage> {
       Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.get(
-        Uri.parse('${dotenv.env['API_URL']}/events?filter=pending'),
+        Uri.parse(
+            '${dotenv.env['API_URL']}/events?page=1&size=1500&filter=pending'),
         headers: <String, String>{
           'Authorization': 'Bearer ${user.accessToken}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -107,9 +107,6 @@ class _EventPendingPageState extends State<EventPendingPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-              onPressed: () => refresh(context),
-              icon: const Icon(Icons.refresh)),
-          IconButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -128,12 +125,13 @@ class _EventPendingPageState extends State<EventPendingPage> {
             future: fetchPendingEvents(context),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                pendingEvents = snapshot.data!;
                 return Expanded(
                   child: ListView.builder(
-                    itemCount: snapshot.data!.length,
+                    itemCount: pendingEvents.length,
                     itemBuilder: (context, index) {
-                      return EventCard(
-                        event: snapshot.data![index],
+                      return InvitationCard(
+                        invitation: pendingEvents[index],
                       );
                     },
                   ),

@@ -22,6 +22,7 @@ class EventPage extends StatefulWidget {
     super.key,
     required this.event,
   });
+
   @override
   State<EventPage> createState() => _EventPageState();
 }
