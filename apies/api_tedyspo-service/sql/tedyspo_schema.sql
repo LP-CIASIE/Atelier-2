@@ -5,20 +5,6 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-DROP TABLE IF EXISTS `comment`;
-CREATE TABLE `comment` (
-  `id_comment` varchar(36) NOT NULL,
-  `comment` longtext DEFAULT NULL,
-  `id_event` varchar(36) DEFAULT NULL,
-  `id_user` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`id_comment`),
-  KEY `id_evenement_idx` (`id_event`),
-  KEY `id_utilisateur_idx` (`id_user`),
-  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`id_event`) REFERENCES `event` (`id_event`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
-
-
 DROP TABLE IF EXISTS `event`;
 CREATE TABLE `event` (
   `id_event` varchar(36) NOT NULL,
@@ -28,6 +14,17 @@ CREATE TABLE `event` (
   `is_public` tinyint(1) DEFAULT NULL,
   `code_share` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`id_event`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id_user` varchar(36) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `lastname` varchar(30) DEFAULT NULL,
+  `firstname` varchar(30) NOT NULL,
+  PRIMARY KEY (`id_user`),
+  UNIQUE KEY `mail_UNIQUE` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 
@@ -83,6 +80,19 @@ CREATE TABLE `location` (
   CONSTRAINT `location_ibfk_1` FOREIGN KEY (`id_event`) REFERENCES `event` (`id_event`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `id_comment` varchar(36) NOT NULL,
+  `comment` longtext DEFAULT NULL,
+  `id_event` varchar(36) DEFAULT NULL,
+  `id_user` varchar(36) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id_comment`),
+  KEY `id_evenement_idx` (`id_event`),
+  KEY `id_utilisateur_idx` (`id_user`),
+  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`id_event`) REFERENCES `event` (`id_event`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 DROP TABLE IF EXISTS `media`;
 CREATE TABLE `media` (
@@ -95,16 +105,4 @@ CREATE TABLE `media` (
   CONSTRAINT `media_ibfk_1` FOREIGN KEY (`id_comment`) REFERENCES `comment` (`id_comment`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
-
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `id_user` varchar(36) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `lastname` varchar(30) DEFAULT NULL,
-  `firstname` varchar(30) NOT NULL,
-  PRIMARY KEY (`id_user`),
-  UNIQUE KEY `mail_UNIQUE` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
-
-
--- 2023-04-04 13:56:05
+-- 2023-04-05 18:05:51

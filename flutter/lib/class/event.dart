@@ -7,6 +7,7 @@ class Event {
   final DateTime date;
   final TimeOfDay hour;
   final bool isPublic;
+  bool iAmOwner;
 
   Event({
     required this.idEvent,
@@ -15,6 +16,7 @@ class Event {
     required this.date,
     required this.hour,
     required this.isPublic,
+    this.iAmOwner = false,
   });
 
   factory Event.fromMap(Map map) {

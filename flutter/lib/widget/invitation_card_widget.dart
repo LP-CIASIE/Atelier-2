@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:lp1_ciasie_atelier_2/class/session.dart';
 import 'package:provider/provider.dart';
 import '../class/event.dart';
-import '../class/user.dart';
 import '../provider/session_provider.dart';
 
 class InvitationCard extends StatefulWidget {
@@ -42,7 +42,7 @@ class _InvitationCardState extends State<InvitationCard> {
     };
 
     try {
-      User user =
+      Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.put(
         Uri.parse(
@@ -109,7 +109,7 @@ class _InvitationCardState extends State<InvitationCard> {
     };
 
     try {
-      User user =
+      Session user =
           Provider.of<SessionProvider>(context, listen: false).userDataSession;
       dynamic responseHttp = await http.put(
         Uri.parse(

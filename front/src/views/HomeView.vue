@@ -7,7 +7,6 @@ import { useSessionStore } from "@/stores/session.js";
 
 const API = inject("api");
 const BUS = inject("bus");
-const Session = useSessionStore();
 
 const events = ref([]);
 const loading = ref(true);
@@ -18,6 +17,7 @@ function getEvents() {
 		page: 1,
 		size: 10000,
 		filter: "accepted",
+		embed: "location",
 	}).then((data) => {
 		events.value = data.events;
 		loading.value = false;
@@ -47,7 +47,6 @@ onMounted(() => {
 <template>
 	<div class="title">
 		<h1>Listes des événements</h1>
-		<Button label="Créer un événement" icon="pi pi-plus" @click="$router.push('/event/create')" />
 		<div class="button">
 			<template v-if="waitingList == 0">
 				<Button :label="waitingList.toString()" @click="$router.push('/event/waiting-list')" disabled />
@@ -59,7 +58,7 @@ onMounted(() => {
 		</div>
 	</div>
 	<template v-if="loading">
-		<p>Chargement...</p>
+		<EventsList :loading="true" />
 	</template>
 	<template v-else>
 		<template v-if="events.length === 0">

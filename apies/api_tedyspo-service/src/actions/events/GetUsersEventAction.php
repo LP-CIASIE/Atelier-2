@@ -12,6 +12,8 @@ class GetUsersEventAction extends AbstractAction
 {
   public function __invoke(Request $request, Response $response, $args)
   {
+    $params = $request->getQueryParams();
+    $embed = $params['embed'] ?? 'none';
 
     $invitationService = $this->container->get('service.invitation');
 
@@ -19,7 +21,7 @@ class GetUsersEventAction extends AbstractAction
 
     $usersEvent = $invitationService->getUsersEvent($id_event);
 
-    $usersEvent = FormatterObject::EventUsers($usersEvent);
+    $usersEvent = FormatterObject::EventUsers($usersEvent, $embed);
 
     $data = [
       'usersEvent' => $usersEvent,

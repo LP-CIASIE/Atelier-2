@@ -97,7 +97,7 @@ $app->put('/events/additionals/{id_additional_event}[/]', atelier\gateway\action
 
 // GET
 $app->get('/events[/]', atelier\gateway\actions\events\GetEventsAction::class)->add(new TokenMiddleware($container));
-$app->get('/events/{id_event}[/]', atelier\gateway\actions\events\GetEventAction::class)->add(new TokenMiddleware($container));
+$app->get('/events/{id_event}[/]', atelier\gateway\actions\events\GetEventAction::class);
 
 // POST
 $app->post('/events[/]', atelier\gateway\actions\events\CreateEventAction::class)->add(new TokenMiddleware($container));
@@ -152,7 +152,7 @@ $app->delete('/events/{id_event}/links/{id_link}[/]', atelier\gateway\actions\li
 
 // Collection locations
 // GET
-$app->get('/events/{id_event}/locations[/]', atelier\gateway\actions\locations\GetLocationsAction::class)->add(new TokenMiddleware($container));
+$app->get('/events/{id_event}/locations[/]', atelier\gateway\actions\locations\GetLocationsAction::class);
 $app->get('/events/{id_event}/locations/{id_location}[/]', atelier\gateway\actions\locations\GetLocationAction::class)->add(new TokenMiddleware($container));
 
 // POST

@@ -47,6 +47,7 @@ class CommentService extends AbstractService
     $comment->comment = $data['comment'];
     $comment->id_user = $id_user;
     $comment->id_event = $id_event;
+    $comment->created_at = date('Y-m-d H:i:s');
 
     try {
       $comment->save();
@@ -57,7 +58,7 @@ class CommentService extends AbstractService
     return $comment;
   }
 
-  public function getComments($id_event, $data): Collection
+  public function getComments($id_event, $data, $embed): Collection
   {
     try {
       $event = Event::findOrFail($id_event);
@@ -88,7 +89,17 @@ class CommentService extends AbstractService
     }
 
     try {
-      $comments = $event->comments()->skip($data['size'] * ($data['page'] - 1))->take($data['size'])->get();
+      $comments = $event->comments()->skip($data['size'] * ($data['page'] - 1))->take($data['size']);
+    } catch (\Exception $e) {
+      throw new \Exception('Erreur lors de la récupération des commentaires', 500);
+    }
+
+    if ($embed == 'user') {
+      $comments->with('user');
+    }
+
+    try {
+      $comments = $comments->orderBy('created_at', 'asc')->get();
     } catch (\Exception $e) {
       throw new \Exception('Erreur lors de la récupération des commentaires', 500);
     }

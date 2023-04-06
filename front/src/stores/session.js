@@ -6,6 +6,7 @@ export const useSessionStore = defineStore("session", {
 	state: () => {
 		const router = useRouter();
 		const API = inject("api");
+		const BUS = inject("bus");
 		const user = reactive({
 			id: "",
 			email: "",
@@ -34,7 +35,6 @@ export const useSessionStore = defineStore("session", {
 					});
 				})
 				.catch((error) => {
-					console.log(error);
 					return {
 						ok: false,
 						message: error.response.data.message,
@@ -122,6 +122,7 @@ export const useSessionStore = defineStore("session", {
 			user.access_token = "";
 			user.refresh_token = "";
 
+			BUS.emit("disconnect");
 			router.push({ name: "signIn" });
 		}
 
