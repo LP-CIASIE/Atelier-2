@@ -26,7 +26,6 @@ class _EventPendingPageState extends State<EventPendingPage> {
   void refresh(context) async {
     setState(() {
       _pending = true;
-      pendingEvents = [];
     });
     List<Event> data = await fetchPendingEvents(context);
     setState(() {
