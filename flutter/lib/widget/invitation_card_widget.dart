@@ -22,6 +22,7 @@ class _InvitationCardState extends State<InvitationCard> {
   bool formPending = false;
   String errorMessage = '';
   late Event invitation;
+  bool _responded = false;
 
   @override
   void initState() {
@@ -78,6 +79,7 @@ class _InvitationCardState extends State<InvitationCard> {
         setState(() {
           errorMessage = 'Invitation acceptée';
           formPending = false;
+          _responded = true;
         });
       } else {
         setState(() {
@@ -144,6 +146,7 @@ class _InvitationCardState extends State<InvitationCard> {
         setState(() {
           errorMessage = 'Invitation acceptée';
           formPending = false;
+          _responded = true;
         });
       } else {
         setState(() {
@@ -163,38 +166,41 @@ class _InvitationCardState extends State<InvitationCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(invitation.title),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                    '${DateFormat('dd/MM/yyyy').format(invitation.date)} à ${invitation.hour.hour.toString().padLeft(2, '0')}:${invitation.hour.minute.toString().padLeft(2, '0')}'),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  tooltip: "Accepter l'invitation",
-                  color: Colors.green,
-                  onPressed: () => _acceptInvitation(context),
-                  icon: const Icon(Icons.check),
-                ),
-                IconButton(
-                  tooltip: "Refuser l'invitation",
-                  color: Colors.red,
-                  onPressed: () => _refuseInvitation(context),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-          )
-        ],
+    return Visibility(
+      visible: !_responded,
+      child: Card(
+        elevation: 8,
+        child: Column(
+          children: [
+            ListTile(
+              title: Text(invitation.title),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                      '${DateFormat('dd/MM/yyyy').format(invitation.date)} à ${invitation.hour.hour.toString().padLeft(2, '0')}:${invitation.hour.minute.toString().padLeft(2, '0')}'),
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: "Accepter l'invitation",
+                    color: Colors.green,
+                    onPressed: () => _acceptInvitation(context),
+                    icon: const Icon(Icons.check),
+                  ),
+                  IconButton(
+                    tooltip: "Refuser l'invitation",
+                    color: Colors.red,
+                    onPressed: () => _refuseInvitation(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

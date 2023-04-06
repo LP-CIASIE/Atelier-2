@@ -129,12 +129,13 @@ class _EventsPageState extends State<EventsPage> {
               future: fetchEvents(context),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  events = snapshot.data!;
                   return Expanded(
                     child: ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: events.length,
                       itemBuilder: (context, index) {
                         return EventCard(
-                          event: snapshot.data![index],
+                          event: events[index],
                         );
                       },
                     ),

@@ -26,6 +26,7 @@ class _EventPendingPageState extends State<EventPendingPage> {
   void refresh(context) async {
     setState(() {
       _pending = true;
+      pendingEvents = [];
     });
     List<Event> data = await fetchPendingEvents(context);
     setState(() {
@@ -107,9 +108,6 @@ class _EventPendingPageState extends State<EventPendingPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-              onPressed: () => refresh(context),
-              icon: const Icon(Icons.refresh)),
-          IconButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -128,12 +126,13 @@ class _EventPendingPageState extends State<EventPendingPage> {
             future: fetchPendingEvents(context),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                pendingEvents = snapshot.data!;
                 return Expanded(
                   child: ListView.builder(
-                    itemCount: snapshot.data!.length,
+                    itemCount: pendingEvents.length,
                     itemBuilder: (context, index) {
                       return InvitationCard(
-                        invitation: snapshot.data![index],
+                        invitation: pendingEvents[index],
                       );
                     },
                   ),
