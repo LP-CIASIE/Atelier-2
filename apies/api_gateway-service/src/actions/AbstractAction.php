@@ -4,7 +4,6 @@ namespace atelier\gateway\actions;
 
 use Psr\Container\ContainerInterface;
 
-use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Psr7\Response as ResponseSlim;
@@ -18,20 +17,19 @@ abstract class AbstractAction
     $this->container = $container;
   }
 
-  public function sendRequest(Request $request, Response $response, $route, $method = 'get')
+  public function sendRequest(Request $request, Response $response, $route, $method = 'get', $serveur = 'tedyspo')
   {
 
-    //Pas toujours ce client, il faut utiliser client.auth.service si c'est pour l'authentification
-    // TODO : Faire une condition qui va chercher le bon client en fonction de la route // DONE : voir plus bas
-
-
-    if ($route === '/signup' || $route === '/signin') {
-      $client = $this->container->get('client.auth.service');
-    } else {
-      $client = $this->container->get('client.tedyspo.service');
-    }
-
+    // Récupère le token
     $token = $request->getHeader('Authorization')[0] ?? '';
+
+
+    // récupère le client nécessaire
+    if ($serveur === 'tedyspo') {
+      $client = $this->container->get('client.tedyspo.service');
+    } else if ($serveur === 'auth') {
+      $client = $this->container->get('client.auth.service');
+    }
 
 
     try {
@@ -76,8 +74,11 @@ abstract class AbstractAction
       $jsonDecode = json_decode($e->getResponse()->getBody()->getContents(), true);
       // var_dump($jsonDecode);
       // die();
+      $code = $jsonDecode['exception'][0]['code'] ?? 500;
+      $code = $code === 0 ? 500 : $code;
+
       $exceptionData = [
-        'code' => $jsonDecode['exception'][0]['code'] ?? 500,
+        'code' => $code,
         'message' => $jsonDecode['exception'][0]['message'] ?? 'Erreur inconnue',
       ];
 
@@ -88,9 +89,13 @@ abstract class AbstractAction
       return $response->withStatus($exceptionData['code']);
     }
 
+
     $logger = $this->container->get('logger');
     $logger->info("{$method} | {$this->container->get('gateway.atelier.local')}{$route} | {$responseHTTP->getStatusCode()}");
 
-    return $responseHTTP;
+    $response = new ResponseSlim();
+    $response->getBody()->write($responseHTTP->getBody()->getContents());
+    $response = $response->withHeader('Content-Type', 'application/json');
+    return $response->withStatus($responseHTTP->getStatusCode());
   }
 }

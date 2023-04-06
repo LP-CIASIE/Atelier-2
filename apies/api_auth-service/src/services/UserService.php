@@ -9,7 +9,7 @@ use Respect\Validation\Validator as v;
 class UserService
 {
 
-  public function createUser($body): void
+  public function createUser($body): array
   {
     try {
       v::key('email', v::email()->length(5, 50)->notEmpty())
@@ -26,7 +26,7 @@ class UserService
     $userExist = User::where('email', $body['email'])->first();
 
     if ($userExist) {
-      throw new \Exception("L'utilisateur existe déjà.", 409);
+      throw new \Exception("Un compte est déjà associé à cette adresse email.", 409);
     }
 
     $user = new User();
@@ -38,9 +38,15 @@ class UserService
       $user->role = $body['role'];
 
       $user->save();
+
+      $data = [
+        'id_user' => $user->id_user,
+      ];
     } catch (\Exception $e) {
       throw new \Exception("Erreur lors de la création de l'utilisateur.", 500);
     }
+
+    return $data;
   }
 
   public function login($body): User
@@ -112,6 +118,17 @@ class UserService
       }
     } catch (\Exception $e) {
       throw new \Exception('Erreur lors de la mise à jour de l\'utilisateur', 500);
+    }
+  }
+
+  public function deleteUserById($id): void
+  {
+    $user = $this->getUserById($id);
+
+    try {
+      $user->delete();
+    } catch (\Exception $e) {
+      throw new \Exception('Erreur lors de la suppression de l\'utilisateur', 500);
     }
   }
 }

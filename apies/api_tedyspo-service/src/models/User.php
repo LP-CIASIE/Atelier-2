@@ -14,4 +14,14 @@ class User extends Model
   protected $table = 'user';
   protected $primaryKey = 'id_user';
   public $timestamps = false;
+
+  public function comments()
+  {
+    return $this->hasMany(Comment::class, 'id_user');
+  }
+
+  public function events()
+  {
+    return $this->belongsToMany(Event::class, 'event_user', 'id_user', 'id_event');
+  }
 }

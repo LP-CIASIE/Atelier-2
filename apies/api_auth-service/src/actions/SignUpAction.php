@@ -13,6 +13,7 @@ final class SignUpAction
 {
     public function __invoke(Request $rq, Response $rs, array $args): Response
     {
+
         try {
             $body = $rq->getBody();
             $body = json_decode($body, true);
@@ -21,8 +22,12 @@ final class SignUpAction
         }
 
         $userService = new UserService();
-        $userService->createUser($body);
+        $id_user = $userService->createUser($body);
 
-        return FormatterAPI::formatResponse($rq, $rs, [], 204); // 204 = No Content
+        $data = [
+            'id_user' => $id_user
+        ];
+
+        return FormatterAPI::formatResponse($rq, $rs, $data, 201); // 201 = Created
     }
 }

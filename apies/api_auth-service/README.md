@@ -1,22 +1,28 @@
-# LeBonSandwich - Partie CMS (Catalog Service)
+# Déploiement API Auth
 
-## Membres de l'équipe
+## Prérequis :
 
-- [Cyprien COTINAUT](https://github.com/lecyp12)
-- [Teddy CLÉMENT DELS](https://github.com/cdteddyk1)
-- [Christopher JUE](https://github.com/JUEChristopher)
-- [Ugo ZANZI](https://github.com/uzanzi)
-- [Bradley BARBIER](https://github.com/Catif)
+- Docker
 
-## Lien des services du projet :
+## Installation :
 
-- [Order Service (API Slim)](https://github.com/cdteddyk1/LP-CIASIE_LBS_Order-Service)
-- [Gateway FrontOffice (API Slim)](https://github.com/uzanzi/LP-CIASIE_LBS_Gateway_FrontOffice)
-- [Auth Service (API MongoDB)](https://github.com/cdteddyk1/LP-CIASIE_LBS_Auth-Service)
-- [Catalog Service](https://github.com/Catif/LP-CIASIE_LBS_Catalog-Service)
+### Dépendance :
 
-![Architecture du projet](https://i.imgur.com/FQuIoZy.png)
+- `composer install`
 
-## Sujet du Projet
+### Base de données :
 
-(...)
+Pour l'API Auth vous avez besoin d'importer les données de la base de données qui se trouve dans le dossier sql :
+
+- `auth_fake` => Donnée généré par faker pour les tests
+- `auth_schema` => Structure de la base de données vide
+
+Assurez-vous d'avoir aussi bien configuré les variables d'environnement dans le fichier `auth.db.ini.dist`.
+
+### Lancement :
+
+Dans le dossier racine du répertoire git :
+
+- `docker-compose up -d`
+
+Cela lancera toutes les API avec Adminer pour la gestion de la base de données.
