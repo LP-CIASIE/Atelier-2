@@ -9,7 +9,7 @@ import mitt from "mitt";
 
 // Variable Globale pour Axios nommé "api"
 const API = axios.create({
-	baseURL: "${dotenv.env['API_URL']}",
+	baseURL: "http://gateway.atelier.local:8000",
 	headers: {
 		"Content-Type": "application/json",
 	},

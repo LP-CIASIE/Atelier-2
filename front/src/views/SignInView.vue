@@ -75,7 +75,7 @@ function on_submit() {
 			<small v-if="form.password.error_message.length > 0" class="p-error" id="text-error">{{ form.password.error_message || "&nbsp;" }}</small>
 		</div>
 
-		<small v-if="form.error_message.length > 0" class="p-error" id="text-error">{{ form.error_message || "&nbsp;" }}</small>
+		<small v-if="form.error_message?.length > 0" class="p-error" id="text-error">{{ form.error_message || "&nbsp;" }}</small>
 
 		<div class="list-button">
 			<Button type="button" label="Créer un compte" @click="router.push({ name: 'signUp' })" outlined />
